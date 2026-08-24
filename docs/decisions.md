@@ -281,3 +281,37 @@ supposed to set them.
 any future role-group check. The fillable bug is fixed; the postscript
 stays here as a reminder to check `$fillable` whenever an Action sets
 fields a Form Request never validates.
+
+## ADR-0013: One canonical report URL serves both members and public guests
+
+**Context**: §27 of the brief specifies a single stable URL per
+published report (`/reports/{report}`) that must work two ways: an org
+member views it through the normal authenticated app, and a stranger
+views the exact same URL after receiving it via WhatsApp or scanning its
+QR code — with no login. A `PRIVATE`/`MEMBERS`/`PUBLIC` field on the
+report itself decides which case applies, and that decision can only be
+made by looking at the specific report being requested — not by which
+route or middleware group handled the request.
+
+**Decision**: `ReportController@show` (and `@share`, `@qr`) sit outside
+the `auth` middleware entirely and branch internally:
+`Auth::user() ? Gate-check via FinancialReportPolicy::view()
+: (published && PUBLIC ? show : 404)`. This is the same shape used for
+the organization landing page (no prior ADR needed there — it was
+simple enough — but the pattern repeats here with real authorization
+stakes, so it's worth naming): **a route can be intentionally
+audience-mixed**, and when it is, the controller — not routing
+middleware — is where "who is this actually for" gets decided, on a
+per-record basis.
+
+The Inertia page (`reports/show.tsx`) mirrors this: it reads
+`auth.user` from shared props and renders either the full `AppLayout`
+shell (with publish/archive/revise/delete actions, when the viewer is
+authorized for them) or a bare public shell with just a "Masuk" link —
+one component, two presentations, driven by the same `auth.user` check
+every other page already gets for free.
+
+**Status**: The pattern to reach for whenever a resource is meant to be
+shareable outside the authenticated app — don't split it into two
+routes/controllers/pages; branch once, in the one place that already
+has the record and can check its actual state.

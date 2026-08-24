@@ -102,11 +102,19 @@ sewa venue, sponsor).
 - `organization_id`, `period_start`, `period_end`, `title`, `status`
   (`DRAFT`/`PUBLISHED`/`ARCHIVED`), `visibility`
   (`PRIVATE`/`MEMBERS`/`PUBLIC`, default `MEMBERS`), `opening_balance`,
-  `total_income`, `total_expense`, `closing_balance`, `published_at`,
-  `published_by`.
-- Types: `MONTHLY`, `EVENT`, `ANNUAL`, `CASH_FLOW`, `MEMBER_DUES`.
-- Always generated from actual transaction data — balances are never
-  hand-typed. See `transparency.md` for the publish/revision model.
+  `total_income`, `total_expense`, `closing_balance`, `created_by`,
+  `published_at`, `published_by`.
+- Types: `MONTHLY`, `EVENT`, `ANNUAL`, `CASH_FLOW`, `MEMBER_DUES` — a
+  label only today; every type computes identically (org-wide approved
+  transactions within the period). Type-specific scoping (e.g. an EVENT
+  report limited to one event) is deferred until actually needed.
+- `visibility` only governs access once a report is PUBLISHED/ARCHIVED —
+  a DRAFT is always treasury-only (OWNER/ADMIN/TREASURER) regardless of
+  what `visibility` is set to.
+- Always generated from actual transaction data
+  (`FinancialReport::calculateFigures()`) — balances are never
+  hand-typed, whether creating the draft, publishing, or revising. See
+  `transparency.md` for the publish/revision model.
 
 **FinancialReportRevision**
 - `financial_report_id`, `revision_number`, `snapshot`, `created_by`.

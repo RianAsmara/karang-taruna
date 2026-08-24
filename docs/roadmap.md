@@ -170,10 +170,76 @@ public profile, transparency is the financial-specific view.
 
 ## Phase 4 — Transparency
 
-Transparency dashboard, financial reports, publish/revision flow,
-visibility levels, shareable URLs, QR codes, WhatsApp share message
-generation, share logs, optional public transparency page. Treated as a
-critical milestone, not a nice-to-have on top of finance.
+**Status: complete.**
+
+- `FinancialReport`, `FinancialReportRevision`, `ReportShareLog` —
+  ULID-keyed. `organizations.public_transparency_enabled` (boolean,
+  default false) added for §30's opt-in public page.
+- `FinancialReport::calculateFigures()` is the one place opening/income/
+  expense/closing balance get computed, from APPROVED transactions only,
+  TRANSFER excluded (it nets to zero at the organization level). Shared
+  by `GenerateFinancialReportAction` (creates DRAFT),
+  `PublishFinancialReportAction` (recomputes fresh at publish time —
+  transactions approved after the draft was made are picked up), and
+  `RevisePublishedReportAction` (§23: correcting history never means
+  editing it — the current state is snapshotted to
+  `FinancialReportRevision` first, revision numbers increment, then the
+  report's own numbers move forward). Administrators never type a
+  balance by hand, anywhere.
+- Same separation of duties as Phase 3's transactions: TREASURER
+  generates the draft, only OWNER/ADMIN publish/archive/revise
+  (`FinancialReportPolicy`). DRAFT reports are treasury-only regardless
+  of their `visibility` field, which only takes effect once
+  PUBLISHED/ARCHIVED.
+- Visibility (`PRIVATE`/`MEMBERS`/`PUBLIC`) drives one canonical,
+  shareable URL — `GET /reports/{report}` — used both by org members and
+  by public visitors; it is deliberately outside the `auth` middleware
+  group and does its own visibility check per request (`ReportController`),
+  since the same route must serve both audiences correctly.
+- QR codes via `endroid/qr-code` (`GET /reports/{report}/qr`, PNG,
+  points at the canonical URL) and a WhatsApp click-to-chat share button
+  built client-side from the brief's exact §26 message format — both
+  gated by the same visibility check as the page itself. Every share
+  (WhatsApp, copy-link, or an anonymous guest's) writes a
+  `ReportShareLog` row; distribution metadata only, never authoritative.
+- `TransparencyController` (`/transparansi`, authenticated, any member)
+  is the §21 dashboard — balance, this month's income/expense/surplus,
+  recent approved transactions, published reports — plus the
+  OWNER-only toggle for the optional public page.
+  `PublicTransparencyController` (`/org/{slug}/transparency`, no auth)
+  is the §30 opt-in page: current balance and PUBLIC+PUBLISHED reports
+  only, 404s outright when the organization hasn't enabled it.
+- Nav gained "Transparansi" (between Kas and Iuran, matching §39's
+  order). Sidebar and public pages both link to it appropriately.
+- `FinancialReportObserver` (same `#[ObservedBy]` pattern as
+  transactions) logs `report.created/published/archived/revised` to
+  `AuditLog` — added after cross-checking `security.md` against what was
+  actually built and finding report publish/archive/revision wasn't
+  wired to the audit trail yet, even though §24 explicitly requires it
+  and the doc already promised it. Fixed before moving on, with its own
+  test.
+- 23 new Pest tests (111 total): the full report state machine
+  (generate → publish → archive, and separately → revise), recomputation
+  behavior, all three visibility levels crossed with guest/member/
+  organizer/tenant-outsider viewers, share logging (authenticated and
+  anonymous), QR access control, and the public transparency toggle.
+  Pint/Larastan/tsc/ESLint clean, verified against real PostgreSQL, plus
+  a live browser walkthrough (public report page → copy-link share
+  logged live → owner's transparency dashboard).
+- One test flake found and fixed in the process: `FinancialAccountFactory`
+  picked from only 4 flavor names, and `financial_accounts` has a
+  `unique(organization_id, name)` constraint — a test creating two
+  accounts for one org would occasionally collide. Fixed by suffixing
+  the factory's default name with `fake()->unique()->numberBetween(...)`;
+  confirmed fixed by rerunning the full suite three times clean.
+- Simplification made deliberately, not by oversight:
+  `FinancialReport.report_type` (MONTHLY/EVENT/ANNUAL/CASH_FLOW/
+  MEMBER_DUES) is a label only for now — every type computes the same
+  way (org-wide transactions within `period_start`/`period_end`). An
+  EVENT report scoped to one event's own transactions, or a MEMBER_DUES
+  report scoped to dues data specifically, would need type-specific
+  computation paths; deferred until a real need for that distinction
+  shows up, rather than building five computation paths speculatively.
 
 ## Phase 5 — API
 

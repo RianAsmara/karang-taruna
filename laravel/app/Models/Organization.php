@@ -17,12 +17,14 @@ class Organization extends Model
         'name',
         'slug',
         'require_transaction_approval',
+        'public_transparency_enabled',
     ];
 
     protected function casts(): array
     {
         return [
             'require_transaction_approval' => 'boolean',
+            'public_transparency_enabled' => 'boolean',
             'settings' => 'array',
         ];
     }
@@ -89,5 +91,13 @@ class Organization extends Model
     public function auditLogs(): HasMany
     {
         return $this->hasMany(AuditLog::class);
+    }
+
+    /**
+     * @return HasMany<FinancialReport, $this>
+     */
+    public function financialReports(): HasMany
+    {
+        return $this->hasMany(FinancialReport::class);
     }
 }

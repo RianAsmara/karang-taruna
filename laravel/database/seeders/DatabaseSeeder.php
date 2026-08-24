@@ -3,11 +3,15 @@
 namespace Database\Seeders;
 
 use App\Actions\Finance\ApproveFinancialTransactionAction;
+use App\Actions\Finance\GenerateFinancialReportAction;
 use App\Actions\Finance\GenerateMonthlyDuesAction;
+use App\Actions\Finance\PublishFinancialReportAction;
 use App\Actions\Finance\RecordDuePaymentAction;
 use App\Actions\Finance\SubmitTransactionAction;
 use App\Enums\EventStatus;
 use App\Enums\EventTaskStatus;
+use App\Enums\FinancialReportType;
+use App\Enums\FinancialReportVisibility;
 use App\Enums\OrganizationRole;
 use App\Enums\TransactionType;
 use App\Models\Announcement;
@@ -35,6 +39,7 @@ class DatabaseSeeder extends Seeder
         $organization = Organization::factory()->create([
             'name' => 'Karang Taruna Melati',
             'require_transaction_approval' => true,
+            'public_transparency_enabled' => true,
         ]);
 
         $ownerMembership = $organization->memberships()->create([
@@ -175,5 +180,17 @@ class DatabaseSeeder extends Seeder
                 $iuran,
             );
         }
+
+        // A published, publicly-visible report for last month — the
+        // organization's public transparency page has something to show.
+        $lastMonthStart = now()->subMonthNoOverflow()->startOfMonth();
+        $report = app(GenerateFinancialReportAction::class)->handle($organization, $treasurer, [
+            'title' => 'Laporan Kas '.$lastMonthStart->translatedFormat('F Y'),
+            'report_type' => FinancialReportType::Monthly,
+            'period_start' => $lastMonthStart->toDateString(),
+            'period_end' => $lastMonthStart->copy()->endOfMonth()->toDateString(),
+            'visibility' => FinancialReportVisibility::Public,
+        ]);
+        app(PublishFinancialReportAction::class)->handle($report, $owner);
     }
 }

@@ -40,7 +40,8 @@ floats.
 
 ```
 organizations
-  id, name, slug, require_transaction_approval (bool), settings (jsonb),
+  id, name, slug, require_transaction_approval (bool),
+  public_transparency_enabled (bool, default false), settings (jsonb),
   created_at, updated_at
 
 organization_memberships
@@ -123,21 +124,29 @@ audit_logs
 
 financial_reports
   id, organization_id fk, period_start, period_end, title,
-  status (enum: DRAFT/PUBLISHED/ARCHIVED),
+  status (enum: DRAFT/PUBLISHED/ARCHIVED, default DRAFT),
   visibility (enum: PRIVATE/MEMBERS/PUBLIC, default MEMBERS),
-  report_type (enum: MONTHLY/EVENT/ANNUAL/CASH_FLOW/MEMBER_DUES),
+  report_type (enum: MONTHLY/EVENT/ANNUAL/CASH_FLOW/MEMBER_DUES — a
+  label only for now, all types compute identically; see decisions.md),
   opening_balance (bigint), total_income (bigint), total_expense (bigint),
-  closing_balance (bigint), published_at, published_by fk -> users,
-  created_at, updated_at
+  closing_balance (bigint) — all four always computed by
+  FinancialReport::calculateFigures(), never hand-typed,
+  published_at nullable, published_by fk -> users nullable,
+  created_by fk -> users, created_at, updated_at
+  index(organization_id, status)
+  index(organization_id, period_start)
 
 financial_report_revisions
   id, financial_report_id fk, revision_number (int),
-  snapshot (jsonb), created_by fk -> users, created_at
+  snapshot (jsonb), created_by fk -> users, created_at (no updated_at —
+  append-only)
   unique(financial_report_id, revision_number)
 
 report_share_logs
   id, financial_report_id fk, channel (enum: WHATSAPP/WEB/PDF),
-  shared_by fk -> users, shared_at
+  shared_by fk -> users nullable (an anonymous guest can share too),
+  shared_at (no created_at/updated_at — this is the only timestamp)
+  index(financial_report_id, shared_at)
 
 attendance_sessions
   id, event_id fk, opened_at, closed_at, created_at, updated_at

@@ -62,6 +62,9 @@ export default function AccountsIndex({ accounts, totalBalance, canManage }: Acc
                         <Button variant="outline" asChild>
                             <Link href={route('finance.transactions.index')}>Riwayat Transaksi</Link>
                         </Button>
+                        <Button variant="outline" asChild>
+                            <Link href={route('finance.reports.index')}>Laporan</Link>
+                        </Button>
                     </div>
                 </div>
 

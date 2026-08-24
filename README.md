@@ -9,11 +9,12 @@ Prinsip produk: **Transparan · Kolaboratif · Sederhana · Akuntabel**.
 
 ## Status
 
-**Phase 3 — Finance: complete.** (Phases 1–2 — Laravel foundation,
-members/events — also complete.) Financial accounts, categories,
-transactions with a full DRAFT→PENDING→APPROVED/REJECTED approval
-workflow, member dues tied to the ledger, event budgets, and an audit
-trail are all live. See `docs/roadmap.md` for what's done and
+**Phase 4 — Transparency: complete.** (Phases 1–3 — Laravel foundation,
+members/events, finance — also complete.) Published financial reports
+with a publish/revision flow, PRIVATE/MEMBERS/PUBLIC visibility, one
+shareable URL per report with QR codes and WhatsApp sharing, share logs,
+an in-app transparency dashboard, and an optional public transparency
+page are all live. See `docs/roadmap.md` for what's done and
 `CLAUDE.md` for the full phase-by-phase plan and working rules.
 
 ## Structure
@@ -50,8 +51,10 @@ Seeded accounts (password `password`): `owner@rukunmuda.test`,
 same seeded organization, which also gets one sample event (with
 committee members and tasks), one published announcement, two kas
 accounts with a realistic transaction history (including one still
-pending approval), monthly dues for every member (one already paid),
-and a matching audit trail.
+pending approval), monthly dues for every member (one already paid), a
+matching audit trail, and one published PUBLIC report — with public
+transparency enabled, so `/org/{slug}/transparency` has something to
+show without logging in.
 
 Postgres and Redis are on non-default host ports (`5433` / `6380`) to
 avoid clashing with other projects on this machine — see

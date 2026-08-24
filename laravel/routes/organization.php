@@ -7,9 +7,11 @@ use App\Http\Controllers\EventParticipantController;
 use App\Http\Controllers\EventTaskController;
 use App\Http\Controllers\FinancialAccountController;
 use App\Http\Controllers\FinancialCategoryController;
+use App\Http\Controllers\FinancialReportController;
 use App\Http\Controllers\FinancialTransactionController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\MemberDueController;
+use App\Http\Controllers\TransparencyController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'current-org'])->group(function () {
@@ -71,4 +73,11 @@ Route::middleware(['auth', 'current-org'])->group(function () {
     Route::post('finance/dues/generate-monthly', [MemberDueController::class, 'generateMonthly'])->name('finance.dues.generate-monthly');
     Route::delete('finance/dues/{due}', [MemberDueController::class, 'destroy'])->name('finance.dues.destroy');
     Route::post('finance/dues/{due}/payments', [MemberDueController::class, 'recordPayment'])->name('finance.dues.payments.store');
+
+    Route::get('finance/reports', [FinancialReportController::class, 'index'])->name('finance.reports.index');
+    Route::get('finance/reports/create', [FinancialReportController::class, 'create'])->name('finance.reports.create');
+    Route::post('finance/reports', [FinancialReportController::class, 'store'])->name('finance.reports.store');
+
+    Route::get('transparansi', [TransparencyController::class, 'index'])->name('transparency.index');
+    Route::post('transparansi/toggle-public', [TransparencyController::class, 'toggle'])->name('transparency.toggle');
 });

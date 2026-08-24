@@ -145,6 +145,29 @@ code. **Status: complete, awaiting approval to start Phase 1.**
   (Laravel mass-assignment protection working as intended, just against
   an incomplete list) — see ADR-0012 postscript for how it was caught.
 
+## Ad hoc — Public organization landing page
+
+Built out of phase order, on explicit request, between Phase 3 and
+Phase 4: `GET /org/{organization:slug}` (`OrganizationLandingController`,
+`organizations/landing.tsx`) — a public, unauthenticated page per
+organization showing its name, member count, upcoming
+PLANNED/ONGOING events, and published announcements. Linked from the
+dashboard's organization card ("Lihat halaman publik").
+
+Deliberately carries **no financial data** — that's Phase 4's "Public
+Transparency" territory (§30 of the brief), which needs
+`FinancialReport.visibility` and the publish/revision flow that don't
+exist yet. Only hand-picked safe fields are selected in the controller
+(never the full `Organization` model), verified by a test asserting the
+response is missing `organization.id`,
+`organization.require_transaction_approval`, and `organization.settings`.
+5 Pest tests (unauth access, event/announcement filtering, field
+scoping, 404 on unknown slug); Pint/Larastan/tsc/ESLint clean.
+
+When Phase 4 lands, its `/org/{organization}/transparency` route is a
+sibling to this one, not a replacement — this page stays the general
+public profile, transparency is the financial-specific view.
+
 ## Phase 4 — Transparency
 
 Transparency dashboard, financial reports, publish/revision flow,

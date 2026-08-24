@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem, type SharedData } from '@/types';
-import { Head, useForm, usePage } from '@inertiajs/react';
+import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import { FormEventHandler } from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -64,6 +64,12 @@ function OrganizationSummary() {
             <p className="text-muted-foreground text-sm">Organisasi Anda</p>
             <p className="text-lg font-semibold">{currentOrganization.name}</p>
             <p className="text-muted-foreground text-sm">Peran: {currentOrganization.roleLabel}</p>
+            <Link
+                href={route('organizations.landing', currentOrganization.slug)}
+                className="text-muted-foreground mt-2 inline-block text-sm underline"
+            >
+                Lihat halaman publik
+            </Link>
         </div>
     );
 }

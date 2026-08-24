@@ -1,12 +1,15 @@
 <?php
 
 use App\Http\Controllers\OrganizationController;
+use App\Http\Controllers\OrganizationLandingController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', function () {
     return Inertia::render('welcome');
 })->name('home');
+
+Route::get('org/{organization:slug}', [OrganizationLandingController::class, 'show'])->name('organizations.landing');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('dashboard', function () {

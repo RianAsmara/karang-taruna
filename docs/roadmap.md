@@ -243,10 +243,80 @@ public profile, transparency is the financial-specific view.
 
 ## Phase 5 — API
 
-REST API (`/api/v1`) for auth, organization, members, events, tasks,
-finance, reports, transparency, attendance — via Sanctum, API Resources,
-Form Requests, Policies, reusing Phase 1–4 business logic. No duplicated
-rules in API controllers.
+**Status: complete.** (Attendance is not built yet — Phase 7 — so it has
+no API surface either; the note below about it was aspirational and is
+corrected here.)
+
+- `laravel/sanctum` installed via `php artisan install:api` (scaffolds
+  `routes/api.php`, migrates `personal_access_tokens`). `User` gained
+  `Laravel\Sanctum\HasApiTokens`.
+- 22 endpoints under `/api/v1`, in `App\Http\Controllers\Api\V1\*`:
+  auth (login/logout), `organizations/current`, members, events,
+  event tasks, finance accounts (read-only), finance transactions,
+  finance reports (index/publish/archive), the mixed-audience report
+  page (show/share/qr), and transparency — matching the endpoint list
+  `api.md` sketched back in Phase 0, with one deliberate correction (see
+  below).
+- **Zero duplicated business logic**, per the brief's explicit
+  constraint — every API controller calls the exact same Actions,
+  Policies, and Form Requests as its web counterpart. Three pieces of
+  logic that lived only inside web controllers were promoted onto models
+  so both sides share one implementation, rather than the API
+  reimplementing them: `FinancialReport::isPubliclyViewable()`,
+  `Organization::transparencySummary()` (the "Transparansi" figures —
+  balance, month income/expense, recent transactions, published
+  reports), and a small shared `App\Support\ReportQrCode` for the PNG
+  generation both `ReportController`s call. This is a strict improvement
+  over Phase 4's web-only versions, not just API scaffolding.
+- **Tenant/org resolution reused as-is**: API routes needing "the
+  current organization" sit behind the same `current-org` middleware
+  alias as the web `routes/organization.php` group, and API controllers
+  type-hint `Organization $organization` / `OrganizationMembership
+  $membership` exactly like their web equivalents — same container-
+  binding mechanism (ADR-0009), no new tenancy code path. The one change:
+  `ResolveCurrentOrganization` now branches on `$request->expectsJson()`
+  — a JSON client with no membership gets a `422` body instead of a
+  redirect to `/dashboard`, which would be meaningless for a mobile app.
+- **Auth is a separate flow from the web login, correctly** — not a
+  duplication of it. `Api\V1\AuthController::login` follows Sanctum's
+  official "mobile API tokens" pattern (validate credentials directly,
+  issue a token via `$user->createToken($device_name)`), because the web
+  `LoginRequest::authenticate()` is inherently session-based
+  (`Auth::attempt` + `session()->regenerate()`) and a token exchange is a
+  fundamentally different response contract, not the same rule expressed
+  twice.
+- **Deliberate spec correction**: `api.md`'s Phase 0 sketch listed
+  `GET /api/v1/finance/reports/{report}/share` as read-only, and that's
+  what got built — it returns `{ shareUrl, qrUrl }` for a mobile client
+  to build its own WhatsApp share action from, with **no side effect**.
+  Logging a share event stays POST-only and web-only
+  (`ReportController@share`, `report_share_logs`) — a `GET` endpoint
+  should never write. Worth naming since it's a case where the earlier
+  sketch was followed literally rather than "fixed" to match the web
+  behavior; if mobile share-analytics become a real requirement later,
+  that's a new `POST /api/v1/.../share` endpoint, not a change to this
+  one.
+- **Real bug found only by testing against Postgres, not SQLite**:
+  Sanctum's published `personal_access_tokens` migration uses
+  `$table->morphs('tokenable')`, which is a `bigint` column — but every
+  `tokenable` model in this app (`User`) has a ULID primary key (ADR-0002).
+  SQLite (the Pest suite's driver) doesn't enforce column typing strictly,
+  so `php artisan test` passed cleanly with this bug present; the very
+  first live `curl` login against real Postgres failed with `invalid
+  input syntax for type bigint`. Fixed by changing it to
+  `$table->ulidMorphs('tokenable')` before this ever reached staging.
+  Reinforces why the phase workflow always ends with a live check against
+  real Postgres, not just a green test suite (see ADR-0016).
+- 30 new Pest tests (141 total, `tests/Feature/Api/`): token issuance and
+  revocation, tenant isolation and role-based authorization mirrored from
+  the web test suites for every resource, the DRAFT-default-on-create
+  behavior, and the same three-tier guest/member/organizer visibility
+  matrix as `FinancialReportTest` for the mixed-audience report
+  endpoints. Pint/Larastan clean; live-verified end-to-end against real
+  PostgreSQL (login → protected endpoints → guest report/QR access) via
+  `php artisan serve` + `curl`, which is what caught the migration bug
+  above. No frontend files changed this phase, so `tsc`/ESLint/build
+  were not re-run.
 
 ## Phase 6 — Mobile
 

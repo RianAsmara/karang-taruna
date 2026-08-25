@@ -315,3 +315,117 @@ every other page already gets for free.
 shareable outside the authenticated app — don't split it into two
 routes/controllers/pages; branch once, in the one place that already
 has the record and can check its actual state.
+
+## ADR-0014: Mobile token auth is a separate flow from web session login — and JSON clients get errors, not redirects
+
+**Context**: Phase 5 needed Sanctum-based API auth. The existing web
+`LoginRequest::authenticate()` (Phase 1) is inherently session-based:
+`Auth::attempt()` followed by `$request->session()->regenerate()`. A
+mobile/API client needs a bearer token back, not a session cookie — a
+fundamentally different response contract, not the same business rule
+expressed twice.
+
+**Decision**: `Api\V1\AuthController::login` is its own small flow,
+following Sanctum's official "issuing mobile API tokens" pattern:
+look up the user by email, `Hash::check()` the password directly, issue
+`$user->createToken($device_name)->plainTextToken` on success. It does
+not call or wrap `LoginRequest` — credential verification here is
+framework plumbing (auth), not the kind of domain business logic the
+brief's "don't duplicate business logic in API controllers" rule is
+protecting (that rule is about things like report figure calculation or
+authorization rules, which this flow still delegates to the same
+`FinancialReportPolicy` etc. as the web app).
+
+**Also decided**: `ResolveCurrentOrganization` (ADR-0009) now branches on
+`$request->expectsJson()`. A user with no organization membership hitting
+a web route gets redirected to `/dashboard` (which prompts them to create
+one); the same condition on an API route returns a `422 {"message": "..."}`
+JSON body instead — a redirect response is meaningless to a mobile HTTP
+client. The container-binding mechanism itself (`app()->instance(Organization::class,
+...)`) is untouched and shared by both.
+
+**Status**: Standing pattern — any future auth-adjacent flow that needs a
+genuinely different response contract per client type (web vs. API) gets
+its own thin flow rather than being forced through the web one; anything
+that's an actual domain rule (authorization, calculations, validation)
+must still go through the one shared implementation.
+
+## ADR-0015: Business logic promoted onto models so the API doesn't duplicate the web controllers
+
+**Context**: Building the Phase 5 API controllers surfaced three pieces
+of logic that had, until now, only lived inline inside Phase 4's web
+controllers: the mixed-audience "can a guest see this report"
+check (`ReportController`, three call sites), the "Transparansi" figure
+computation (`TransparencyController@index`, one ~35-line block), and QR
+PNG generation (`ReportController@qr`). Writing the API's equivalents by
+copying that logic would have been exactly the "duplicated business
+logic in API controllers" the brief explicitly forbids.
+
+**Decision**: Moved each onto the model/domain layer, where it belongs
+per the brief's own layering rule (§8 — business logic belongs on models
+when it naturally belongs to the model), and had **both** the web and API
+controllers call the shared version:
+
+- `FinancialReport::isPubliclyViewable(): bool` — was a private method
+  on the web `ReportController`, duplicated three times inside that same
+  class even before Phase 5.
+- `Organization::transparencySummary(): array` — mirrors
+  `FinancialReport::calculateFigures()`'s existing pattern (ADR from
+  Phase 4) of a model computing its own derived figures. Both
+  `TransparencyController@index` (web) and `Api\V1\TransparencyController@index`
+  now call this one method.
+- `App\Support\ReportQrCode::png(string $url)` — QR generation isn't
+  domain logic, but the size/margin/target-URL choice is a real decision
+  worth keeping in exactly one place; a small `Support` class (not an
+  Action — no multi-step business operation here) was enough.
+
+`PublicTransparencyController` (the §30 fully-public page) was
+deliberately **not** folded into `transparencySummary()` — it computes a
+narrower, differently-filtered figure set (PUBLIC-visibility reports
+only, no recent-transactions list) by design, not by omission; conflating
+the two would have made the public page accidentally start leaking
+whatever the members-only dashboard chooses to show next.
+
+**Status**: Standing pattern for any future feature that needs a web and
+an API surface: write the computation once on the model/domain layer
+first, then have both controllers call it — never build the API version
+by copying the web controller's inline logic.
+
+## ADR-0016: Sanctum's default token migration doesn't fit a ULID-keyed `users` table — caught only by testing against real Postgres
+
+**Context**: `php artisan install:api` publishes a
+`personal_access_tokens` migration using `$table->morphs('tokenable')`,
+which Laravel's schema builder implements as a `bigint`
+`tokenable_id` column — the correct default when `tokenable` models use
+auto-incrementing integer primary keys. This app's `User` (and every
+other model) uses a ULID string primary key instead (ADR-0002). The
+full Pest suite (30 new API tests plus the existing 111) passed cleanly
+with the un-fixed migration, because SQLite — the suite's driver — does
+not enforce column type strictly and happily stored a 26-character ULID
+string into a column declared `INTEGER`. The very first live login
+attempt against the project's real PostgreSQL instance
+(`php artisan serve` + `curl`, the phase's usual final verification step)
+failed immediately: `SQLSTATE[22P02]: invalid input syntax for type
+bigint: "01m0v..."`.
+
+**Decision**: Changed the published migration to
+`$table->ulidMorphs('tokenable')`, matching the `foreignUlid`/`ulid()`
+convention used by every other table that references a ULID-keyed model
+in this schema. The token row's own primary key stays
+Sanctum's standard `$table->id()` (bigint, auto-increment) — nothing in
+this app references `personal_access_tokens.id` as a foreign key, so
+there's no ULID requirement on that column specifically, only on the
+morph target.
+
+**Why this matters beyond the one-line fix**: this is a concrete
+instance of a known Laravel gotcha (published/vendor migrations assume
+auto-increment PKs by default) that is invisible to a green SQLite-backed
+test suite. It's the reason the phase workflow always ends with a live
+check against the project's real PostgreSQL — not just `php artisan
+test` — before calling a phase done; this bug would have shipped
+straight past a "111... 141 passed" test run otherwise.
+
+**Status**: Fixed before this ever reached staging. Standing reminder:
+any future `php artisan install:*`-published migration touching a
+`tokenable`/`commentable`/similar morph column needs the same check
+against this app's ULID convention before it's trusted.

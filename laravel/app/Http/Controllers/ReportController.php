@@ -2,12 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\FinancialReportStatus;
-use App\Enums\FinancialReportVisibility;
 use App\Enums\ReportShareChannel;
 use App\Models\FinancialReport;
-use Endroid\QrCode\Builder\Builder;
-use Endroid\QrCode\Writer\PngWriter;
+use App\Support\ReportQrCode;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response as HttpResponse;
@@ -31,7 +28,7 @@ class ReportController extends Controller
         if ($user) {
             abort_unless($user->can('view', $report), 403);
         } else {
-            abort_unless($this->isPubliclyViewable($report), 404);
+            abort_unless($report->isPubliclyViewable(), 404);
         }
 
         $report->load(['organization:id,name', 'publisher:id,name']);
@@ -71,7 +68,7 @@ class ReportController extends Controller
         if ($user) {
             abort_unless($user->can('view', $report), 403);
         } else {
-            abort_unless($this->isPubliclyViewable($report), 404);
+            abort_unless($report->isPubliclyViewable(), 404);
         }
 
         $data = $request->validate([
@@ -94,21 +91,9 @@ class ReportController extends Controller
         if ($user) {
             abort_unless($user->can('view', $report), 403);
         } else {
-            abort_unless($this->isPubliclyViewable($report), 404);
+            abort_unless($report->isPubliclyViewable(), 404);
         }
 
-        $result = (new Builder(writer: new PngWriter))->build(
-            data: route('reports.show', $report),
-            size: 320,
-            margin: 12,
-        );
-
-        return response($result->getString(), 200)->header('Content-Type', $result->getMimeType());
-    }
-
-    private function isPubliclyViewable(FinancialReport $report): bool
-    {
-        return $report->status === FinancialReportStatus::Published
-            && $report->visibility === FinancialReportVisibility::Public;
+        return ReportQrCode::png(route('reports.show', $report));
     }
 }

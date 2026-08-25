@@ -106,6 +106,16 @@ class FinancialReport extends Model
     }
 
     /**
+     * Whether this report may be viewed without authentication — the
+     * mixed-audience check shared by the web and API report controllers.
+     */
+    public function isPubliclyViewable(): bool
+    {
+        return $this->status === FinancialReportStatus::Published
+            && $this->visibility === FinancialReportVisibility::Public;
+    }
+
+    /**
      * Compute a period's figures straight from approved transactions —
      * administrators never type a closing balance by hand. TRANSFER
      * transactions are excluded: they move money between the

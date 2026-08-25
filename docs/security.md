@@ -20,9 +20,13 @@
   Laravel React Starter Kit (Fortify under the hood) — registration,
   login, logout, password reset, email verification, profile/settings.
   Not replaced or reimplemented.
-- **Mobile/API**: Laravel Sanctum personal access tokens. Login, logout
-  (token revocation), and device/session listing where appropriate. No
-  custom JWT, no custom auth protocol.
+- **Mobile/API**: Laravel Sanctum personal access tokens (Phase 5,
+  `docs/api.md`). `POST /api/v1/auth/login` issues a token named after
+  the client's `device_name`; `POST /api/v1/auth/logout` revokes only
+  the token used for that request, leaving other devices signed in. No
+  custom JWT, no custom auth protocol. A device/session listing endpoint
+  (to let a user see and revoke *other* devices' tokens) is not built yet
+  — not required by anything shipped through Phase 5.
 - Passwords: Laravel's default hashing (bcrypt/argon2 per config) —
   never stored or logged in plaintext.
 

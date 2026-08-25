@@ -9,13 +9,14 @@ Prinsip produk: **Transparan · Kolaboratif · Sederhana · Akuntabel**.
 
 ## Status
 
-**Phase 4 — Transparency: complete.** (Phases 1–3 — Laravel foundation,
-members/events, finance — also complete.) Published financial reports
-with a publish/revision flow, PRIVATE/MEMBERS/PUBLIC visibility, one
-shareable URL per report with QR codes and WhatsApp sharing, share logs,
-an in-app transparency dashboard, and an optional public transparency
-page are all live. See `docs/roadmap.md` for what's done and
-`CLAUDE.md` for the full phase-by-phase plan and working rules.
+**Phase 5 — API: complete.** (Phases 1–4 — Laravel foundation,
+members/events, finance, transparency — also complete.) A REST API under
+`/api/v1`, authenticated via Sanctum, covers everything built so far
+(auth, organization, members, events, tasks, finance, reports,
+transparency) for the future mobile client — reusing the exact same
+Actions/Policies/Form Requests as the web app, with zero duplicated
+business logic. See `docs/roadmap.md` for what's done and `CLAUDE.md`
+for the full phase-by-phase plan and working rules.
 
 ## Structure
 
@@ -74,8 +75,8 @@ avoid clashing with other projects on this machine — see
 ## Stack
 
 Laravel 13.26.1 (PHP 8.4.24) · React 19.2 + TypeScript + Inertia 3.3.1 +
-shadcn/ui + Tailwind v4 · PostgreSQL 16 · Redis (via predis) · Pest ·
-Pint · Larastan · Docker Compose (postgres, redis, minio, mailpit).
-Sanctum lands in Phase 5 (API).
+shadcn/ui + Tailwind v4 · PostgreSQL 16 · Redis (via predis) · Sanctum
+(REST API) · Pest · Pint · Larastan · Docker Compose (postgres, redis,
+minio, mailpit).
 
 Later: React Native + Expo (`mobile/`, Phase 6 only).

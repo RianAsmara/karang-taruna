@@ -21,6 +21,12 @@ class ResolveCurrentOrganization
         $membership = $request->user()->currentMembership();
 
         if (! $membership) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'message' => 'Anda belum tergabung di organisasi manapun.',
+                ], 422);
+            }
+
             return redirect()->route('dashboard')
                 ->with('error', 'Anda belum tergabung di organisasi manapun.');
         }

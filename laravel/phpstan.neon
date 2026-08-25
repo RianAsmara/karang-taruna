@@ -11,3 +11,8 @@ parameters:
         - routes/
 
     level: 7
+
+    # Sanctum's own published config stub — env()'s bool|string return type
+    # for the default expression, not application code we maintain.
+    ignoreErrors:
+        - '#Parameter \#2 \$string of function explode expects string, bool\|string given\.#'

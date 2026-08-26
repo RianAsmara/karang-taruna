@@ -41,16 +41,17 @@ Voting, Inventory, Sponsors, Document management — no pages under
 `resources/js/pages/` for any of these, matching the backend gap in
 `backend-backlog.md` §5.
 
-## 6. No PDF export UI
+## 6. No PDF export UI — RESOLVED (2026-08-25)
 
-No download/export control anywhere for financial reports as PDF —
-matches the backend gap in `backend-backlog.md` §10.
+`reports/show.tsx` now has an "Unduh PDF" link (`route('reports.pdf', report.id)`),
+alongside the existing WhatsApp/copy-link actions — see
+`backend-backlog.md` §10.
 
-## 7. No notification center
+## 7. No notification center — RESOLVED (2026-08-25)
 
-No bell icon, no notification list, no unread-count UI anywhere in the
-web app — matches the backend gap in `backend-backlog.md` §6 (no
-notifications concept exists server-side to display).
+Added `resources/js/pages/notifications/index.tsx` plus a bell icon
+with an unread-count badge in `app-sidebar-header.tsx`
+(`route('notifications.index')`) — see `backend-backlog.md` §2.
 
 ## 8. No device/session management UI
 

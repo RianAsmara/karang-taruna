@@ -30,6 +30,11 @@ class FinancialTransactionResource extends JsonResource
             'creatorName' => $this->whenLoaded('creator', fn () => $this->creator?->name),
             'reviewerName' => $this->whenLoaded('reviewer', fn () => $this->reviewer?->name),
             'reviewedAt' => $this->reviewed_at?->toIso8601String(),
+            'attachments' => FinancialTransactionAttachmentResource::collection($this->whenLoaded('attachments')),
+            // Cheap presence flag for list views (via withCount()) that
+            // don't want the full attachment list above — the mobile
+            // Report Detail "bukti terlampir" / "tanpa bukti" distinction.
+            'hasEvidence' => $this->whenCounted('attachments', fn () => $this->attachments_count > 0),
         ];
     }
 }

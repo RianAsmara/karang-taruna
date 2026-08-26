@@ -12,7 +12,15 @@ parameters:
 
     level: 7
 
-    # Sanctum's own published config stub — env()'s bool|string return type
-    # for the default expression, not application code we maintain.
     ignoreErrors:
+        # Sanctum's own published config stub — env()'s bool|string return
+        # type for the default expression, not application code we maintain.
         - '#Parameter \#2 \$string of function explode expects string, bool\|string given\.#'
+
+        # False positive: Larastan resolves FinancialTransaction::$category
+        # as never-null from the category() relation method regardless of
+        # the @property FinancialCategory|null annotation on the model —
+        # category_id is genuinely nullable at the DB level
+        # (2026_08_24_181038_create_financial_transactions_table.php).
+        - message: '#Using nullsafe property access "\?\->name" on left side of \?\? is unnecessary\.#'
+          path: app/Models/FinancialReport.php

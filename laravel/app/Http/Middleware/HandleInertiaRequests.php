@@ -54,6 +54,7 @@ class HandleInertiaRequests extends Middleware
                 'role' => $membership->role->value,
                 'roleLabel' => $membership->role->label(),
             ] : null,
+            'unreadNotificationsCount' => $request->user()?->unreadNotifications()->count() ?? 0,
         ]);
     }
 }

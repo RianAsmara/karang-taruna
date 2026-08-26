@@ -79,4 +79,16 @@ class FinancialTransactionPolicy
 
         return $user->isOrganizerOf($financialTransaction->organization);
     }
+
+    /**
+     * Attaching/removing evidence (receipts, invoices, transfer proof) is
+     * deliberately not gated by status.isFinal() like update()/delete():
+     * evidence is supplementary documentation, not the recorded amount or
+     * type — finding and attaching a receipt after a transaction is
+     * already APPROVED is a normal, legitimate treasury workflow.
+     */
+    public function manageEvidence(User $user, FinancialTransaction $financialTransaction): bool
+    {
+        return $user->isTreasurerOf($financialTransaction->organization);
+    }
 }

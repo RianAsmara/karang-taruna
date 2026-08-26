@@ -173,6 +173,9 @@ function ReportBody({ report, canPublish, canArchive, canRevise, canDelete, shar
                             <Button size="sm" variant="outline" onClick={copyLink}>
                                 {copied ? 'Tautan disalin!' : 'Salin tautan'}
                             </Button>
+                            <Button size="sm" variant="outline" asChild>
+                                <a href={route('reports.pdf', report.id)}>Unduh PDF</a>
+                            </Button>
                         </div>
                         <code className="text-muted-foreground text-xs break-all">{shareUrl}</code>
                     </div>

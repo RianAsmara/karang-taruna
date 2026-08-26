@@ -2,9 +2,12 @@
 
 namespace App\Actions\Finance;
 
+use App\Enums\OrganizationRole;
 use App\Enums\TransactionStatus;
 use App\Models\FinancialTransaction;
+use App\Notifications\TransactionSubmittedForReview;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Notification;
 
 class SubmitTransactionAction
 {
@@ -15,14 +18,27 @@ class SubmitTransactionAction
      */
     public function handle(FinancialTransaction $transaction): FinancialTransaction
     {
-        return DB::transaction(function () use ($transaction) {
+        $requiresApproval = $transaction->organization->require_transaction_approval;
+
+        DB::transaction(function () use ($transaction, $requiresApproval) {
             $transaction->update([
-                'status' => $transaction->organization->require_transaction_approval
+                'status' => $requiresApproval
                     ? TransactionStatus::Pending
                     : TransactionStatus::Approved,
             ]);
-
-            return $transaction;
         });
+
+        if ($requiresApproval) {
+            $organizers = $transaction->organization->memberships()
+                ->whereIn('role', [OrganizationRole::Owner, OrganizationRole::Admin])
+                ->where('user_id', '!=', $transaction->created_by)
+                ->with('user')
+                ->get()
+                ->pluck('user');
+
+            Notification::send($organizers, new TransactionSubmittedForReview($transaction));
+        }
+
+        return $transaction;
     }
 }

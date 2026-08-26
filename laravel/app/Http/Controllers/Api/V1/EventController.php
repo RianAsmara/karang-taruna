@@ -20,7 +20,7 @@ class EventController extends Controller
     {
         $this->authorize('viewAny', [Event::class, $organization]);
 
-        $events = $organization->events()->orderByDesc('start_at')->get();
+        $events = $organization->events()->withCount(['committees', 'participants'])->orderByDesc('start_at')->get();
 
         return EventResource::collection($events);
     }
@@ -39,6 +39,7 @@ class EventController extends Controller
         $event->load([
             'pic.user:id,name',
             'tasks.assignee.user:id,name',
+            'committees.membership.user:id,name',
             'participants.membership.user:id,name',
         ]);
 

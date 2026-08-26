@@ -5,7 +5,9 @@ namespace App\Actions\Finance;
 use App\Enums\FinancialReportStatus;
 use App\Models\FinancialReport;
 use App\Models\User;
+use App\Notifications\FinancialReportPublished;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Notification;
 
 class PublishFinancialReportAction
 {
@@ -17,7 +19,7 @@ class PublishFinancialReportAction
      */
     public function handle(FinancialReport $report, User $publisher): FinancialReport
     {
-        return DB::transaction(function () use ($report, $publisher) {
+        DB::transaction(function () use ($report, $publisher) {
             $figures = FinancialReport::calculateFigures($report->organization, $report->period_start, $report->period_end);
 
             $report->update([
@@ -26,8 +28,16 @@ class PublishFinancialReportAction
                 'published_at' => now(),
                 'published_by' => $publisher->id,
             ]);
-
-            return $report;
         });
+
+        $members = $report->organization->memberships()
+            ->where('user_id', '!=', $publisher->id)
+            ->with('user')
+            ->get()
+            ->pluck('user');
+
+        Notification::send($members, new FinancialReportPublished($report));
+
+        return $report;
     }
 }

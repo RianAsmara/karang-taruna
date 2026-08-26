@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 
 /**
@@ -19,6 +20,7 @@ use Illuminate\Support\Carbon;
  * @property TransactionStatus $status
  * @property Carbon $transaction_date
  * @property Carbon|null $reviewed_at
+ * @property FinancialCategory|null $category
  */
 #[ObservedBy(FinancialTransactionObserver::class)]
 class FinancialTransaction extends Model
@@ -107,6 +109,14 @@ class FinancialTransaction extends Model
     public function reviewer(): BelongsTo
     {
         return $this->belongsTo(User::class, 'reviewed_by');
+    }
+
+    /**
+     * @return HasMany<FinancialTransactionAttachment, $this>
+     */
+    public function attachments(): HasMany
+    {
+        return $this->hasMany(FinancialTransactionAttachment::class);
     }
 
     /**

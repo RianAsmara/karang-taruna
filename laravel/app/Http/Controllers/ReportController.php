@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Enums\ReportShareChannel;
 use App\Models\FinancialReport;
 use App\Support\ReportQrCode;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response as HttpResponse;
@@ -95,5 +96,31 @@ class ReportController extends Controller
         }
 
         return ReportQrCode::png(route('reports.show', $report));
+    }
+
+    /**
+     * PDF is a distribution artifact of the published report, not a
+     * source of truth (master prompt §75) — generated on demand from
+     * the report's own stored figures, never a stand-in source.
+     */
+    public function pdf(FinancialReport $report): HttpResponse
+    {
+        $user = Auth::user();
+
+        if ($user) {
+            abort_unless($user->can('view', $report), 403);
+        } else {
+            abort_unless($report->isPubliclyViewable(), 404);
+        }
+
+        $report->load(['organization:id,name', 'publisher:id,name']);
+
+        $pdf = Pdf::loadView('reports.pdf', [
+            'report' => $report,
+            'breakdown' => $report->categoryBreakdown(),
+            'revisionCount' => $report->revisions()->count(),
+        ]);
+
+        return $pdf->download("laporan-{$report->id}.pdf");
     }
 }

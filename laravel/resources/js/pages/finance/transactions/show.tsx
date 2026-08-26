@@ -3,7 +3,18 @@ import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
 import { formatDate, formatDateTime, formatRupiah } from '@/lib/utils';
 import { type BreadcrumbItem } from '@/types';
-import { Head, Link, router } from '@inertiajs/react';
+import { Head, Link, router, useForm } from '@inertiajs/react';
+import { useRef } from 'react';
+
+interface TransactionAttachment {
+    id: string;
+    originalName: string;
+    mimeType: string;
+    sizeBytes: number;
+    uploaderName: string;
+    uploadedAt: string;
+    downloadUrl: string;
+}
 
 interface TransactionShowProps {
     transaction: {
@@ -22,11 +33,19 @@ interface TransactionShowProps {
         creatorName: string;
         reviewerName: string | null;
         reviewedAt: string | null;
+        attachments: TransactionAttachment[];
     };
     canEdit: boolean;
     canDelete: boolean;
     canSubmit: boolean;
     canReview: boolean;
+    canManageEvidence: boolean;
+}
+
+function formatFileSize(bytes: number): string {
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
 const STATUS_VARIANT: Record<string, 'default' | 'secondary' | 'destructive' | 'outline'> = {
@@ -36,7 +55,7 @@ const STATUS_VARIANT: Record<string, 'default' | 'secondary' | 'destructive' | '
     REJECTED: 'destructive',
 };
 
-export default function TransactionShow({ transaction, canEdit, canDelete, canSubmit, canReview }: TransactionShowProps) {
+export default function TransactionShow({ transaction, canEdit, canDelete, canSubmit, canReview, canManageEvidence }: TransactionShowProps) {
     const breadcrumbs: BreadcrumbItem[] = [
         { title: 'Kas', href: '/finance/accounts' },
         { title: 'Riwayat Transaksi', href: '/finance/transactions' },
@@ -47,6 +66,25 @@ export default function TransactionShow({ transaction, canEdit, canDelete, canSu
     const approve = () => router.post(route('finance.transactions.approve', transaction.id));
     const reject = () => router.post(route('finance.transactions.reject', transaction.id));
     const destroy = () => router.delete(route('finance.transactions.destroy', transaction.id));
+
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    const evidenceForm = useForm<{ file: File | null }>({ file: null });
+
+    const uploadEvidence = () => {
+        if (!evidenceForm.data.file) return;
+
+        evidenceForm.post(route('finance.transactions.attachments.store', transaction.id), {
+            forceFormData: true,
+            onSuccess: () => {
+                evidenceForm.reset('file');
+                if (fileInputRef.current) fileInputRef.current.value = '';
+            },
+        });
+    };
+
+    const deleteAttachment = (attachmentId: string) => {
+        router.delete(route('finance.transactions.attachments.destroy', [transaction.id, attachmentId]));
+    };
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -139,6 +177,51 @@ export default function TransactionShow({ transaction, canEdit, canDelete, canSu
                         </>
                     )}
                 </dl>
+
+                <div className="max-w-xl space-y-3">
+                    <h2 className="text-sm font-semibold">Bukti Transaksi</h2>
+
+                    {transaction.attachments.length > 0 ? (
+                        <ul className="space-y-2">
+                            {transaction.attachments.map((attachment) => (
+                                <li key={attachment.id} className="flex items-center justify-between gap-2 rounded-md border p-2 text-sm">
+                                    <div className="min-w-0">
+                                        <a href={attachment.downloadUrl} className="block truncate font-medium hover:underline">
+                                            {attachment.originalName}
+                                        </a>
+                                        <p className="text-muted-foreground text-xs">
+                                            {formatFileSize(attachment.sizeBytes)} · {attachment.uploaderName} ·{' '}
+                                            {formatDateTime(attachment.uploadedAt)}
+                                        </p>
+                                    </div>
+                                    {canManageEvidence && (
+                                        <Button variant="ghost" size="sm" onClick={() => deleteAttachment(attachment.id)}>
+                                            Hapus
+                                        </Button>
+                                    )}
+                                </li>
+                            ))}
+                        </ul>
+                    ) : (
+                        <p className="text-muted-foreground text-sm">Belum ada bukti yang diunggah.</p>
+                    )}
+
+                    {canManageEvidence && (
+                        <div className="flex items-center gap-2">
+                            <input
+                                ref={fileInputRef}
+                                type="file"
+                                accept=".jpg,.jpeg,.png,.webp,.pdf"
+                                onChange={(e) => evidenceForm.setData('file', e.target.files?.[0] ?? null)}
+                                className="text-sm"
+                            />
+                            <Button size="sm" onClick={uploadEvidence} disabled={!evidenceForm.data.file || evidenceForm.processing}>
+                                Unggah
+                            </Button>
+                        </div>
+                    )}
+                    {evidenceForm.errors.file && <p className="text-destructive text-xs">{evidenceForm.errors.file}</p>}
+                </div>
             </div>
         </AppLayout>
     );

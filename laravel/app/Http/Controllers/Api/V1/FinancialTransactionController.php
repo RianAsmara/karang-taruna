@@ -10,6 +10,7 @@ use App\Models\Organization;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Auth;
 
 class FinancialTransactionController extends Controller
@@ -20,6 +21,7 @@ class FinancialTransactionController extends Controller
 
         $query = $organization->financialTransactions()
             ->with(['financialAccount:id,name', 'category:id,name', 'event:id,title'])
+            ->withCount('attachments')
             ->orderByDesc('transaction_date');
 
         if (! Auth::user()->isTreasurerOf($organization)) {
@@ -43,5 +45,22 @@ class FinancialTransactionController extends Controller
         $transaction->refresh()->load(['financialAccount:id,name', 'category:id,name', 'event:id,title']);
 
         return (new FinancialTransactionResource($transaction))->response()->setStatusCode(201);
+    }
+
+    public function show(FinancialTransaction $transaction): JsonResource
+    {
+        $this->authorize('view', $transaction);
+
+        $transaction->load([
+            'financialAccount:id,name',
+            'relatedAccount:id,name',
+            'category:id,name',
+            'event:id,title',
+            'creator:id,name',
+            'reviewer:id,name',
+            'attachments.uploader:id,name',
+        ]);
+
+        return new FinancialTransactionResource($transaction);
     }
 }

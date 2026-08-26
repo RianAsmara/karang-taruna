@@ -75,4 +75,70 @@ class AuthTest extends TestCase
 
         $this->getJson('/api/v1/organizations/current')->assertStatus(422);
     }
+
+    public function test_login_is_throttled_after_five_failed_attempts()
+    {
+        $user = User::factory()->create(['password' => bcrypt('correct-password')]);
+
+        for ($i = 0; $i < 5; $i++) {
+            $this->postJson('/api/v1/auth/login', [
+                'email' => $user->email,
+                'password' => 'wrong-password',
+                'device_name' => 'iPhone 15',
+            ])->assertUnprocessable();
+        }
+
+        // The 6th attempt is throttled even with the correct password.
+        $this->postJson('/api/v1/auth/login', [
+            'email' => $user->email,
+            'password' => 'correct-password',
+            'device_name' => 'iPhone 15',
+        ])->assertUnprocessable()->assertJsonValidationErrors('email');
+
+        $this->assertDatabaseCount('personal_access_tokens', 0);
+    }
+
+    public function test_a_user_can_list_their_active_sessions_and_see_which_is_current()
+    {
+        $user = User::factory()->create();
+        $otherToken = $user->createToken('Android phone');
+        $currentToken = $user->createToken('iPhone 15');
+
+        $this->withHeader('Authorization', "Bearer {$currentToken->plainTextToken}")
+            ->getJson('/api/v1/auth/sessions')
+            ->assertOk()
+            ->assertJsonCount(2, 'data')
+            ->assertJsonFragment(['deviceName' => 'Android phone', 'isCurrent' => false])
+            ->assertJsonFragment(['deviceName' => 'iPhone 15', 'isCurrent' => true]);
+
+        $this->assertNotNull($otherToken);
+    }
+
+    public function test_a_user_can_revoke_another_devices_session()
+    {
+        $user = User::factory()->create();
+        $otherToken = $user->createToken('Android phone');
+        $currentToken = $user->createToken('iPhone 15');
+
+        $this->withHeader('Authorization', "Bearer {$currentToken->plainTextToken}")
+            ->deleteJson("/api/v1/auth/sessions/{$otherToken->accessToken->id}")
+            ->assertNoContent();
+
+        $this->assertDatabaseCount('personal_access_tokens', 1);
+        $this->assertDatabaseHas('personal_access_tokens', ['name' => 'iPhone 15']);
+    }
+
+    public function test_a_user_cannot_revoke_another_users_session()
+    {
+        $user = User::factory()->create();
+        $otherUser = User::factory()->create();
+        $otherUsersToken = $otherUser->createToken('Their phone');
+        $currentToken = $user->createToken('My phone');
+
+        $this->withHeader('Authorization', "Bearer {$currentToken->plainTextToken}")
+            ->deleteJson("/api/v1/auth/sessions/{$otherUsersToken->accessToken->id}")
+            ->assertNotFound();
+
+        $this->assertDatabaseCount('personal_access_tokens', 2);
+    }
 }

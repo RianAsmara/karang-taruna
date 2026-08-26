@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-bad2173c-197c-48a1-8911-42bb01cf56b4/styles.css">
+<script src="_ds/modernist-bad2173c-197c-48a1-8911-42bb01cf56b4/_ds_bundle.js"></script>
+<style>
+body{margin:0;background:#f3f2f2}
+@keyframes rmSheet{from{transform:translateY(100%)}to{transform:translateY(0)}}
+@keyframes rmFade{from{opacity:0}to{opacity:1}}
+.rm-scr::-webkit-scrollbar{width:0}
+.rm-rail-i:hover{background:#eae9e9}
+.rm-tap{cursor:pointer;user-select:none}
+</style>
+</helmet>
+
+<div style="max-width:1280px;margin:0 auto;padding:56px 40px 100px;font-family:var(--font-body)">
+
+<div style="display:flex;align-items:baseline;gap:14px;margin-bottom:24px">
+<span style="display:inline-block;width:22px;height:22px;background:var(--color-accent)"></span>
+<span style="font-family:var(--font-heading);font-weight:800;font-size:15px;letter-spacing:.16em;text-transform:uppercase">RukunMuda</span>
+<span style="margin-left:auto;font-family:var(--font-heading);font-weight:800;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 55%,transparent)">Dokumen 2 dari 3 · Core Screens</span>
+</div>
+<h1 style="font-size:52px;line-height:1.04;letter-spacing:-0.03em;max-width:18ch;margin:0 0 16px">Sepuluh layar inti, bisa ditekan.</h1>
+<p style="max-width:56ch;margin:0 0 40px;font-size:16px">Prototipe berjalan pada lebar sebenarnya 390 × 844. Tab bawah, kartu, tombol kembali, bottom sheet, dialog, dan penyelesaian tugas semuanya berfungsi. Gunakan daftar di kiri untuk melompat ke layar mana pun.</p>
+
+<div style="display:flex;gap:48px;align-items:flex-start">
+
+<aside style="flex:none;width:280px;position:sticky;top:24px">
+<div style="font-family:var(--font-heading);font-weight:800;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 55%,transparent);border-bottom:2px solid var(--color-divider);padding-bottom:8px;margin-bottom:4px">Daftar layar</div>
+<div class="rm-rail-i rm-tap" onClick="{{ goSplash }}" style="display:flex;gap:12px;align-items:center;padding:11px 8px 11px 0;border-bottom:1px solid color-mix(in srgb,var(--color-text) 12%,transparent)"><span style="font-family:ui-monospace,Menlo,monospace;font-size:11px;color:color-mix(in srgb,var(--color-text) 50%,transparent)">01</span><span style="font-family:var(--font-heading);font-weight:800;font-size:14px;flex:1">Splash</span><span hidden="{{ hSplash }}" style="width:8px;height:8px;background:var(--color-accent)"></span></div>
+<div class="rm-rail-i rm-tap" onClick="{{ goLogin }}" style="display:flex;gap:12px;align-items:center;padding:11px 8px 11px 0;border-bottom:1px solid color-mix(in srgb,var(--color-text) 12%,transparent)"><span style="font-family:ui-monospace,Menlo,monospace;font-size:11px;color:color-mix(in srgb,var(--color-text) 50%,transparent)">02</span><span style="font-family:var(--font-heading);font-weight:800;font-size:14px;flex:1">Masuk</span><span hidden="{{ hLogin }}" style="width:8px;height:8px;background:var(--color-accent)"></span></div>
+<div class="rm-rail-i rm-tap" onClick="{{ goHome }}" style="display:flex;gap:12px;align-items:center;padding:11px 8px 11px 0;border-bottom:1px solid color-mix(in srgb,var(--color-text) 12%,transparent)"><span style="font-family:ui-monospace,Menlo,monospace;font-size:11px;color:color-mix(in srgb,var(--color-text) 50%,transparent)">03</span><span style="font-family:var(--font-heading);font-weight:800;font-size:14px;flex:1">Home</span><span hidden="{{ hHome }}" style="width:8px;height:8px;background:var(--color-accent)"></span></div>
+<div class="rm-rail-i rm-tap" onClick="{{ goKegiatan }}" style="display:flex;gap:12px;align-items:center;padding:11px 8px 11px 0;border-bottom:1px solid color-mix(in srgb,var(--color-text) 12%,transparent)"><span style="font-family:ui-monospace,Menlo,monospace;font-size:11px;color:color-mix(in srgb,var(--color-text) 50%,transparent)">04</span><span style="font-family:var(--font-heading);font-weight:800;font-size:14px;flex:1">Kegiatan</span><span hidden="{{ hKegiatan }}" style="width:8px;height:8px;background:var(--color-accent)"></span></div>
+<div class="rm-rail-i rm-tap" onClick="{{ goEvent }}" style="display:flex;gap:12px;align-items:center;padding:11px 8px 11px 0;border-bottom:1px solid color-mix(in srgb,var(--color-text) 12%,transparent)"><span style="font-family:ui-monospace,Menlo,monospace;font-size:11px;color:color-mix(in srgb,var(--color-text) 50%,transparent)">05</span><span style="font-family:var(--font-heading);font-weight:800;font-size:14px;flex:1">Detail Kegiatan</span><span hidden="{{ hEvent }}" style="width:8px;height:8px;background:var(--color-accent)"></span></div>
+<div class="rm-rail-i rm-tap" onClick="{{ goKas }}" style="display:flex;gap:12px;align-items:center;padding:11px 8px 11px 0;border-bottom:1px solid color-mix(in srgb,var(--color-text) 12%,transparent)"><span style="font-family:ui-monospace,Menlo,monospace;font-size:11px;color:color-mix(in srgb,var(--color-text) 50%,transparent)">06</span><span style="font-family:var(--font-heading);font-weight:800;font-size:14px;flex:1">Kas</span><span hidden="{{ hKas }}" style="width:8px;height:8px;background:var(--color-accent)"></span></div>
+<div class="rm-rail-i rm-tap" onClick="{{ goTrans }}" style="display:flex;gap:12px;align-items:center;padding:11px 8px 11px 0;border-bottom:1px solid color-mix(in srgb,var(--color-text) 12%,transparent)"><span style="font-family:ui-monospace,Menlo,monospace;font-size:11px;color:color-mix(in srgb,var(--color-text) 50%,transparent)">07</span><span style="font-family:var(--font-heading);font-weight:800;font-size:14px;flex:1">Transparansi</span><span hidden="{{ hTrans }}" style="width:8px;height:8px;background:var(--color-accent)"></span></div>
+<div class="rm-rail-i rm-tap" onClick="{{ goLaporan }}" style="display:flex;gap:12px;align-items:center;padding:11px 8px 11px 0;border-bottom:1px solid color-mix(in srgb,var(--color-text) 12%,transparent)"><span style="font-family:ui-monospace,Menlo,monospace;font-size:11px;color:color-mix(in srgb,var(--color-text) 50%,transparent)">08</span><span style="font-family:var(--font-heading);font-weight:800;font-size:14px;flex:1">Detail Laporan</span><span hidden="{{ hLaporan }}" style="width:8px;height:8px;background:var(--color-accent)"></span></div>
+<div class="rm-rail-i rm-tap" onClick="{{ goNotif }}" style="display:flex;gap:12px;align-items:center;padding:11px 8px 11px 0;border-bottom:1px solid color-mix(in srgb,var(--color-text) 12%,transparent)"><span style="font-family:ui-monospace,Menlo,monospace;font-size:11px;color:color-mix(in srgb,var(--color-text) 50%,transparent)">09</span><span style="font-family:var(--font-heading);font-weight:800;font-size:14px;flex:1">Notifikasi</span><span hidden="{{ hNotif }}" style="width:8px;height:8px;background:var(--color-accent)"></span></div>
+<div class="rm-rail-i rm-tap" onClick="{{ goProfil }}" style="display:flex;gap:12px;align-items:center;padding:11px 8px 11px 0;border-bottom:2px solid var(--color-divider)"><span style="font-family:ui-monospace,Menlo,monospace;font-size:11px;color:color-mix(in srgb,var(--color-text) 50%,transparent)">10</span><span style="font-family:var(--font-heading);font-weight:800;font-size:14px;flex:1">Profil &amp; Organisasi</span><span hidden="{{ hProfil }}" style="width:8px;height:8px;background:var(--color-accent)"></span></div>
+<div class="rm-rail-i rm-tap" onClick="{{ goDark }}" style="display:flex;gap:12px;align-items:center;padding:11px 8px;margin-top:12px;background:#201e1d;color:#f3f2f2"><span style="font-family:ui-monospace,Menlo,monospace;font-size:11px;opacity:.6">11</span><span style="font-family:var(--font-heading);font-weight:800;font-size:14px;flex:1">Transparansi — mode gelap</span><span hidden="{{ hDark }}" style="width:8px;height:8px;background:#ff563c"></span></div>
+
+<div style="margin-top:28px;border-top:2px solid var(--color-divider);padding-top:12px">
+<div style="font-family:var(--font-heading);font-weight:800;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 55%,transparent);margin-bottom:8px">Sedang dilihat</div>
+<div style="font-family:var(--font-heading);font-weight:800;font-size:20px;line-height:1.15">{{ screenName }}</div>
+<p style="font-size:13px;margin:6px 0 0;color:color-mix(in srgb,var(--color-text) 70%,transparent)">{{ screenNote }}</p>
+</div>
+</aside>
+
+<div style="flex:none">
+<div style="width:390px;height:844px;border:2px solid #201e1d;background:#f3f2f2;display:flex;flex-direction:column;position:relative;overflow:hidden;box-shadow:0 12px 32px color-mix(in srgb,#2d2b2b 22%, transparent)">
+
+<div style="height:40px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 16px;font-family:var(--font-heading);font-weight:800;font-size:12px;letter-spacing:.02em;border-bottom:1px solid color-mix(in srgb,var(--color-text) 12%,transparent)"><span>09.41</span><span style="display:flex;gap:6px;align-items:center"><span style="width:16px;height:8px;border:1px solid #201e1d;display:inline-block"></span><span style="width:18px;height:9px;border:1px solid #201e1d;display:inline-block;position:relative"><span style="position:absolute;left:1px;top:1px;bottom:1px;width:11px;background:#201e1d;display:block"></span></span></span></div>
+
+<div style="flex:1;position:relative;overflow:hidden">
+
+<div class="rm-scr" style="position:absolute;inset:0;background:var(--color-accent);color:#f3f2f2;display:{{ dSplash }};flex-direction:column;padding:32px 24px">
+<div style="flex:1;display:flex;flex-direction:column;justify-content:center">
+<div style="width:44px;height:44px;background:#f3f2f2;margin-bottom:28px"></div>
+<div style="font-family:var(--font-heading);font-weight:800;font-size:44px;line-height:1;letter-spacing:-0.035em">Rukun<br>Muda</div>
+<div style="height:2px;background:#f3f2f2;width:64px;margin:24px 0"></div>
+<div style="font-size:17px;line-height:1.45;max-width:22ch">Urus kegiatan dan kas kampung dengan rapi, transparan, dan mudah.</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:10px">
+<div class="rm-tap" onClick="{{ goLogin }}" style="background:#f3f2f2;color:#201e1d;min-height:52px;display:flex;align-items:center;padding:0 16px;font-family:var(--font-heading);font-weight:800;font-size:15px">Masuk ke organisasi saya</div>
+<div class="rm-tap" onClick="{{ goLogin }}" style="border:1px solid #f3f2f2;min-height:52px;display:flex;align-items:center;padding:0 16px;font-family:var(--font-heading);font-weight:800;font-size:15px">Buat organisasi baru</div>
+<div style="font-size:12px;opacity:.8;margin-top:6px">Gratis untuk Karang Taruna dan pemuda kampung.</div>
+</div>
+</div>
+
+<div class="rm-scr" style="position:absolute;inset:0;display:{{ dLogin }};flex-direction:column;overflow:auto">
+<div style="padding:24px 16px 0"><span class="rm-tap" onClick="{{ goSplash }}" style="font-family:var(--font-heading);font-weight:800;font-size:14px">← Kembali</span></div>
+<div style="padding:28px 16px 24px">
+<div style="font-family:var(--font-heading);font-weight:800;font-size:34px;line-height:1.08;letter-spacing:-0.03em;max-width:14ch">Masuk pakai nomor HP</div>
+<p style="font-size:14px;margin:12px 0 0;color:color-mix(in srgb,var(--color-text) 70%,transparent);max-width:30ch">Kami kirim kode 6 angka lewat WhatsApp. Tidak perlu kata sandi.</p>
+</div>
+<div style="padding:0 16px;display:flex;flex-direction:column;gap:16px">
+<div class="field"><label>Nomor WhatsApp</label><div style="display:flex;border:1px solid var(--color-divider);background:#fff"><span style="padding:12px 12px;border-right:1px solid var(--color-divider);font-weight:800;font-size:15px">+62</span><span style="padding:12px;font-size:15px;font-weight:800;flex:1">812 3456 7890</span></div></div>
+<div class="field"><label>Kode organisasi <span style="opacity:.6">(opsional)</span></label><div style="border:1px solid var(--color-divider);background:#fff;padding:12px;font-size:15px;color:color-mix(in srgb,var(--color-text) 45%,transparent)">Contoh: PKB-2026</div></div>
+<div class="rm-tap" onClick="{{ goHome }}" style="background:var(--color-accent);color:#f3f2f2;min-height:52px;display:flex;align-items:center;padding:0 16px;font-family:var(--font-heading);font-weight:800;font-size:15px">Kirim kode ke WhatsApp</div>
+<p style="font-size:12.5px;color:color-mix(in srgb,var(--color-text) 65%,transparent);margin:0">Dengan masuk, Anda setuju pada aturan komunitas RukunMuda. Nomor Anda tidak dibagikan ke anggota lain.</p>
+</div>
+<div style="margin-top:auto;border-top:2px solid var(--color-divider);padding:16px;display:flex;align-items:center;gap:12px">
+<span style="width:36px;height:36px;background:#201e1d;color:#f3f2f2;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px">PK</span>
+<div style="flex:1"><div style="font-family:var(--font-heading);font-weight:800;font-size:14px">Pemuda Karya Bakti</div><div style="font-size:12px;color:color-mix(in srgb,var(--color-text) 60%,transparent)">RW 04 · Kelurahan Sukamaju · 24 anggota</div></div>
+</div>
+</div>
+
+<div style="position:absolute;inset:0;display:{{ dHome }};flex-direction:column">
+<div style="height:56px;flex:none;display:flex;align-items:center;gap:10px;padding:0 16px;border-bottom:2px solid var(--color-divider)">
+<span style="width:26px;height:26px;background:var(--color-accent);display:inline-block"></span>
+<div style="flex:1;min-width:0"><div style="font-family:var(--font-heading);font-weight:800;font-size:15px;line-height:1.1">Pemuda Karya Bakti</div><div style="font-size:11px;color:color-mix(in srgb,var(--color-text) 60%,transparent)">RW 04 Sukamaju ▾</div></div>
+<span class="rm-tap" onClick="{{ goProfil }}" style="width:32px;height:32px;background:#201e1d;color:#f3f2f2;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px">AR</span>
+</div>
+<div class="rm-scr" style="flex:1;overflow:auto">
+<div style="padding:20px 16px 18px;border-bottom:2px solid var(--color-divider)">
+<div style="font-size:14px;color:color-mix(in srgb,var(--color-text) 70%,transparent)">Selamat pagi, Arif.</div>
+<div style="font-family:var(--font-heading);font-weight:800;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 55%,transparent);margin-top:16px">Kas kita sekarang</div>
+<div class="rm-tap" onClick="{{ goKas }}" style="font-family:var(--font-heading);font-weight:800;font-size:44px;line-height:1.02;letter-spacing:-0.03em;font-variant-numeric:tabular-nums;margin:6px 0 10px">Rp8.450.000</div>
+<div style="display:flex;gap:16px;font-size:13px;font-variant-numeric:tabular-nums"><span><strong style="font-weight:800">+Rp2.350.000</strong> masuk</span><span style="color:#ae1800"><strong style="font-weight:800">−Rp1.850.000</strong> keluar</span></div>
+<div style="font-size:12px;color:color-mix(in srgb,var(--color-text) 55%,transparent);margin-top:4px">Agustus 2026 · diperbarui 19.40</div>
+</div>
+
+<div style="background:var(--color-accent);color:#f3f2f2;padding:16px" class="rm-tap" onClick="{{ payDues }}">
+<div style="font-family:var(--font-heading);font-weight:800;font-size:11px;letter-spacing:.09em;text-transform:uppercase;opacity:.9">Perlu tindakan · {{ pendingCount }}</div>
+<div style="font-family:var(--font-heading);font-weight:800;font-size:19px;margin-top:8px">{{ duesLine }}</div>
+<div style="font-size:13px;margin-top:4px;opacity:.9">{{ duesSub }}</div>
+</div>
+
+<div style="padding:20px 16px 16px;border-bottom:2px solid var(--color-divider)">
+<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px"><span style="font-family:var(--font-heading);font-weight:800;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 55%,transparent)">Kegiatan terdekat</span><span class="rm-tap" onClick="{{ goKegiatan }}" style="font-size:12px;font-weight:800;color:var(--color-accent)">Semua</span></div>
+<div class="rm-tap" onClick="{{ goEvent }}" style="background:#fff;padding:14px;display:flex;gap:14px">
+<div style="flex:none;width:48px;border-right:2px solid var(--color-accent);padding-right:10px"><div style="font-family:var(--font-heading);font-weight:800;font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--color-accent)">Sab</div><div style="font-family:var(--font-heading);font-weight:800;font-size:26px;line-height:1">29</div><div style="font-size:11px;font-weight:600">Agu</div></div>
+<div style="flex:1;min-width:0">
+<div style="font-family:var(--font-heading);font-weight:800;font-size:16px;line-height:1.2">Turnamen Voli Antar RT</div>
+<div style="font-size:12px;color:color-mix(in srgb,var(--color-text) 65%,transparent);margin-top:3px">08.00–17.00 · Lapangan Kampung</div>
+<div style="display:flex;align-items:center;gap:8px;margin-top:10px"><span style="font-size:10px;font-weight:800;letter-spacing:.05em">PERSIAPAN {{ progText }}</span><span style="flex:1;height:6px;background:#d7d3d3;display:block"><span style="display:block;height:6px;background:#201e1d;width:{{ progPct }}%"></span></span></div>
+</div>
+</div>
+</div>
+
+<div style="padding:20px 16px 16px;border-bottom:2px solid var(--color-divider)">
+<div style="font-family:var(--font-heading);font-weight:800;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 55%,transparent);margin-bottom:10px">Tugas saya · {{ myTaskCount }}</div>
+<div style="background:#fff">
+<div class="rm-tap" onClick="{{ goEvent }}" style="display:flex;align-items:center;gap:12px;padding:14px;border-bottom:1px solid color-mix(in srgb,var(--color-text) 15%,transparent)"><span style="width:20px;height:20px;border:1.5px solid var(--color-divider);flex:none"></span><div style="flex:1"><div style="font-family:var(--font-heading);font-weight:800;font-size:14px">Dokumentasi turnamen</div><div style="font-size:12px;color:color-mix(in srgb,var(--color-text) 60%,transparent)">Tenggat 28 Agu</div></div><span style="background:var(--color-accent);color:#f3f2f2;font-size:9px;font-weight:800;padding:2px 5px">PENTING</span></div>
+<div class="rm-tap" onClick="{{ goEvent }}" style="display:flex;align-items:center;gap:12px;padding:14px"><span style="width:20px;height:20px;border:1.5px solid var(--color-divider);flex:none"></span><div style="flex:1"><div style="font-family:var(--font-heading);font-weight:800;font-size:14px">Kumpulkan hadiah dari sponsor</div><div style="font-size:12px;color:color-mix(in srgb,var(--color-text) 60%,transparent)">Tenggat 27 Agu</div></div></div>
+</div>
+</div>
+
+<div style="padding:20px 16px 16px;border-bottom:2px solid var(--color-divider)">
+<div style="font-family:var(--font-heading);font-weight:800;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 55%,transparent);margin-bottom:10px">Pengumuman</div>
+<div style="border-left:4px solid #201e1d;padding-left:12px">
+<div style="font-family:var(--font-heading);font-weight:800;font-size:15px">Rapat panitia Jumat malam</div>
+<p style="font-size:13px;margin:4px 0 0">Kumpul di pos ronda jam 20.00. Bahas teknis turnamen dan pembagian konsumsi.</p>
+<div style="font-size:11px;color:color-mix(in srgb,var(--color-text) 55%,transparent);margin-top:6px">Ketua · 23 Agu</div>
+</div>
+</div>
+
+<div style="padding:20px 16px 24px">
+<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px"><span style="font-family:var(--font-heading);font-weight:800;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 55%,transparent)">Aktivitas terbaru</span><span class="rm-tap" onClick="{{ goKas }}" style="font-size:12px;font-weight:800;color:var(--color-accent)">Lihat kas</span></div>
+<div style="background:#fff">
+<div style="display:flex;align-items:center;gap:12px;padding:13px 14px;border-bottom:1px solid color-mix(in srgb,var(--color-text) 15%,transparent)"><span style="width:28px;height:28px;border:1px solid var(--color-divider);display:flex;align-items:center;justify-content:center;font-weight:800;flex:none">+</span><div style="flex:1"><div style="font-family:var(--font-heading);font-weight:800;font-size:14px">Iuran anggota</div><div style="font-size:11.5px;color:color-mix(in srgb,var(--color-text) 60%,transparent)">24 Agu · Rina · Masuk</div></div><span style="font-family:var(--font-heading);font-weight:800;font-size:14px;font-variant-numeric:tabular-nums">+Rp500.000</span></div>
+<div style="display:flex;align-items:center;gap:12px;padding:13px 14px"><span style="width:28px;height:28px;border:1px solid var(--color-divider);display:flex;align-items:center;justify-content:center;font-weight:800;flex:none;color:#ae1800">−</span><div style="flex:1"><div style="font-family:var(--font-heading);font-weight:800;font-size:14px">Konsumsi kegiatan</div><div style="font-size:11.5px;color:color-mix(in srgb,var(--color-text) 60%,transparent)">23 Agu · Dwi · Keluar</div></div><span style="font-family:var(--font-heading);font-weight:800;font-size:14px;font-variant-numeric:tabular-nums;color:#ae1800">−Rp350.000</span></div>
+</div>
+</div>
+</div>
+<div style="height:60px;flex:none;display:flex;border-top:2px solid var(--color-divider);background:#f3f2f2">
+<div class="rm-tap" onClick="{{ goHome }}" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;border-top:2px solid var(--color-accent);margin-top:-2px"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M3 10.5 12 3l9 7.5"></path><path d="M5 9.5V21h14V9.5"></path></svg><span style="font-size:10px;font-weight:800;letter-spacing:.03em">Home</span></div>
+<div class="rm-tap" onClick="{{ goKegiatan }}" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:color-mix(in srgb,var(--color-text) 50%,transparent)"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="3" y="5" width="18" height="16"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg><span style="font-size:10px;font-weight:800;letter-spacing:.03em">Kegiatan</span></div>
+<div class="rm-tap" onClick="{{ goKas }}" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:color-mix(in srgb,var(--color-text) 50%,transparent)"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="3" y="6" width="18" height="13"></rect><path d="M3 10h18M16 14.5h2"></path></svg><span style="font-size:10px;font-weight:800;letter-spacing:.03em">Kas</span></div>
+<div class="rm-tap" onClick="{{ goNotif }}" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:color-mix(in srgb,var(--color-text) 50%,transparent);position:relative"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M6 9a6 6 0 0 1 12 0c0 5 2 6 2 6H4s2-1 2-6Z"></path><path d="M10 20h4"></path></svg><span style="font-size:10px;font-weight:800;letter-spacing:.03em">Notifikasi</span><span style="position:absolute;top:9px;right:34px;background:var(--color-accent);color:#f3f2f2;font-size:9px;font-weight:800;padding:1px 4px">3</span></div>
+</div>
+</div>
+
+<div style="position:absolute;inset:0;display:{{ dKegiatan }};flex-direction:column">
+<div style="height:56px;flex:none;display:flex;align-items:center;gap:10px;padding:0 16px;border-bottom:2px solid var(--color-divider)"><div style="flex:1;font-family:var(--font-heading);font-weight:800;font-size:19px">Kegiatan</div><span class="rm-tap" onClick="{{ openFilter }}" style="font-size:13px;font-weight:800">⌕ Cari</span></div>
+<div class="rm-scr" style="flex:1;overflow:auto">
+<div style="display:flex;border-bottom:2px solid var(--color-divider)">
+<span style="flex:1;text-align:center;padding:12px 6px;background:#201e1d;color:#f3f2f2;font-family:var(--font-heading);font-weight:800;font-size:13px">Akan datang</span>
+<span style="flex:1;text-align:center;padding:12px 6px;font-family:var(--font-heading);font-weight:800;font-size:13px;color:color-mix(in srgb,var(--color-text) 55%,transparent)">Berjalan</span>
+<span style="flex:1;text-align:center;padding:12px 6px;font-family:var(--font-heading);font-weight:800;font-size:13px;color:color-mix(in srgb,var(--color-text) 55%,transparent)">Selesai</span>
+</div>
+<div style="padding:20px 16px 8px;font-family:var(--font-heading);font-weight:800;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 55%,transparent)">Minggu ini</div>
+<div class="rm-tap" onClick="{{ goEvent }}" style="margin:0 16px 12px;background:#fff;padding:16px;display:flex;gap:14px">
+<div style="flex:none;width:48px;border-right:2px solid var(--color-accent);padding-right:10px"><div style="font-family:var(--font-heading);font-weight:800;font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--color-accent)">Sab</div><div style="font-family:var(--font-heading);font-weight:800;font-size:26px;line-height:1">29</div><div style="font-size:11px;font-weight:600">Agu</div></div>
+<div style="flex:1;min-width:0">
+<div style="font-family:var(--font-heading);font-weight:800;font-size:16px;line-height:1.2">Turnamen Voli Antar RT</div>
+<div style="font-size:12px;color:color-mix(in srgb,var(--color-text) 65%,transparent);margin-top:3px">08.00–17.00 · Lapangan Kampung</div>
+<div style="display:flex;align-items:center;gap:8px;margin-top:10px"><span style="font-size:10px;font-weight:800;letter-spacing:.05em">PERSIAPAN {{ progText }}</span><span style="flex:1;height:6px;background:#d7d3d3;display:block"><span style="display:block;height:6px;background:#201e1d;width:{{ progPct }}%"></span></span></div>
+<div style="display:flex;align-items:center;gap:5px;margin-top:9px"><span style="width:18px;height:18px;background:#201e1d;color:#f3f2f2;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:800">AR</span><span style="width:18px;height:18px;background:#605d5d;color:#f3f2f2;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:800">BP</span><span style="font-size:11.5px;color:color-mix(in srgb,var(--color-text) 65%,transparent)">8 panitia · 24 peserta</span></div>
+</div>
+</div>
+<div style="padding:12px 16px 8px;font-family:var(--font-heading);font-weight:800;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 55%,transparent);border-top:1px solid color-mix(in srgb,var(--color-text) 12%,transparent)">September</div>
+<div style="margin:0 16px 12px;background:#fff;padding:16px;display:flex;gap:14px">
+<div style="flex:none;width:48px;border-right:2px solid var(--color-divider);padding-right:10px"><div style="font-family:var(--font-heading);font-weight:800;font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 55%,transparent)">Min</div><div style="font-family:var(--font-heading);font-weight:800;font-size:26px;line-height:1">07</div><div style="font-size:11px;font-weight:600">Sep</div></div>
+<div style="flex:1"><div style="font-family:var(--font-heading);font-weight:800;font-size:16px;line-height:1.2">Kerja Bakti Saluran Air</div><div style="font-size:12px;color:color-mix(in srgb,var(--color-text) 65%,transparent);margin-top:3px">06.00–10.00 · Gang 3</div><div style="margin-top:10px;display:inline-flex;align-items:center;border:1px solid var(--color-divider);font-size:10px;font-weight:800;letter-spacing:.05em;padding:3px 6px">PERENCANAAN</div></div>
+</div>
+<div style="margin:0 16px 12px;background:#fff;padding:16px;display:flex;gap:14px">
+<div style="flex:none;width:48px;border-right:2px solid var(--color-divider);padding-right:10px"><div style="font-family:var(--font-heading);font-weight:800;font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 55%,transparent)">Sab</div><div style="font-family:var(--font-heading);font-weight:800;font-size:26px;line-height:1">20</div><div style="font-size:11px;font-weight:600">Sep</div></div>
+<div style="flex:1"><div style="font-family:var(--font-heading);font-weight:800;font-size:16px;line-height:1.2">Malam Keakraban Pemuda</div><div style="font-size:12px;color:color-mix(in srgb,var(--color-text) 65%,transparent);margin-top:3px">19.00–23.00 · Balai RW</div><div style="margin-top:10px;display:inline-flex;align-items:center;background:#ffe0d9;color:#7c1405;font-size:10px;font-weight:800;letter-spacing:.05em;padding:3px 6px">◷ MENUNGGU ANGGARAN</div></div>
+</div>
+<div style="padding:16px">
+<div class="rm-tap" onClick="{{ showToastEvent }}" style="border:1px solid var(--color-divider);min-height:48px;display:flex;align-items:center;padding:0 14px;font-family:var(--font-heading);font-weight:800;font-size:14px">+ Buat kegiatan baru</div>
+</div>
+</div>
+<div style="height:60px;flex:none;display:flex;border-top:2px solid var(--color-divider);background:#f3f2f2">
+<div class="rm-tap" onClick="{{ goHome }}" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:color-mix(in srgb,var(--color-text) 50%,transparent)"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M3 10.5 12 3l9 7.5"></path><path d="M5 9.5V21h14V9.5"></path></svg><span style="font-size:10px;font-weight:800">Home</span></div>
+<div class="rm-tap" onClick="{{ goKegiatan }}" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;border-top:2px solid var(--color-accent);margin-top:-2px"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="3" y="5" width="18" height="16"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg><span style="font-size:10px;font-weight:800">Kegiatan</span></div>
+<div class="rm-tap" onClick="{{ goKas }}" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:color-mix(in srgb,var(--color-text) 50%,transparent)"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="3" y="6" width="18" height="13"></rect><path d="M3 10h18M16 14.5h2"></path></svg><span style="font-size:10px;font-weight:800">Kas</span></div>
+<div class="rm-tap" onClick="{{ goNotif }}" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:color-mix(in srgb,var(--color-text) 50%,transparent)"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M6 9a6 6 0 0 1 12 0c0 5 2 6 2 6H4s2-1 2-6Z"></path><path d="M10 20h4"></path></svg><span style="font-size:10px;font-weight:800">Notifikasi</span></div>
+</div>
+</div>
+
+<div style="position:absolute;inset:0;display:{{ dEvent }};flex-direction:column">
+<div style="height:56px;flex:none;display:flex;align-items:center;gap:12px;padding:0 16px;border-bottom:2px solid var(--color-divider)"><span class="rm-tap" onClick="{{ goKegiatan }}" style="font-family:var(--font-heading);font-weight:800;font-size:15px">←</span><div style="flex:1;font-family:var(--font-heading);font-weight:800;font-size:14px">Detail kegiatan</div><span class="rm-tap" onClick="{{ showToastShare }}" style="font-size:13px;font-weight:800;color:var(--color-accent)">Bagikan</span></div>
+<div class="rm-scr" style="flex:1;overflow:auto">
+<div style="padding:20px 16px;border-bottom:2px solid var(--color-divider)">
+<div style="display:inline-flex;background:var(--color-accent);color:#f3f2f2;font-size:10px;font-weight:800;letter-spacing:.06em;padding:3px 6px;margin-bottom:10px">4 HARI LAGI</div>
+<div style="font-family:var(--font-heading);font-weight:800;font-size:30px;line-height:1.08;letter-spacing:-0.025em">Turnamen Voli Antar RT</div>
+<div style="display:flex;margin-top:18px;border-top:2px solid var(--color-divider)">
+<div style="flex:1;padding:12px 12px 0 0"><div style="font-family:var(--font-heading);font-weight:800;font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 55%,transparent)">Kapan</div><div style="font-size:14px;font-weight:800;margin-top:3px">Sab, 29 Agustus</div><div style="font-size:13px">08.00 – 17.00</div></div>
+<div style="flex:1;padding:12px 0 0 12px;border-left:1px solid var(--color-divider)"><div style="font-family:var(--font-heading);font-weight:800;font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 55%,transparent)">Di mana</div><div style="font-size:14px;font-weight:800;margin-top:3px">Lapangan Kampung</div><div style="font-size:13px">Gang 2, RW 04</div></div>
+</div>
+</div>
+<div style="display:flex;gap:20px;padding:0 16px;border-bottom:2px solid var(--color-divider)">
+<span class="rm-tap" onClick="{{ evtRingkasan }}" style="padding:14px 0;font-family:var(--font-heading);font-weight:800;font-size:14px;border-bottom:2px solid {{ evtC1 }};margin-bottom:-2px;color:{{ evtT1 }}">Ringkasan</span>
+<span class="rm-tap" onClick="{{ evtTugas }}" style="padding:14px 0;font-family:var(--font-heading);font-weight:800;font-size:14px;border-bottom:2px solid {{ evtC2 }};margin-bottom:-2px;color:{{ evtT2 }}">Tugas</span>
+<span class="rm-tap" onClick="{{ evtAnggaran }}" style="padding:14px 0;font-family:var(--font-heading);font-weight:800;font-size:14px;border-bottom:2px solid {{ evtC3 }};margin-bottom:-2px;color:{{ evtT3 }}">Anggaran</span>
+</div>
+
+<div hidden="{{ hTab1 }}">
+<div style="padding:18px 16px;border-bottom:1px solid color-mix(in srgb,var(--color-text) 15%,transparent)">
+<div style="display:flex;justify-content:space-between;font-size:10px;font-weight:800;letter-spacing:.06em;margin-bottom:8px"><span>PERSIAPAN</span><span>{{ progFrac }} · {{ progText }}</span></div>
+<div style="display:flex;gap:2px;height:10px"><span style="flex:1;background:#201e1d"></span><span style="flex:1;background:#201e1d"></span><span style="flex:1;background:#201e1d"></span><span style="flex:1;background:{{ seg4 }}"></span></div>
+</div>
+<div style="padding:18px 16px;border-bottom:1px solid color-mix(in srgb,var(--color-text) 15%,transparent)">
+<div style="font-family:var(--font-heading);font-weight:800;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 55%,transparent);margin-bottom:12px">Siapa</div>
+<div style="display:flex;gap:24px">
+<div><div style="font-family:var(--font-heading);font-weight:800;font-size:26px">24</div><div style="font-size:12px">peserta terdaftar</div></div>
+<div><div style="font-family:var(--font-heading);font-weight:800;font-size:26px">8</div><div style="font-size:12px">panitia</div></div>
+</div>
+<div style="display:flex;gap:4px;margin-top:14px"><span style="width:28px;height:28px;background:#201e1d;color:#f3f2f2;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800">AR</span><span style="width:28px;height:28px;background:#605d5d;color:#f3f2f2;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800">BP</span><span style="width:28px;height:28px;background:#7d7979;color:#f3f2f2;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800">SN</span><span style="width:28px;height:28px;background:#d7d3d3;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800">+5</span></div>
+</div>
+<div style="padding:18px 16px;border-bottom:1px solid color-mix(in srgb,var(--color-text) 15%,transparent)">
+<div style="font-family:var(--font-heading);font-weight:800;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 55%,transparent);margin-bottom:12px">Saya di kegiatan ini</div>
+<div style="display:flex;gap:0;border:1px solid var(--color-divider);background:#fff">
+<div style="flex:1;padding:12px"><div style="font-family:var(--font-heading);font-weight:800;font-size:20px">{{ myTaskCount }}</div><div style="font-size:12px">tugas saya</div></div>
+<div style="flex:1;padding:12px;border-left:1px solid var(--color-divider)"><div style="display:inline-flex;background:#201e1d;color:#f3f2f2;font-size:10px;font-weight:800;padding:3px 6px">✓ HADIR</div><div style="font-size:12px;margin-top:6px">kehadiran dikonfirmasi</div></div>
+</div>
+</div>
+<div style="padding:18px 16px 28px">
+<div style="font-family:var(--font-heading);font-weight:800;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 55%,transparent);margin-bottom:10px">Catatan panitia</div>
+<p style="font-size:13.5px;margin:0">Peserta membawa perlengkapan sendiri. Panitia kumpul jam 06.30 untuk pasang net dan tenda. Konsumsi disiapkan oleh Dwi.</p>
+</div>
+</div>
+
+<div hidden="{{ hTab2 }}">
+<div style="padding:16px 16px 8px;font-family:var(--font-heading);font-weight:800;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 55%,transparent)">4 tugas persiapan</div>
+<div style="background:#fff;margin:0 16px">
+<div style="display:flex;align-items:flex-start;gap:12px;padding:14px;border-bottom:1px solid color-mix(in srgb,var(--color-text) 15%,transparent)"><span style="width:20px;height:20px;background:#201e1d;color:#f3f2f2;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex:none;margin-top:1px">✓</span><div style="flex:1"><div style="font-family:var(--font-heading);font-weight:800;font-size:15px;text-decoration:line-through;opacity:.5">Sewa lapangan</div><div style="font-size:12px;color:color-mix(in srgb,var(--color-text) 60%,transparent)">Agus · selesai 20 Agu</div></div></div>
+<div style="display:flex;align-items:flex-start;gap:12px;padding:14px;border-bottom:1px solid color-mix(in srgb,var(--color-text) 15%,transparent)"><span style="width:20px;height:20px;background:#201e1d;color:#f3f2f2;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex:none;margin-top:1px">✓</span><div style="flex:1"><div style="font-family:var(--font-heading);font-weight:800;font-size:15px;text-decoration:line-through;opacity:.5">Konsumsi</div><div style="font-size:12px;color:color-mix(in srgb,var(--color-text) 60%,transparent)">Dwi · selesai 22 Agu</div></div></div>
+<div style="display:flex;align-items:flex-start;gap:12px;padding:14px;border-bottom:1px solid color-mix(in srgb,var(--color-text) 15%,transparent)"><span style="width:20px;height:20px;background:#201e1d;color:#f3f2f2;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex:none;margin-top:1px">✓</span><div style="flex:1"><div style="font-family:var(--font-heading);font-weight:800;font-size:15px;text-decoration:line-through;opacity:.5">Hadiah</div><div style="font-size:12px;color:color-mix(in srgb,var(--color-text) 60%,transparent)">Sinta · selesai 23 Agu</div></div></div>
+<div class="rm-tap" onClick="{{ toggleDok }}" style="display:flex;align-items:flex-start;gap:12px;padding:14px;background:{{ dokBg }}"><span style="width:20px;height:20px;border:1.5px solid var(--color-divider);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex:none;margin-top:1px;background:{{ dokBox }};color:#f3f2f2">{{ dokMark }}</span><div style="flex:1"><div style="font-family:var(--font-heading);font-weight:800;font-size:15px">Dokumentasi</div><div style="font-size:12px;color:color-mix(in srgb,var(--color-text) 60%,transparent);display:flex;align-items:center;gap:6px">Saya · tenggat 28 Agu</div></div><span style="background:var(--color-accent);color:#f3f2f2;font-size:9px;font-weight:800;padding:2px 5px;align-self:center">PENTING</span></div>
+</div>
+<div style="padding:16px">
+<div style="font-size:12.5px;color:color-mix(in srgb,var(--color-text) 65%,transparent)">Ketuk tugas untuk menandai selesai. Perubahan langsung terlihat oleh ketua panitia.</div>
+</div>
+</div>
+
+<div hidden="{{ hTab3 }}">
+<div style="padding:18px 16px">
+<div style="font-family:var(--font-heading);font-weight:800;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 55%,transparent)">Anggaran kegiatan</div>
+<div style="font-family:var(--font-heading);font-weight:800;font-size:34px;font-variant-numeric:tabular-nums;margin-top:6px">Rp3.200.000</div>
+<div style="font-size:13px;color:color-mix(in srgb,var(--color-text) 65%,transparent)">Terpakai Rp1.850.000 · sisa Rp1.350.000</div>
+<div style="height:10px;background:#d7d3d3;margin-top:12px"><span style="display:block;width:58%;height:10px;background:#201e1d"></span></div>
+</div>
+<div style="background:#fff;margin:0 16px 16px">
+<div style="display:flex;align-items:center;gap:12px;padding:13px 14px;border-bottom:1px solid color-mix(in srgb,var(--color-text) 15%,transparent)"><span style="width:28px;height:28px;border:1px solid var(--color-divider);display:flex;align-items:center;justify-content:center;font-weight:800;flex:none">+</span><div style="flex:1"><div style="font-family:var(--font-heading);font-weight:800;font-size:14px">Sponsor turnamen</div><div style="font-size:11.5px;color:color-mix(in srgb,var(--color-text) 60%,transparent)">Toko Bangunan Jaya · Masuk</div></div><span style="font-family:var(--font-heading);font-weight:800;font-size:14px;font-variant-numeric:tabular-nums">+Rp2.000.000</span></div>
+<div style="display:flex;align-items:center;gap:12px;padding:13px 14px;border-bottom:1px solid color-mix(in srgb,var(--color-text) 15%,transparent)"><span style="width:28px;height:28px;border:1px solid var(--color-divider);display:flex;align-items:center;justify-content:center;font-weight:800;flex:none;color:#ae1800">−</span><div style="flex:1"><div style="font-family:var(--font-heading);font-weight:800;font-size:14px">Sewa lapangan</div><div style="font-size:11.5px;color:color-mix(in srgb,var(--color-text) 60%,transparent)">20 Agu · Keluar</div></div><span style="font-family:var(--font-heading);font-weight:800;font-size:14px;font-variant-numeric:tabular-nums;color:#ae1800">−Rp1.500.000</span></div>
+<div style="display:flex;align-items:center;gap:12px;padding:13px 14px"><span style="width:28px;height:28px;border:1px solid var(--color-divider);display:flex;align-items:center;justify-content:center;font-weight:800;flex:none;color:#ae1800">−</span><div style="flex:1"><div style="font-family:var(--font-heading);font-weight:800;font-size:14px">Konsumsi kegiatan</div><div style="font-size:11.5px;color:color-mix(in srgb,var(--color-text) 60%,transparent)">23 Agu · Keluar</div></div><span style="font-family:var(--font-heading);font-weight:800;font-size:14px;font-variant-numeric:tabular-nums;color:#ae1800">−Rp350.000</span></div>
+</div>
+<div style="padding:0 16px 24px"><div class="rm-tap" onClick="{{ openSheet }}" style="border:1px solid var(--color-divider);min-height:48px;display:flex;align-items:center;padding:0 14px;font-family:var(--font-heading);font-weight:800;font-size:14px">+ Catat pengeluaran kegiatan</div></div>
+</div>
+</div>
+<div style="flex:none;border-top:2px solid var(--color-divider);padding:12px 16px;background:#f3f2f2"><div class="rm-tap" onClick="{{ showToastAttend }}" style="background:var(--color-accent);color:#f3f2f2;min-height:48px;display:flex;align-items:center;padding:0 16px;font-family:var(--font-heading);font-weight:800;font-size:15px">Konfirmasi kehadiran saya</div></div>
+</div>
+
+<div style="position:absolute;inset:0;display:{{ dKas }};flex-direction:column">
+<div style="height:56px;flex:none;display:flex;align-items:center;gap:10px;padding:0 16px;border-bottom:2px solid var(--color-divider)"><div style="flex:1;font-family:var(--font-heading);font-weight:800;font-size:19px">Kas</div><span class="rm-tap" onClick="{{ openSheet }}" style="font-size:13px;font-weight:800;color:var(--color-accent)">+ Catat</span></div>
+<div class="rm-scr" style="flex:1;overflow:auto">
+<div style="padding:20px 16px 18px;border-bottom:2px solid var(--color-divider)">
+<div style="font-family:var(--font-heading);font-weight:800;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 55%,transparent)">Kas Pemuda Karya Bakti</div>
+<div style="font-family:var(--font-heading);font-weight:800;font-size:44px;line-height:1.02;letter-spacing:-0.03em;font-variant-numeric:tabular-nums;margin:8px 0 4px">Rp8.450.000</div>
+<div style="font-size:12px;color:color-mix(in srgb,var(--color-text) 60%,transparent)">Tunai Rp1.200.000 · Rekening BRI Rp7.250.000</div>
+<div style="display:flex;border-top:2px solid var(--color-divider);margin-top:16px">
+<div style="flex:1;padding:12px 12px 0 0"><div style="font-family:var(--font-heading);font-weight:800;font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 55%,transparent)">Masuk · Agustus</div><div style="font-family:var(--font-heading);font-weight:800;font-size:20px;font-variant-numeric:tabular-nums;margin-top:4px">+Rp2.350.000</div></div>
+<div style="flex:1;padding:12px 0 0 12px;border-left:1px solid var(--color-divider)"><div style="font-family:var(--font-heading);font-weight:800;font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 55%,transparent)">Keluar · Agustus</div><div style="font-family:var(--font-heading);font-weight:800;font-size:20px;font-variant-numeric:tabular-nums;margin-top:4px;color:#ae1800">−Rp1.850.000</div></div>
+</div>
+</div>
+<div class="rm-tap" onClick="{{ goTrans }}" style="background:var(--color-accent);color:#f3f2f2;padding:16px;display:flex;align-items:center;gap:12px">
+<div style="flex:1"><div style="font-family:var(--font-heading);font-weight:800;font-size:17px">Transparansi kas</div><div style="font-size:13px;opacity:.9;margin-top:2px">Laporan Agustus siap dibagikan ke grup</div></div><span style="font-family:var(--font-heading);font-weight:800;font-size:18px">→</span>
+</div>
+<div style="padding:18px 16px 12px">
+<div style="display:flex;border:1px solid var(--color-divider);background:#fff">
+<span class="rm-tap" onClick="{{ rangeBulan }}" style="flex:1;text-align:center;padding:11px 6px;font-family:var(--font-heading);font-weight:800;font-size:13px;background:{{ rB }};color:{{ rBt }}">Bulan ini</span>
+<span class="rm-tap" onClick="{{ range3 }}" style="flex:1;text-align:center;padding:11px 6px;font-family:var(--font-heading);font-weight:800;font-size:13px;border-left:1px solid var(--color-divider);background:{{ r3 }};color:{{ r3t }}">3 bulan</span>
+<span class="rm-tap" onClick="{{ rangeAll }}" style="flex:1;text-align:center;padding:11px 6px;font-family:var(--font-heading);font-weight:800;font-size:13px;border-left:1px solid var(--color-divider);background:{{ rA }};color:{{ rAt }}">Semua</span>
+</div>
+</div>
+<div style="padding:0 16px 8px;font-family:var(--font-heading);font-weight:800;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 55%,transparent)">Aktivitas terbaru</div>
+<div style="background:#fff;margin:0 16px 16px">
+<div style="display:flex;align-items:center;gap:12px;padding:13px 14px;border-bottom:1px solid color-mix(in srgb,var(--color-text) 15%,transparent)"><span style="width:28px;height:28px;border:1px solid var(--color-divider);display:flex;align-items:center;justify-content:center;font-weight:800;flex:none">+</span><div style="flex:1"><div style="font-family:var(--font-heading);font-weight:800;font-size:14px">Iuran anggota</div><div style="font-size:11.5px;color:color-mix(in srgb,var(--color-text) 60%,transparent)">24 Agu · Rina · Masuk</div></div><span style="font-family:var(--font-heading);font-weight:800;font-size:14px;font-variant-numeric:tabular-nums">+Rp500.000</span></div>
+<div style="display:flex;align-items:center;gap:12px;padding:13px 14px;border-bottom:1px solid color-mix(in srgb,var(--color-text) 15%,transparent)"><span style="width:28px;height:28px;border:1px solid var(--color-divider);display:flex;align-items:center;justify-content:center;font-weight:800;flex:none;color:#ae1800">−</span><div style="flex:1"><div style="font-family:var(--font-heading);font-weight:800;font-size:14px">Konsumsi kegiatan</div><div style="font-size:11.5px;color:color-mix(in srgb,var(--color-text) 60%,transparent)">23 Agu · Dwi · Keluar</div></div><span style="font-family:var(--font-heading);font-weight:800;font-size:14px;font-variant-numeric:tabular-nums;color:#ae1800">−Rp350.000</span></div>
+<div style="display:flex;align-items:center;gap:12px;padding:13px 14px;border-bottom:1px solid color-mix(in srgb,var(--color-text) 15%,transparent)"><span style="width:28px;height:28px;border:1px solid var(--color-divider);display:flex;align-items:center;justify-content:center;font-weight:800;flex:none">+</span><div style="flex:1"><div style="font-family:var(--font-heading);font-weight:800;font-size:14px">Sponsor turnamen</div><div style="font-size:11.5px;color:color-mix(in srgb,var(--color-text) 60%,transparent);display:flex;gap:6px;align-items:center">22 Agu · Ketua <span style="background:#ffe0d9;color:#7c1405;font-size:9px;font-weight:800;padding:1px 4px">MENUNGGU</span></div></div><span style="font-family:var(--font-heading);font-weight:800;font-size:14px;font-variant-numeric:tabular-nums">+Rp2.000.000</span></div>
+<div style="display:flex;align-items:center;gap:12px;padding:13px 14px"><span style="width:28px;height:28px;border:1px solid var(--color-divider);display:flex;align-items:center;justify-content:center;font-weight:800;flex:none;color:#ae1800">−</span><div style="flex:1"><div style="font-family:var(--font-heading);font-weight:800;font-size:14px">Cetak spanduk</div><div style="font-size:11.5px;color:color-mix(in srgb,var(--color-text) 60%,transparent)">21 Agu · Agus · Keluar</div></div><span style="font-family:var(--font-heading);font-weight:800;font-size:14px;font-variant-numeric:tabular-nums;color:#ae1800">−Rp450.000</span></div>
+</div>
+<div style="padding:0 16px 8px;font-family:var(--font-heading);font-weight:800;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 55%,transparent)">Iuran Agustus</div>
+<div style="background:#fff;margin:0 16px 24px;padding:14px">
+<div style="display:flex;justify-content:space-between;font-size:11px;font-weight:800;letter-spacing:.05em;margin-bottom:8px"><span>18 DARI 24 ANGGOTA</span><span>Rp1.800.000</span></div>
+<div style="height:10px;background:#d7d3d3"><span style="display:block;width:75%;height:10px;background:var(--color-accent)"></span></div>
+<div class="rm-tap" onClick="{{ payDues }}" style="margin-top:12px;font-size:13px;font-weight:800;color:var(--color-accent)">Lihat status iuran per anggota →</div>
+</div>
+</div>
+<div style="height:60px;flex:none;display:flex;border-top:2px solid var(--color-divider);background:#f3f2f2">
+<div class="rm-tap" onClick="{{ goHome }}" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:color-mix(in srgb,var(--color-text) 50%,transparent)"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M3 10.5 12 3l9 7.5"></path><path d="M5 9.5V21h14V9.5"></path></svg><span style="font-size:10px;font-weight:800">Home</span></div>
+<div class="rm-tap" onClick="{{ goKegiatan }}" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:color-mix(in srgb,var(--color-text) 50%,transparent)"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="3" y="5" width="18" height="16"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg><span style="font-size:10px;font-weight:800">Kegiatan</span></div>
+<div class="rm-tap" onClick="{{ goKas }}" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;border-top:2px solid var(--color-accent);margin-top:-2px"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="3" y="6" width="18" height="13"></rect><path d="M3 10h18M16 14.5h2"></path></svg><span style="font-size:10px;font-weight:800">Kas</span></div>
+<div class="rm-tap" onClick="{{ goNotif }}" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:color-mix(in srgb,var(--color-text) 50%,transparent)"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M6 9a6 6 0 0 1 12 0c0 5 2 6 2 6H4s2-1 2-6Z"></path><path d="M10 20h4"></path></svg><span style="font-size:10px;font-weight:800">Notifikasi</span></div>
+</div>
+</div>
+
+<div style="position:absolute;inset:0;display:{{ dTrans }};flex-direction:column">
+<div style="height:56px;flex:none;display:flex;align-items:center;gap:12px;padding:0 16px;border-bottom:2px solid var(--color-divider)"><span class="rm-tap" onClick="{{ goKas }}" style="font-family:var(--font-heading);font-weight:800;font-size:15px">←</span><div style="flex:1;font-family:var(--font-heading);font-weight:800;font-size:14px">Transparansi</div><span class="rm-tap" onClick="{{ goDark }}" style="font-size:12px;font-weight:800;color:color-mix(in srgb,var(--color-text) 60%,transparent)">◐ Gelap</span></div>
+<div class="rm-scr" style="flex:1;overflow:auto">
+<div style="background:var(--color-accent);color:#f3f2f2;padding:24px 16px">
+<div style="font-family:var(--font-heading);font-weight:800;font-size:10px;letter-spacing:.14em;text-transform:uppercase;opacity:.9">Agustus 2026</div>
+<div style="font-family:var(--font-heading);font-weight:800;font-size:40px;line-height:1.02;letter-spacing:-0.03em;font-variant-numeric:tabular-nums;margin:12px 0 8px">Rp8.450.000</div>
+<div style="font-size:14px;max-width:26ch">Uang organisasi kita jelas. Semua anggota melihat angka yang sama.</div>
+</div>
+<div style="padding:20px 16px 8px;font-family:var(--font-heading);font-weight:800;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 55%,transparent)">Ringkasan bulan ini</div>
+<div style="margin:0 16px 20px;border:2px solid #201e1d;background:#fff;padding:4px 14px 14px">
+<div style="display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid color-mix(in srgb,var(--color-text) 15%,transparent);font-size:14px"><span>Saldo awal</span><span style="font-weight:800;font-variant-numeric:tabular-nums">Rp7.950.000</span></div>
+<div style="display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid color-mix(in srgb,var(--color-text) 15%,transparent);font-size:14px"><span>Uang masuk</span><span style="font-weight:800;font-variant-numeric:tabular-nums">+Rp2.350.000</span></div>
+<div style="display:flex;justify-content:space-between;padding:11px 0;border-bottom:2px solid #201e1d;font-size:14px"><span>Uang keluar</span><span style="font-weight:800;font-variant-numeric:tabular-nums;color:#ae1800">−Rp1.850.000</span></div>
+<div style="display:flex;justify-content:space-between;align-items:baseline;padding:14px 0 0"><span style="font-family:var(--font-heading);font-weight:800;font-size:15px">Saldo akhir</span><span style="font-family:var(--font-heading);font-weight:800;font-size:26px;font-variant-numeric:tabular-nums">Rp8.450.000</span></div>
+</div>
+<div style="padding:0 16px 8px;font-family:var(--font-heading);font-weight:800;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 55%,transparent)">Laporan</div>
+<div style="margin:0 16px 20px;background:#fff">
+<div class="rm-tap" onClick="{{ goLaporan }}" style="display:flex;align-items:center;gap:12px;padding:14px;border-bottom:1px solid color-mix(in srgb,var(--color-text) 15%,transparent)"><div style="flex:1"><div style="font-family:var(--font-heading);font-weight:800;font-size:15px">Laporan kas Agustus 2026</div><div style="font-size:12px;color:color-mix(in srgb,var(--color-text) 60%,transparent)">Disusun Rina · 24 Agu</div></div><span style="background:#201e1d;color:#f3f2f2;font-size:9px;font-weight:800;padding:3px 6px">✓ TERBIT</span></div>
+<div style="display:flex;align-items:center;gap:12px;padding:14px;border-bottom:1px solid color-mix(in srgb,var(--color-text) 15%,transparent)"><div style="flex:1"><div style="font-family:var(--font-heading);font-weight:800;font-size:15px">Laporan Turnamen Voli</div><div style="font-size:12px;color:color-mix(in srgb,var(--color-text) 60%,transparent)">Menunggu kegiatan selesai</div></div><span style="border:1px solid var(--color-divider);font-size:9px;font-weight:800;padding:2px 6px">DRAF</span></div>
+<div style="display:flex;align-items:center;gap:12px;padding:14px"><div style="flex:1"><div style="font-family:var(--font-heading);font-weight:800;font-size:15px">Laporan kas Juli 2026</div><div style="font-size:12px;color:color-mix(in srgb,var(--color-text) 60%,transparent)">Dibagikan ke grup 2 Agu</div></div><span style="background:#201e1d;color:#f3f2f2;font-size:9px;font-weight:800;padding:3px 6px">✓ TERBIT</span></div>
+</div>
+<div style="padding:0 16px 24px"><p style="font-size:12.5px;color:color-mix(in srgb,var(--color-text) 65%,transparent);margin:0">Setiap transaksi memiliki bukti dan nama pencatat. Anggota bisa mengajukan pertanyaan lewat tombol di halaman laporan.</p></div>
+</div>
+<div style="flex:none;border-top:2px solid var(--color-divider);padding:12px 16px;background:#f3f2f2;display:flex;gap:8px">
+<div class="rm-tap" onClick="{{ openShare }}" style="flex:1;background:var(--color-accent);color:#f3f2f2;min-height:48px;display:flex;align-items:center;padding:0 16px;font-family:var(--font-heading);font-weight:800;font-size:15px">Bagikan ke WhatsApp</div>
+<div class="rm-tap" onClick="{{ showToastPdf }}" style="flex:none;border:1px solid var(--color-divider);min-height:48px;display:flex;align-items:center;padding:0 14px;font-family:var(--font-heading);font-weight:800;font-size:14px">PDF</div>
+</div>
+</div>
+
+<div style="position:absolute;inset:0;display:{{ dDark }};flex-direction:column;background:#1a1918;color:#f3f2f2">
+<div style="height:56px;flex:none;display:flex;align-items:center;gap:12px;padding:0 16px;border-bottom:2px solid rgba(243,242,242,.35)"><span class="rm-tap" onClick="{{ goTrans }}" style="font-family:var(--font-heading);font-weight:800;font-size:15px">←</span><div style="flex:1;font-family:var(--font-heading);font-weight:800;font-size:14px">Transparansi</div><span class="rm-tap" onClick="{{ goTrans }}" style="font-size:12px;font-weight:800;color:rgba(243,242,242,.6)">◑ Terang</span></div>
+<div class="rm-scr" style="flex:1;overflow:auto">
+<div style="background:#ff563c;color:#1a1918;padding:24px 16px">
+<div style="font-family:var(--font-heading);font-weight:800;font-size:10px;letter-spacing:.14em;text-transform:uppercase;opacity:.8">Agustus 2026</div>
+<div style="font-family:var(--font-heading);font-weight:800;font-size:40px;line-height:1.02;letter-spacing:-0.03em;font-variant-numeric:tabular-nums;margin:12px 0 8px">Rp8.450.000</div>
+<div style="font-size:14px;max-width:26ch">Uang organisasi kita jelas. Semua anggota melihat angka yang sama.</div>
+</div>
+<div style="padding:20px 16px 8px;font-family:var(--font-heading);font-weight:800;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:rgba(243,242,242,.6)">Ringkasan bulan ini</div>
+<div style="margin:0 16px 20px;border:2px solid rgba(243,242,242,.85);background:#242221;padding:4px 14px 14px">
+<div style="display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid rgba(243,242,242,.2);font-size:14px"><span>Saldo awal</span><span style="font-weight:800;font-variant-numeric:tabular-nums">Rp7.950.000</span></div>
+<div style="display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid rgba(243,242,242,.2);font-size:14px"><span>Uang masuk</span><span style="font-weight:800;font-variant-numeric:tabular-nums">+Rp2.350.000</span></div>
+<div style="display:flex;justify-content:space-between;padding:11px 0;border-bottom:2px solid rgba(243,242,242,.85);font-size:14px"><span>Uang keluar</span><span style="font-weight:800;font-variant-numeric:tabular-nums;color:#ff9783">−Rp1.850.000</span></div>
+<div style="display:flex;justify-content:space-between;align-items:baseline;padding:14px 0 0"><span style="font-family:var(--font-heading);font-weight:800;font-size:15px">Saldo akhir</span><span style="font-family:var(--font-heading);font-weight:800;font-size:26px;font-variant-numeric:tabular-nums">Rp8.450.000</span></div>
+</div>
+<div style="padding:0 16px 8px;font-family:var(--font-heading);font-weight:800;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:rgba(243,242,242,.6)">Laporan</div>
+<div style="margin:0 16px 20px;background:#242221">
+<div style="display:flex;align-items:center;gap:12px;padding:14px;border-bottom:1px solid rgba(243,242,242,.2)"><div style="flex:1"><div style="font-family:var(--font-heading);font-weight:800;font-size:15px">Laporan kas Agustus 2026</div><div style="font-size:12px;color:rgba(243,242,242,.6)">Disusun Rina · 24 Agu</div></div><span style="background:#f3f2f2;color:#1a1918;font-size:9px;font-weight:800;padding:3px 6px">✓ TERBIT</span></div>
+<div style="display:flex;align-items:center;gap:12px;padding:14px"><div style="flex:1"><div style="font-family:var(--font-heading);font-weight:800;font-size:15px">Laporan kas Juli 2026</div><div style="font-size:12px;color:rgba(243,242,242,.6)">Dibagikan ke grup 2 Agu</div></div><span style="background:#f3f2f2;color:#1a1918;font-size:9px;font-weight:800;padding:3px 6px">✓ TERBIT</span></div>
+</div>
+<div style="padding:0 16px 24px"><p style="font-size:12.5px;color:rgba(243,242,242,.65);margin:0">Mode gelap adalah inversi token, bukan tema baru: aksen naik ke accent-500 agar kontras tetap aman, uang keluar memakai accent-400.</p></div>
+</div>
+<div style="flex:none;border-top:2px solid rgba(243,242,242,.35);padding:12px 16px;display:flex;gap:8px">
+<div class="rm-tap" onClick="{{ openShare }}" style="flex:1;background:#ff563c;color:#1a1918;min-height:48px;display:flex;align-items:center;padding:0 16px;font-family:var(--font-heading);font-weight:800;font-size:15px">Bagikan ke WhatsApp</div>
+<div class="rm-tap" onClick="{{ showToastPdf }}" style="flex:none;border:1px solid rgba(243,242,242,.4);min-height:48px;display:flex;align-items:center;padding:0 14px;font-family:var(--font-heading);font-weight:800;font-size:14px">PDF</div>
+</div>
+</div>
+
+<div style="position:absolute;inset:0;display:{{ dLaporan }};flex-direction:column">
+<div style="height:56px;flex:none;display:flex;align-items:center;gap:12px;padding:0 16px;border-bottom:2px solid var(--color-divider)"><span class="rm-tap" onClick="{{ goTrans }}" style="font-family:var(--font-heading);font-weight:800;font-size:15px">←</span><div style="flex:1;font-family:var(--font-heading);font-weight:800;font-size:14px">Laporan Agustus 2026</div><span style="background:#201e1d;color:#f3f2f2;font-size:9px;font-weight:800;padding:3px 6px">✓ TERBIT</span></div>
+<div class="rm-scr" style="flex:1;overflow:auto">
+<div style="padding:20px 16px;border-bottom:2px solid var(--color-divider)">
+<div style="font-family:var(--font-heading);font-weight:800;font-size:28px;line-height:1.1;letter-spacing:-0.025em">Laporan kas<br>Agustus 2026</div>
+<div style="font-size:13px;color:color-mix(in srgb,var(--color-text) 65%,transparent);margin-top:8px">Pemuda Karya Bakti · RW 04 Sukamaju<br>Disusun Rina Andriani (Bendahara), disetujui Arif Ramadhan (Ketua)</div>
+</div>
+<div style="padding:18px 16px 8px;font-family:var(--font-heading);font-weight:800;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 55%,transparent)">Ikhtisar</div>
+<div style="margin:0 16px 20px;border:2px solid #201e1d;background:#fff;padding:4px 14px 14px">
+<div style="display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid color-mix(in srgb,var(--color-text) 15%,transparent);font-size:14px"><span>Saldo awal 1 Agu</span><span style="font-weight:800;font-variant-numeric:tabular-nums">Rp7.950.000</span></div>
+<div style="display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid color-mix(in srgb,var(--color-text) 15%,transparent);font-size:14px"><span>Uang masuk (7 catatan)</span><span style="font-weight:800;font-variant-numeric:tabular-nums">+Rp2.350.000</span></div>
+<div style="display:flex;justify-content:space-between;padding:11px 0;border-bottom:2px solid #201e1d;font-size:14px"><span>Uang keluar (11 catatan)</span><span style="font-weight:800;font-variant-numeric:tabular-nums;color:#ae1800">−Rp1.850.000</span></div>
+<div style="display:flex;justify-content:space-between;align-items:baseline;padding:14px 0 0"><span style="font-family:var(--font-heading);font-weight:800;font-size:15px">Saldo akhir 31 Agu</span><span style="font-family:var(--font-heading);font-weight:800;font-size:26px;font-variant-numeric:tabular-nums">Rp8.450.000</span></div>
+</div>
+<div style="padding:0 16px 8px;font-family:var(--font-heading);font-weight:800;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 55%,transparent)">Uang masuk menurut sumber</div>
+<div style="margin:0 16px 20px">
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><span style="width:96px;font-size:13px">Iuran anggota</span><span style="flex:1;height:14px;background:#d7d3d3"><span style="display:block;width:77%;height:14px;background:#201e1d"></span></span><span style="width:88px;text-align:right;font-size:12.5px;font-weight:800;font-variant-numeric:tabular-nums">Rp1.800.000</span></div>
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><span style="width:96px;font-size:13px">Sponsor</span><span style="flex:1;height:14px;background:#d7d3d3"><span style="display:block;width:17%;height:14px;background:#201e1d"></span></span><span style="width:88px;text-align:right;font-size:12.5px;font-weight:800;font-variant-numeric:tabular-nums">Rp400.000</span></div>
+<div style="display:flex;align-items:center;gap:10px"><span style="width:96px;font-size:13px">Donasi warga</span><span style="flex:1;height:14px;background:#d7d3d3"><span style="display:block;width:6%;height:14px;background:#201e1d"></span></span><span style="width:88px;text-align:right;font-size:12.5px;font-weight:800;font-variant-numeric:tabular-nums">Rp150.000</span></div>
+</div>
+<div style="padding:0 16px 8px;font-family:var(--font-heading);font-weight:800;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 55%,transparent)">Uang keluar menurut pos</div>
+<div style="margin:0 16px 20px">
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><span style="width:96px;font-size:13px">Kegiatan</span><span style="flex:1;height:14px;background:#d7d3d3"><span style="display:block;width:81%;height:14px;background:#ae1800"></span></span><span style="width:88px;text-align:right;font-size:12.5px;font-weight:800;font-variant-numeric:tabular-nums">Rp1.500.000</span></div>
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><span style="width:96px;font-size:13px">Konsumsi</span><span style="flex:1;height:14px;background:#d7d3d3"><span style="display:block;width:19%;height:14px;background:#ae1800"></span></span><span style="width:88px;text-align:right;font-size:12.5px;font-weight:800;font-variant-numeric:tabular-nums">Rp350.000</span></div>
+</div>
+<div style="padding:0 16px 8px;font-family:var(--font-heading);font-weight:800;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 55%,transparent)">Semua catatan · 18</div>
+<div style="background:#fff;margin:0 16px 16px">
+<div style="display:flex;align-items:center;gap:12px;padding:13px 14px;border-bottom:1px solid color-mix(in srgb,var(--color-text) 15%,transparent)"><span style="width:28px;height:28px;border:1px solid var(--color-divider);display:flex;align-items:center;justify-content:center;font-weight:800;flex:none">+</span><div style="flex:1"><div style="font-family:var(--font-heading);font-weight:800;font-size:14px">Iuran anggota</div><div style="font-size:11.5px;color:color-mix(in srgb,var(--color-text) 60%,transparent)">24 Agu · bukti terlampir</div></div><span style="font-family:var(--font-heading);font-weight:800;font-size:14px;font-variant-numeric:tabular-nums">+Rp500.000</span></div>
+<div style="display:flex;align-items:center;gap:12px;padding:13px 14px;border-bottom:1px solid color-mix(in srgb,var(--color-text) 15%,transparent)"><span style="width:28px;height:28px;border:1px solid var(--color-divider);display:flex;align-items:center;justify-content:center;font-weight:800;flex:none;color:#ae1800">−</span><div style="flex:1"><div style="font-family:var(--font-heading);font-weight:800;font-size:14px">Konsumsi kegiatan</div><div style="font-size:11.5px;color:color-mix(in srgb,var(--color-text) 60%,transparent)">23 Agu · bukti terlampir</div></div><span style="font-family:var(--font-heading);font-weight:800;font-size:14px;font-variant-numeric:tabular-nums;color:#ae1800">−Rp350.000</span></div>
+<div style="display:flex;align-items:center;gap:12px;padding:13px 14px"><span style="width:28px;height:28px;border:1px solid var(--color-divider);display:flex;align-items:center;justify-content:center;font-weight:800;flex:none;color:#ae1800">−</span><div style="flex:1"><div style="font-family:var(--font-heading);font-weight:800;font-size:14px">Cetak spanduk</div><div style="font-size:11.5px;color:color-mix(in srgb,var(--color-text) 60%,transparent)">21 Agu · bukti terlampir</div></div><span style="font-family:var(--font-heading);font-weight:800;font-size:14px;font-variant-numeric:tabular-nums;color:#ae1800">−Rp450.000</span></div>
+</div>
+<div style="padding:0 16px 24px"><div class="rm-tap" onClick="{{ showToastAsk }}" style="border:1px solid var(--color-divider);min-height:48px;display:flex;align-items:center;padding:0 14px;font-family:var(--font-heading);font-weight:800;font-size:14px">Ajukan pertanyaan soal laporan ini</div></div>
+</div>
+<div style="flex:none;border-top:2px solid var(--color-divider);padding:12px 16px;background:#f3f2f2"><div class="rm-tap" onClick="{{ openShare }}" style="background:var(--color-accent);color:#f3f2f2;min-height:48px;display:flex;align-items:center;padding:0 16px;font-family:var(--font-heading);font-weight:800;font-size:15px">Bagikan ke WhatsApp</div></div>
+</div>
+
+<div style="position:absolute;inset:0;display:{{ dNotif }};flex-direction:column">
+<div style="height:56px;flex:none;display:flex;align-items:center;gap:10px;padding:0 16px;border-bottom:2px solid var(--color-divider)"><div style="flex:1;font-family:var(--font-heading);font-weight:800;font-size:19px">Notifikasi</div><span class="rm-tap" onClick="{{ readAll }}" style="font-size:12.5px;font-weight:800;color:var(--color-accent)">Tandai dibaca</span></div>
+<div class="rm-scr" style="flex:1;overflow:auto">
+<div style="padding:16px 16px 8px;font-family:var(--font-heading);font-weight:800;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--color-accent)">Perlu tindakan · {{ pendingCount }}</div>
+<div style="background:#fff;margin:0 16px 20px;border-left:4px solid var(--color-accent)">
+<div class="rm-tap" onClick="{{ goEvent }}" style="padding:14px;border-bottom:1px solid color-mix(in srgb,var(--color-text) 15%,transparent)"><div style="font-family:var(--font-heading);font-weight:800;font-size:15px">Anda ditugaskan sebagai PIC konsumsi</div><div style="font-size:12.5px;margin-top:3px;color:color-mix(in srgb,var(--color-text) 65%,transparent)">Turnamen Voli Antar RT · 2 jam lalu</div></div>
+<div class="rm-tap" onClick="{{ payDues }}" style="padding:14px;border-bottom:1px solid color-mix(in srgb,var(--color-text) 15%,transparent)"><div style="font-family:var(--font-heading);font-weight:800;font-size:15px">{{ duesLine }}</div><div style="font-size:12.5px;margin-top:3px;color:color-mix(in srgb,var(--color-text) 65%,transparent)">Rp100.000 · jatuh tempo 31 Agu</div></div>
+<div class="rm-tap" onClick="{{ goKas }}" style="padding:14px"><div style="font-family:var(--font-heading);font-weight:800;font-size:15px">Transaksi Rp2.000.000 menunggu approval</div><div style="font-size:12.5px;margin-top:3px;color:color-mix(in srgb,var(--color-text) 65%,transparent)">Sponsor turnamen · dicatat Ketua · 1 hari lalu</div></div>
+</div>
+<div style="padding:0 16px 8px;font-family:var(--font-heading);font-weight:800;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 55%,transparent)">Sedang berjalan</div>
+<div style="margin:0 16px 20px;border:2px solid #201e1d;padding:14px;background:#fff">
+<div style="font-family:var(--font-heading);font-weight:800;font-size:15px">Voting: kaos turnamen warna apa?</div>
+<div style="font-size:12.5px;color:color-mix(in srgb,var(--color-text) 65%,transparent);margin:3px 0 12px">Berakhir 2 jam lagi · 17 dari 24 sudah memilih</div>
+<div style="height:8px;background:#d7d3d3;margin-bottom:12px"><span style="display:block;width:71%;height:8px;background:#201e1d"></span></div>
+<div class="rm-tap" onClick="{{ showToastVote }}" style="background:var(--color-accent);color:#f3f2f2;min-height:44px;display:flex;align-items:center;padding:0 14px;font-family:var(--font-heading);font-weight:800;font-size:14px">Ikut memilih</div>
+</div>
+<div style="padding:0 16px 8px;font-family:var(--font-heading);font-weight:800;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 55%,transparent)">Kabar lain</div>
+<div style="background:#fff;margin:0 16px 24px">
+<div style="padding:14px;border-bottom:1px solid color-mix(in srgb,var(--color-text) 15%,transparent)"><div style="font-size:14px;font-weight:800">Laporan kas Agustus sudah terbit</div><div style="font-size:12px;color:color-mix(in srgb,var(--color-text) 60%,transparent);margin-top:2px">Rina · 24 Agu</div></div>
+<div style="padding:14px;border-bottom:1px solid color-mix(in srgb,var(--color-text) 15%,transparent)"><div style="font-size:14px;font-weight:800">Rapat panitia Jumat malam</div><div style="font-size:12px;color:color-mix(in srgb,var(--color-text) 60%,transparent);margin-top:2px">Ketua · 23 Agu</div></div>
+<div style="padding:14px"><div style="font-size:14px;font-weight:800">Bayu Pratama bergabung sebagai anggota</div><div style="font-size:12px;color:color-mix(in srgb,var(--color-text) 60%,transparent);margin-top:2px">22 Agu</div></div>
+</div>
+</div>
+<div style="height:60px;flex:none;display:flex;border-top:2px solid var(--color-divider);background:#f3f2f2">
+<div class="rm-tap" onClick="{{ goHome }}" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:color-mix(in srgb,var(--color-text) 50%,transparent)"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M3 10.5 12 3l9 7.5"></path><path d="M5 9.5V21h14V9.5"></path></svg><span style="font-size:10px;font-weight:800">Home</span></div>
+<div class="rm-tap" onClick="{{ goKegiatan }}" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:color-mix(in srgb,var(--color-text) 50%,transparent)"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="3" y="5" width="18" height="16"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg><span style="font-size:10px;font-weight:800">Kegiatan</span></div>
+<div class="rm-tap" onClick="{{ goKas }}" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:color-mix(in srgb,var(--color-text) 50%,transparent)"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="3" y="6" width="18" height="13"></rect><path d="M3 10h18M16 14.5h2"></path></svg><span style="font-size:10px;font-weight:800">Kas</span></div>
+<div class="rm-tap" onClick="{{ goNotif }}" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;border-top:2px solid var(--color-accent);margin-top:-2px"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M6 9a6 6 0 0 1 12 0c0 5 2 6 2 6H4s2-1 2-6Z"></path><path d="M10 20h4"></path></svg><span style="font-size:10px;font-weight:800">Notifikasi</span></div>
+</div>
+</div>
+
+<div style="position:absolute;inset:0;display:{{ dProfil }};flex-direction:column">
+<div style="height:56px;flex:none;display:flex;align-items:center;gap:12px;padding:0 16px;border-bottom:2px solid var(--color-divider)"><span class="rm-tap" onClick="{{ goHome }}" style="font-family:var(--font-heading);font-weight:800;font-size:15px">←</span><div style="flex:1;font-family:var(--font-heading);font-weight:800;font-size:14px">Profil &amp; organisasi</div></div>
+<div class="rm-scr" style="flex:1;overflow:auto">
+<div style="padding:20px 16px;border-bottom:2px solid var(--color-divider);display:flex;gap:14px;align-items:flex-start">
+<span style="width:56px;height:56px;background:#201e1d;color:#f3f2f2;display:flex;align-items:center;justify-content:center;font-family:var(--font-heading);font-weight:800;font-size:19px;flex:none">AR</span>
+<div style="flex:1"><div style="font-family:var(--font-heading);font-weight:800;font-size:22px;line-height:1.15">Arif Ramadhan</div><div style="font-size:13px;color:color-mix(in srgb,var(--color-text) 65%,transparent);margin-top:2px">Ketua · anggota sejak Maret 2024</div><div style="display:flex;gap:6px;margin-top:10px"><span style="border:1px solid var(--color-divider);font-size:10px;font-weight:800;letter-spacing:.05em;padding:3px 6px">KETUA</span><span style="background:#201e1d;color:#f3f2f2;font-size:10px;font-weight:800;letter-spacing:.05em;padding:3px 6px">✓ IURAN LUNAS</span></div></div>
+</div>
+<div style="display:flex;border-bottom:2px solid var(--color-divider)">
+<div class="rm-tap" onClick="{{ payDues }}" style="flex:1;padding:16px"><div style="font-family:var(--font-heading);font-weight:800;font-size:24px;font-variant-numeric:tabular-nums">Rp1,2jt</div><div style="font-size:12px;color:color-mix(in srgb,var(--color-text) 65%,transparent)">iuran saya, 12 bulan</div></div>
+<div class="rm-tap" onClick="{{ goEvent }}" style="flex:1;padding:16px;border-left:1px solid var(--color-divider)"><div style="font-family:var(--font-heading);font-weight:800;font-size:24px">{{ myTaskCount }}</div><div style="font-size:12px;color:color-mix(in srgb,var(--color-text) 65%,transparent)">tugas aktif</div></div>
+<div style="flex:1;padding:16px;border-left:1px solid var(--color-divider)"><div style="font-family:var(--font-heading);font-weight:800;font-size:24px">14</div><div style="font-size:12px;color:color-mix(in srgb,var(--color-text) 65%,transparent)">kegiatan diikuti</div></div>
+</div>
+<div style="padding:18px 16px 8px;font-family:var(--font-heading);font-weight:800;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 55%,transparent)">Organisasi saya</div>
+<div style="margin:0 16px 20px;background:#fff;padding:16px;display:flex;gap:14px;align-items:center">
+<span style="width:44px;height:44px;background:var(--color-accent);color:#f3f2f2;display:flex;align-items:center;justify-content:center;font-family:var(--font-heading);font-weight:800;font-size:15px;flex:none">PK</span>
+<div style="flex:1"><div style="font-family:var(--font-heading);font-weight:800;font-size:16px">Pemuda Karya Bakti</div><div style="font-size:12.5px;color:color-mix(in srgb,var(--color-text) 65%,transparent)">RW 04 Sukamaju · 24 anggota · kode PKB-2026</div></div>
+</div>
+<div style="background:#fff;margin:0 16px 20px">
+<div class="rm-tap" onClick="{{ showToastSoon }}" style="display:flex;align-items:center;padding:15px 14px;border-bottom:1px solid color-mix(in srgb,var(--color-text) 15%,transparent)"><span style="flex:1;font-family:var(--font-heading);font-weight:800;font-size:15px">Anggota &amp; peran</span><span style="font-size:12.5px;color:color-mix(in srgb,var(--color-text) 55%,transparent)">24 →</span></div>
+<div class="rm-tap" onClick="{{ showToastSoon }}" style="display:flex;align-items:center;padding:15px 14px;border-bottom:1px solid color-mix(in srgb,var(--color-text) 15%,transparent)"><span style="flex:1;font-family:var(--font-heading);font-weight:800;font-size:15px">Iuran &amp; tarif</span><span style="font-size:12.5px;color:color-mix(in srgb,var(--color-text) 55%,transparent)">Rp100rb/bln →</span></div>
+<div class="rm-tap" onClick="{{ showToastSoon }}" style="display:flex;align-items:center;padding:15px 14px;border-bottom:1px solid color-mix(in srgb,var(--color-text) 15%,transparent)"><span style="flex:1;font-family:var(--font-heading);font-weight:800;font-size:15px">Inventaris</span><span style="font-size:12.5px;color:color-mix(in srgb,var(--color-text) 55%,transparent)">31 barang →</span></div>
+<div class="rm-tap" onClick="{{ showToastSoon }}" style="display:flex;align-items:center;padding:15px 14px;border-bottom:1px solid color-mix(in srgb,var(--color-text) 15%,transparent)"><span style="flex:1;font-family:var(--font-heading);font-weight:800;font-size:15px">Dokumen</span><span style="font-size:12.5px;color:color-mix(in srgb,var(--color-text) 55%,transparent)">9 berkas →</span></div>
+<div class="rm-tap" onClick="{{ showToastSoon }}" style="display:flex;align-items:center;padding:15px 14px"><span style="flex:1;font-family:var(--font-heading);font-weight:800;font-size:15px">Sponsor</span><span style="font-size:12.5px;color:color-mix(in srgb,var(--color-text) 55%,transparent)">4 mitra →</span></div>
+</div>
+<div style="background:#fff;margin:0 16px 24px">
+<div class="rm-tap" onClick="{{ showToastSoon }}" style="display:flex;align-items:center;padding:15px 14px;border-bottom:1px solid color-mix(in srgb,var(--color-text) 15%,transparent)"><span style="flex:1;font-size:14px;font-weight:800">Pengaturan &amp; notifikasi</span><span style="font-size:12.5px;color:color-mix(in srgb,var(--color-text) 55%,transparent)">→</span></div>
+<div class="rm-tap" onClick="{{ openDialog }}" style="display:flex;align-items:center;padding:15px 14px"><span style="flex:1;font-size:14px;font-weight:800;color:var(--color-accent)">Keluar dari organisasi</span></div>
+</div>
+</div>
+</div>
+
+<div style="position:absolute;inset:0;background:rgba(32,30,29,.45);display:{{ dSheet }};flex-direction:column;justify-content:flex-end" onClick="{{ closeAll }}">
+<div style="background:#f3f2f2;border-top:2px solid #201e1d;box-shadow:var(--shadow-md);animation:rmSheet 240ms ease-out">
+<div style="padding:16px;border-bottom:1px solid color-mix(in srgb,var(--color-text) 15%,transparent);display:flex;justify-content:space-between;align-items:center"><span style="font-family:var(--font-heading);font-weight:800;font-size:18px">Catat transaksi</span><span style="font-size:17px;color:color-mix(in srgb,var(--color-text) 55%,transparent)">✕</span></div>
+<div style="padding:16px;display:flex;flex-direction:column;gap:14px">
+<div style="display:flex;border:1px solid var(--color-divider);background:#fff"><span style="flex:1;text-align:center;padding:12px;background:#201e1d;color:#f3f2f2;font-weight:800;font-size:13px">+ Uang masuk</span><span style="flex:1;text-align:center;padding:12px;font-weight:800;font-size:13px;border-left:1px solid var(--color-divider)">− Uang keluar</span></div>
+<div class="field"><label>Jumlah</label><div style="border:1px solid var(--color-divider);background:#fff;min-height:48px;display:flex;align-items:center;padding:0 12px;font-family:var(--font-heading);font-weight:800;font-size:20px;font-variant-numeric:tabular-nums">Rp500.000</div></div>
+<div class="field"><label>Untuk apa</label><div style="border:1px solid var(--color-divider);background:#fff;min-height:44px;display:flex;align-items:center;padding:0 12px;font-size:14px">Iuran anggota Agustus</div></div>
+<div class="field"><label>Bukti</label><div style="border:1px dashed var(--color-divider);background:#fff;min-height:56px;display:flex;align-items:center;padding:0 12px;font-size:13px;color:color-mix(in srgb,var(--color-text) 60%,transparent)">Ambil foto atau unggah struk</div></div>
+<div class="rm-tap" onClick="{{ saveTx }}" style="background:var(--color-accent);color:#f3f2f2;min-height:52px;display:flex;align-items:center;padding:0 16px;font-family:var(--font-heading);font-weight:800;font-size:15px">Simpan transaksi</div>
+</div>
+</div>
+</div>
+
+<div style="position:absolute;inset:0;background:rgba(32,30,29,.45);display:{{ dShare }};flex-direction:column;justify-content:flex-end" onClick="{{ closeAll }}">
+<div style="background:#f3f2f2;border-top:2px solid #201e1d;box-shadow:var(--shadow-md);animation:rmSheet 240ms ease-out">
+<div style="padding:16px;border-bottom:1px solid color-mix(in srgb,var(--color-text) 15%,transparent);display:flex;justify-content:space-between;align-items:center"><span style="font-family:var(--font-heading);font-weight:800;font-size:18px">Bagikan ke WhatsApp</span><span style="font-size:17px;color:color-mix(in srgb,var(--color-text) 55%,transparent)">✕</span></div>
+<div style="padding:16px">
+<div style="font-family:var(--font-heading);font-weight:800;font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 55%,transparent);margin-bottom:8px">Pratinjau pesan</div>
+<div style="background:#fff;border-left:4px solid #201e1d;padding:14px;font-size:13.5px;line-height:1.6">
+*Laporan Kas Agustus 2026*<br>Pemuda Karya Bakti — RW 04 Sukamaju<br><br>Saldo awal: Rp7.950.000<br>Uang masuk: +Rp2.350.000<br>Uang keluar: −Rp1.850.000<br>*Saldo akhir: Rp8.450.000*<br><br>Rincian lengkap dan bukti:<br><span style="color:#ae1800">rukunmuda.id/pkb/agu-2026</span>
+</div>
+<div style="display:flex;gap:10px;margin-top:14px;font-size:12.5px;color:color-mix(in srgb,var(--color-text) 65%,transparent)">Tautan bisa dibuka siapa saja tanpa memasang aplikasi.</div>
+<div class="rm-tap" onClick="{{ shareWa }}" style="background:var(--color-accent);color:#f3f2f2;min-height:52px;display:flex;align-items:center;padding:0 16px;font-family:var(--font-heading);font-weight:800;font-size:15px;margin-top:14px">Kirim ke grup WhatsApp</div>
+<div class="rm-tap" onClick="{{ closeAll }}" style="border:1px solid var(--color-divider);min-height:48px;display:flex;align-items:center;padding:0 16px;font-family:var(--font-heading);font-weight:800;font-size:14px;margin-top:8px">Salin tautan saja</div>
+</div>
+</div>
+</div>
+
+<div style="position:absolute;inset:0;background:rgba(32,30,29,.45);display:{{ dDialog }};align-items:center;justify-content:center;padding:24px" onClick="{{ closeAll }}">
+<div style="background:#f3f2f2;box-shadow:var(--shadow-lg);padding:20px 16px;width:100%;animation:rmFade 160ms ease-out">
+<div style="font-family:var(--font-heading);font-weight:800;font-size:19px;margin-bottom:8px">Keluar dari organisasi?</div>
+<p style="font-size:13.5px;margin:0 0 18px">Anda tidak lagi melihat kas, kegiatan, dan tugas Pemuda Karya Bakti. Riwayat iuran Anda tetap tersimpan di catatan organisasi.</p>
+<div style="display:flex;gap:8px"><div class="rm-tap" onClick="{{ closeAll }}" style="flex:1;border:1px solid var(--color-divider);min-height:48px;display:flex;align-items:center;justify-content:center;font-family:var(--font-heading);font-weight:800;font-size:14px">Batal</div><div class="rm-tap" onClick="{{ closeAll }}" style="flex:1;background:var(--color-accent);color:#f3f2f2;min-height:48px;display:flex;align-items:center;justify-content:center;font-family:var(--font-heading);font-weight:800;font-size:14px">Keluar</div></div>
+</div>
+</div>
+
+<div style="position:absolute;left:12px;right:12px;bottom:74px;background:#201e1d;color:#f3f2f2;padding:14px;display:{{ dToast }};align-items:center;gap:10px;box-shadow:var(--shadow-sm);animation:rmFade 160ms ease-out">
+<span style="font-weight:800">✓</span><span style="font-size:13.5px;flex:1">{{ toast }}</span>
+</div>
+
+</div>
+</div>
+<p style="font-size:12.5px;color:color-mix(in srgb,var(--color-text) 60%,transparent);margin:14px 0 0;max-width:390px">390 × 844 · skala 1:1. Semua interaksi berjalan dari state yang sama, jadi menandai tugas selesai mengubah progres di Home dan di daftar Kegiatan.</p>
+</div>
+
+<div style="flex:1;min-width:220px;position:sticky;top:24px">
+<div style="font-family:var(--font-heading);font-weight:800;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 55%,transparent);border-bottom:2px solid var(--color-divider);padding-bottom:8px;margin-bottom:14px">Coba ini</div>
+<div style="font-size:13.5px;line-height:1.75">
+<div style="padding:8px 0;border-bottom:1px solid color-mix(in srgb,var(--color-text) 12%,transparent)">Tandai tugas <strong>Dokumentasi</strong> selesai di Detail Kegiatan → tab Tugas. Progres berubah di tiga layar.</div>
+<div style="padding:8px 0;border-bottom:1px solid color-mix(in srgb,var(--color-text) 12%,transparent)">Kas → <strong>Transparansi</strong> → Bagikan ke WhatsApp: pratinjau pesan grup.</div>
+<div style="padding:8px 0;border-bottom:1px solid color-mix(in srgb,var(--color-text) 12%,transparent)">Home → blok merah <strong>Perlu tindakan</strong>: bayar iuran, blok berubah jadi lunas.</div>
+<div style="padding:8px 0;border-bottom:1px solid color-mix(in srgb,var(--color-text) 12%,transparent)">Kas → <strong>+ Catat</strong>: bottom sheet transaksi.</div>
+<div style="padding:8px 0">Profil → <strong>Keluar dari organisasi</strong>: dialog konfirmasi merusak.</div>
+</div>
+<div style="font-family:var(--font-heading);font-weight:800;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 55%,transparent);border-bottom:2px solid var(--color-divider);padding-bottom:8px;margin:28px 0 14px">Selanjutnya</div>
+<p style="font-size:13.5px;margin:0">Dokumen 3: catatan implementasi React Native — nama token, struktur navigator, peta komponen, dan spesifikasi per layar.</p>
+</div>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const NAMES = {
+  splash: ["Splash", "Poster pembuka: janji produk dalam satu kalimat, dua jalan masuk."],
+  login: ["Masuk", "Nomor WhatsApp + kode 6 angka. Tanpa kata sandi."],
+  home: ["Home", "Saldo dulu, lalu yang perlu tindakan, baru sisanya."],
+  kegiatan: ["Kegiatan", "Dikelompokkan per waktu; setiap kartu membawa progres persiapan."],
+  event: ["Detail Kegiatan", "Apa, kapan, di mana, siapa — lalu tugas dan anggaran."],
+  kas: ["Kas", "Saldo, ringkasan bulan, transaksi, iuran. Jalan ke transparansi."],
+  trans: ["Transparansi", "Blok merah + ikhtisar + status publikasi laporan."],
+  laporan: ["Detail Laporan", "Ikhtisar, sumber pemasukan, pos pengeluaran, semua catatan."],
+  notif: ["Notifikasi", "Perlu tindakan di atas; kabar lain dipisah dan tenang."],
+  profil: ["Profil & Organisasi", "Semua yang bukan tugas harian tinggal di sini."],
+  dark: ["Transparansi — gelap", "Inversi token, aksen naik ke accent-500."]
+};
+class Component extends DCLogic {
+  state = { screen: "home", evtTab: "ringkasan", sheet: null, toast: null, dok: false, paid: false, range: "bulan" };
+  go(s) { return () => this.setState({ screen: s, sheet: null }); }
+  toast(msg) { clearTimeout(this._t); this.setState({ toast: msg, sheet: null }); this._t = setTimeout(() => this.setState({ toast: null }), 2600); }
+  renderVals() {
+    const s = this.state, sc = s.screen;
+    const done = 3 + (s.dok ? 1 : 0);
+    const pct = Math.round(done / 4 * 100);
+    const [name, note] = NAMES[sc] || NAMES.home;
+    const d = (n) => sc === n ? "flex" : "none";
+    const seg = (on) => on ? "#201e1d" : "transparent";
+    const segT = (on) => on ? "#f3f2f2" : "#201e1d";
+    return {
+      screenName: name, screenNote: note,
+      hSplash: sc !== "splash", hLogin: sc !== "login", hHome: sc !== "home", hKegiatan: sc !== "kegiatan",
+      hEvent: sc !== "event", hKas: sc !== "kas", hTrans: sc !== "trans", hLaporan: sc !== "laporan",
+      hNotif: sc !== "notif", hProfil: sc !== "profil", hDark: sc !== "dark",
+      dSplash: d("splash"), dLogin: d("login"), dHome: d("home"), dKegiatan: d("kegiatan"), dEvent: d("event"),
+      dKas: d("kas"), dTrans: d("trans"), dLaporan: d("laporan"), dNotif: d("notif"), dProfil: d("profil"), dDark: d("dark"),
+      dSheet: s.sheet === "tx" ? "flex" : "none", dShare: s.sheet === "share" ? "flex" : "none",
+      dDialog: s.sheet === "dialog" ? "flex" : "none", dToast: s.toast ? "flex" : "none",
+      goSplash: this.go("splash"), goLogin: this.go("login"), goHome: this.go("home"), goKegiatan: this.go("kegiatan"),
+      goEvent: this.go("event"), goKas: this.go("kas"), goTrans: this.go("trans"), goLaporan: this.go("laporan"),
+      goNotif: this.go("notif"), goProfil: this.go("profil"), goDark: this.go("dark"),
+      progPct: pct, progText: pct + "%", progFrac: done + " DARI 4", seg4: s.dok ? "#201e1d" : "#d7d3d3",
+      myTaskCount: s.dok ? 1 : 2,
+      pendingCount: s.paid ? 2 : 3,
+      duesLine: s.paid ? "Iuran Agustus sudah dibayar" : "Iuran Agustus belum dibayar",
+      duesSub: s.paid ? "Menunggu konfirmasi bendahara · Rp100.000" : "Rp100.000 · jatuh tempo 31 Agustus. Ketuk untuk bayar.",
+      evtRingkasan: () => this.setState({ evtTab: "ringkasan" }),
+      evtTugas: () => this.setState({ evtTab: "tugas" }),
+      evtAnggaran: () => this.setState({ evtTab: "anggaran" }),
+      hTab1: s.evtTab !== "ringkasan", hTab2: s.evtTab !== "tugas", hTab3: s.evtTab !== "anggaran",
+      evtC1: s.evtTab === "ringkasan" ? "#ec3013" : "transparent",
+      evtC2: s.evtTab === "tugas" ? "#ec3013" : "transparent",
+      evtC3: s.evtTab === "anggaran" ? "#ec3013" : "transparent",
+      evtT1: s.evtTab === "ringkasan" ? "#201e1d" : "#807d7c",
+      evtT2: s.evtTab === "tugas" ? "#201e1d" : "#807d7c",
+      evtT3: s.evtTab === "anggaran" ? "#201e1d" : "#807d7c",
+      dokMark: s.dok ? "✓" : "", dokBox: s.dok ? "#201e1d" : "transparent", dokBg: s.dok ? "#f8f4f4" : "#fff",
+      toggleDok: () => { const n = !this.state.dok; this.setState({ dok: n }); this.toast(n ? 'Tugas "Dokumentasi" selesai.' : 'Tugas "Dokumentasi" dibuka lagi.'); },
+      rB: seg(s.range === "bulan"), rBt: segT(s.range === "bulan"),
+      r3: seg(s.range === "3bulan"), r3t: segT(s.range === "3bulan"),
+      rA: seg(s.range === "semua"), rAt: segT(s.range === "semua"),
+      rangeBulan: () => this.setState({ range: "bulan" }), range3: () => this.setState({ range: "3bulan" }), rangeAll: () => this.setState({ range: "semua" }),
+      openSheet: () => this.setState({ sheet: "tx" }), openShare: () => this.setState({ sheet: "share" }),
+      openDialog: () => this.setState({ sheet: "dialog" }), openFilter: () => this.toast("Pencarian kegiatan — belum dirancang di pass ini."),
+      closeAll: () => this.setState({ sheet: null }),
+      hSheet: s.sheet !== "tx", hShare: s.sheet !== "share", hDialog: s.sheet !== "dialog",
+      saveTx: () => this.toast("Transaksi tersimpan. Menunggu approval ketua."),
+      shareWa: () => this.toast("Laporan Agustus dikirim ke grup WhatsApp."),
+      payDues: () => { this.setState({ paid: true }); this.toast("Pembayaran dicatat. Menunggu konfirmasi bendahara."); },
+      readAll: () => this.toast("Semua kabar ditandai sudah dibaca."),
+      showToastEvent: () => this.toast("Formulir kegiatan baru — belum dirancang di pass ini."),
+      showToastShare: () => this.toast("Tautan kegiatan disalin."),
+      showToastAttend: () => this.toast("Kehadiran Anda dikonfirmasi."),
+      showToastPdf: () => this.toast("Laporan Agustus diunduh sebagai PDF."),
+      showToastAsk: () => this.toast("Pertanyaan dikirim ke bendahara."),
+      showToastVote: () => this.toast("Suara Anda tercatat."),
+      showToastSoon: () => this.toast("Layar ini di luar sepuluh layar inti."),
+      hToast: !s.toast, toast: s.toast || ""
+    };
+  }
+}
+</script>
+</body>
+</html>

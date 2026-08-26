@@ -27,6 +27,10 @@ class EventTaskResource extends JsonResource
                 'id' => $this->assignee->id,
                 'name' => $this->assignee->user->name,
             ] : null),
+            'event' => $this->whenLoaded('event', fn () => [
+                'id' => $this->event->id,
+                'title' => $this->event->title,
+            ]),
         ];
     }
 }

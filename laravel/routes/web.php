@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\FinancialReportController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\OrganizationLandingController;
 use App\Http\Controllers\PublicTransparencyController;
@@ -22,6 +23,7 @@ Route::get('org/{organization:slug}/transparency', [PublicTransparencyController
 Route::get('reports/{report}', [ReportController::class, 'show'])->name('reports.show');
 Route::post('reports/{report}/share', [ReportController::class, 'share'])->name('reports.share');
 Route::get('reports/{report}/qr', [ReportController::class, 'qr'])->name('reports.qr');
+Route::get('reports/{report}/pdf', [ReportController::class, 'pdf'])->name('reports.pdf');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('dashboard', function () {
@@ -29,6 +31,9 @@ Route::middleware(['auth'])->group(function () {
     })->name('dashboard');
 
     Route::post('organizations', [OrganizationController::class, 'store'])->name('organizations.store');
+
+    Route::get('notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('notifications/{notification}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
 
     Route::delete('reports/{report}', [FinancialReportController::class, 'destroy'])->name('reports.destroy');
     Route::post('reports/{report}/publish', [FinancialReportController::class, 'publish'])->name('reports.publish');

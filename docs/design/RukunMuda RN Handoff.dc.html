@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-bad2173c-197c-48a1-8911-42bb01cf56b4/styles.css">
+<script src="_ds/modernist-bad2173c-197c-48a1-8911-42bb01cf56b4/_ds_bundle.js"></script>
+<style>
+body{margin:0;background:#f3f2f2}
+.rm-doc{max-width:1160px;margin:0 auto;padding:0 40px 120px}
+.rm-sec{padding:56px 0 0;border-top:2px solid var(--color-divider);margin-top:56px}
+.rm-num{font-family:var(--font-heading);font-weight:800;font-size:13px;letter-spacing:.08em;color:var(--color-accent)}
+.rm-lab{font-family:var(--font-heading);font-weight:800;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 55%,transparent)}
+.rm-t{width:100%;border-collapse:collapse;font-size:13.5px}
+.rm-t th{text-align:left;font-family:var(--font-heading);font-weight:800;font-size:11px;letter-spacing:.09em;text-transform:uppercase;padding:8px 14px 8px 0;border-bottom:2px solid var(--color-divider)}
+.rm-t td{padding:10px 14px 10px 0;border-bottom:1px solid color-mix(in srgb,var(--color-text) 15%,transparent);vertical-align:top}
+.rm-mono{font-family:ui-monospace,Menlo,monospace;font-size:12px}
+.rm-code{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;line-height:1.65;background:#fff;border-left:4px solid #201e1d;padding:16px 18px;white-space:pre;overflow-x:auto}
+.rm-grid2{display:grid;grid-template-columns:1fr 1fr;gap:32px}
+.rm-grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
+.rm-cell{border-top:2px solid var(--color-divider);padding-top:14px}
+</style>
+</helmet>
+
+<div class="rm-doc">
+
+<header style="padding:64px 0 40px">
+<div style="display:flex;align-items:baseline;gap:14px;margin-bottom:28px">
+<span style="display:inline-block;width:22px;height:22px;background:var(--color-accent)"></span>
+<span style="font-family:var(--font-heading);font-weight:800;font-size:15px;letter-spacing:.16em;text-transform:uppercase">RukunMuda</span>
+<span class="rm-lab" style="margin-left:auto">Dokumen 3 dari 3 · React Native Handoff</span>
+</div>
+<h1 style="font-size:60px;line-height:1.02;letter-spacing:-0.03em;max-width:15ch;margin:0 0 24px">Spesifikasi implementasi.</h1>
+<p style="font-size:18px;line-height:1.5;max-width:58ch;margin:0 0 28px">Dokumen ini untuk agen engineering. Semua nilai di sini mengikat: token, ukuran, jarak, salinan teks, dan perilaku. Jika sebuah keputusan tidak tertulis di sini, tanyakan — jangan mengarang.</p>
+<div style="border-top:2px solid var(--color-divider);border-bottom:2px solid var(--color-divider);padding:16px 0;display:flex;gap:32px;font-size:13.5px">
+<div style="flex:1"><span class="rm-lab">Sumber kebenaran visual</span><br>Dokumen 1 (Foundations) untuk alasan, dokumen 2 (Core Screens) untuk tata letak final.</div>
+<div style="flex:1"><span class="rm-lab">Cakupan</span><br>10 layar inti + 1 layar mode gelap. Layar di luar itu belum dirancang.</div>
+<div style="flex:1"><span class="rm-lab">Yang tidak diputuskan di sini</span><br>Backend, skema data, autentikasi nyata, state management pilihan tim.</div>
+</div>
+</header>
+
+<section class="rm-sec" style="border-top-width:2px">
+<div class="rm-num">01 — Asumsi teknis</div>
+<h2 style="font-size:32px;margin:12px 0 24px">Lingkungan</h2>
+<table class="rm-t">
+<thead><tr><th style="width:24%">Hal</th><th style="width:30%">Keputusan</th><th>Catatan</th></tr></thead>
+<tbody>
+<tr><td>Platform</td><td>React Native (Expo diperbolehkan)</td><td>iOS 15+ dan Android 9+</td></tr>
+<tr><td>Navigasi</td><td><span class="rm-mono">@react-navigation/native</span> — bottom-tabs + native-stack</td><td>Struktur di bagian 04</td></tr>
+<tr><td>Font</td><td>Archivo 400 / 600 / 800</td><td><span class="rm-mono">expo-font</span> atau aset lokal; tanpa fallback sistem pada judul</td></tr>
+<tr><td>Ikon</td><td><span class="rm-mono">lucide-react-native</span></td><td>strokeWidth 1.75; ukuran 20 (baris) / 22 (tab) / 24 (header)</td></tr>
+<tr><td>Styling</td><td>StyleSheet + satu modul token</td><td>Tidak ada nilai warna atau ukuran yang ditulis langsung di layar</td></tr>
+<tr><td>Angka</td><td><span class="rm-mono">Intl.NumberFormat('id-ID')</span></td><td>Selalu lewat helper <span class="rm-mono">formatRupiah()</span>, bagian 08</td></tr>
+<tr><td>Radius</td><td>0 di seluruh aplikasi</td><td>Termasuk avatar, input, sheet, dialog, gambar</td></tr>
+<tr><td>Animasi</td><td>Reanimated atau Animated, ≤ 240ms</td><td>Hormati <span class="rm-mono">AccessibilityInfo.isReduceMotionEnabled()</span></td></tr>
+</tbody>
+</table>
+</section>
+
+<section class="rm-sec">
+<div class="rm-num">02 — Token</div>
+<h2 style="font-size:32px;margin:12px 0 8px">theme.ts</h2>
+<p style="max-width:52ch;margin:0 0 24px">Satu berkas, tidak boleh diduplikasi. Mode gelap adalah objek kedua dengan kunci yang sama persis.</p>
+<div class="rm-code">export const light = {
+  color: {
+    bg:        '#f3f2f2',
+    surface:   '#ffffff',   // permukaan kartu di dalam layar
+    surfaceAlt:'#eae9e9',   // input, isian pasif
+    text:      '#201e1d',
+    textMuted: '#6b6867',   // = text @ 65% pada bg
+    textFaint: '#8b8887',   // = text @ 50%
+    divider:   '#c9c6c5',   // garis 1px baris
+    rule:      '#8d8988',   // garis 2px bagian
+    accent:    '#ec3013',
+    accent200: '#ffe0d9',
+    accent700: '#ae1800',
+    accent800: '#7c1405',
+    neutral300:'#d7d3d3',
+    // semantik keuangan
+    income:    '#201e1d',
+    expense:   '#ae1800',
+    balance:   '#201e1d',
+    onAccent:  '#f3f2f2',
+    onInk:     '#f3f2f2',
+  },
+  space: { xs:4, sm:8, md:12, lg:16, xl:24, xxl:32, xxxl:48 },
+  radius: 0,
+  hitSlop: { top:12, bottom:12, left:12, right:12 },
+  shadow: {
+    sm: { shadowColor:'#2d2b2b', shadowOpacity:0.14, shadowRadius:2,  shadowOffset:{width:0,height:1}, elevation:2 },
+    md: { shadowColor:'#2d2b2b', shadowOpacity:0.16, shadowRadius:10, shadowOffset:{width:0,height:3}, elevation:6 },
+    lg: { shadowColor:'#2d2b2b', shadowOpacity:0.22, shadowRadius:32, shadowOffset:{width:0,height:12},elevation:16 },
+  },
+};
+
+export const dark = {
+  ...light,
+  color: { ...light.color,
+    bg:'#1a1918', surface:'#242221', surfaceAlt:'#2d2b2a',
+    text:'#f3f2f2', textMuted:'#a9a5a4', textFaint:'#8b8887',
+    divider:'#3d3a39', rule:'#5c5857',
+    accent:'#ff563c', accent200:'#7c1405', accent700:'#ff9783', accent800:'#ffc4b8',
+    income:'#f3f2f2', expense:'#ff9783', balance:'#f3f2f2',
+    onAccent:'#1a1918', onInk:'#1a1918',
+  },
+};</div>
+<p style="font-size:13px;margin-top:14px;color:color-mix(in srgb,var(--color-text) 65%,transparent);max-width:64ch">Nilai <span class="rm-mono">textMuted</span>, <span class="rm-mono">divider</span>, dan <span class="rm-mono">rule</span> adalah hasil ratakan dari <span class="rm-mono">color-mix()</span> di web — RN tidak mendukung <span class="rm-mono">color-mix</span>, jadi pakai heksa di atas apa adanya.</p>
+</section>
+
+<section class="rm-sec">
+<div class="rm-num">03 — Tipografi</div>
+<h2 style="font-size:32px;margin:12px 0 24px">type.ts</h2>
+<div class="rm-grid2" style="gap:40px;align-items:start">
+<div class="rm-code">export const type = {
+  display:  { fontFamily:'Archivo_800ExtraBold', fontSize:40, lineHeight:42, letterSpacing:-1.2 },
+  h1:       { fontFamily:'Archivo_800ExtraBold', fontSize:30, lineHeight:33, letterSpacing:-0.8 },
+  h2:       { fontFamily:'Archivo_800ExtraBold', fontSize:26, lineHeight:30, letterSpacing:-0.6 },
+  title:    { fontFamily:'Archivo_800ExtraBold', fontSize:17, lineHeight:22 },
+  section:  { fontFamily:'Archivo_800ExtraBold', fontSize:11, lineHeight:14,
+              letterSpacing:1.0, textTransform:'uppercase' },
+  body:     { fontFamily:'Archivo_400Regular',   fontSize:15, lineHeight:23 },
+  bodySm:   { fontFamily:'Archivo_400Regular',   fontSize:13, lineHeight:19 },
+  caption:  { fontFamily:'Archivo_600SemiBold',  fontSize:11, lineHeight:15, letterSpacing:0.7 },
+  numHero:  { fontFamily:'Archivo_800ExtraBold', fontSize:44, lineHeight:46,
+              letterSpacing:-1.3, fontVariant:['tabular-nums'] },
+  numLg:    { fontFamily:'Archivo_800ExtraBold', fontSize:20, lineHeight:24,
+              fontVariant:['tabular-nums'] },
+  numRow:   { fontFamily:'Archivo_800ExtraBold', fontSize:15, lineHeight:20,
+              fontVariant:['tabular-nums'] },
+};</div>
+<div>
+<div class="rm-lab" style="margin-bottom:10px">Aturan mengikat</div>
+<table class="rm-t"><tbody>
+<tr><td>Judul selalu bobot 800. Tidak ada judul 600 atau 400.</td></tr>
+<tr><td>Semua nilai uang memakai <span class="rm-mono">numHero</span> / <span class="rm-mono">numLg</span> / <span class="rm-mono">numRow</span> — jangan pakai <span class="rm-mono">body</span> untuk angka.</td></tr>
+<tr><td><span class="rm-mono">fontVariant: ['tabular-nums']</span> wajib pada setiap nilai uang, termasuk di dalam daftar.</td></tr>
+<tr><td>Tidak ada italic. Tidak ada bobot 300 atau 700.</td></tr>
+<tr><td><span class="rm-mono">allowFontScaling</span> tetap true di semua teks. Uji pada skala 200%: baris ringkasan kas beralih ke susunan vertikal di atas 130% (lihat bagian 09).</td></tr>
+<tr><td>Teks berwarna aksen hanya boleh ≥ 19px dan bobot 800; di bawah itu pakai <span class="rm-mono">accent700</span>.</td></tr>
+</tbody></table>
+</div>
+</div>
+</section>
+
+<section class="rm-sec">
+<div class="rm-num">04 — Navigasi</div>
+<h2 style="font-size:32px;margin:12px 0 24px">Struktur navigator</h2>
+<div class="rm-grid2" style="gap:40px;align-items:start">
+<div class="rm-code">RootStack (native-stack, headerShown:false)
+├── Splash                 (tanpa header, tanpa tab)
+├── Login                  (tanpa tab)
+└── App (BottomTabs)
+    ├── HomeTab   → HomeStack
+    │   ├── Home
+    │   └── EventDetail
+    ├── KegiatanTab → KegiatanStack
+    │   ├── Kegiatan
+    │   └── EventDetail
+    ├── KasTab    → KasStack
+    │   ├── Kas
+    │   ├── Transparansi
+    │   └── ReportDetail
+    └── NotifikasiTab → Notifikasi
+
+Modal group (presentation:'modal', RootStack)
+├── Profil            (Profil & Organisasi)
+├── IuranSaya
+└── (bottom sheets bukan rute — komponen lokal)</div>
+<div>
+<div class="rm-lab" style="margin-bottom:10px">Aturan</div>
+<table class="rm-t"><tbody>
+<tr><td style="width:38%"><strong>Tab bar</strong></td><td>Tinggi 56 + <span class="rm-mono">insets.bottom</span>. Latar <span class="rm-mono">bg</span>, garis atas 2px <span class="rm-mono">rule</span>. Tab aktif: ikon &amp; label <span class="rm-mono">text</span> + garis 2px <span class="rm-mono">accent</span> menempel di sisi atas tab. Tab pasif: <span class="rm-mono">textFaint</span>. Label 10px/800.</td></tr>
+<tr><td><strong>Badge</strong></td><td>Hanya tab Notifikasi. Persegi, <span class="rm-mono">accent</span>, teks <span class="rm-mono">onAccent</span> 9px/800. Hilang saat 0.</td></tr>
+<tr><td><strong>EventDetail</strong></td><td>Didaftarkan di dua stack (Home dan Kegiatan) supaya tab tetap konsisten dengan asal navigasi.</td></tr>
+<tr><td><strong>Profil</strong></td><td>Modal dari avatar di header Home, bukan tab.</td></tr>
+<tr><td><strong>Header layar</strong></td><td>Header kustom, tinggi 56, garis bawah 2px <span class="rm-mono">rule</span>, tanpa bayangan, judul rata kiri 14–19px/800.</td></tr>
+<tr><td><strong>Kembali</strong></td><td>Glyph <span class="rm-mono">←</span> teks 15px/800 di kiri header, hitSlop 12. Gesture swipe-back tetap aktif.</td></tr>
+<tr><td><strong>Deep link</strong></td><td><span class="rm-mono">rukunmuda.id/&lt;org&gt;/&lt;bulan&gt;</span> → ReportDetail. Halaman web publik untuk yang belum memasang aplikasi.</td></tr>
+</tbody></table>
+</div>
+</div>
+</section>
+
+<section class="rm-sec">
+<div class="rm-num">05 — Peta komponen</div>
+<h2 style="font-size:32px;margin:12px 0 8px">Komponen bersama</h2>
+<p style="max-width:52ch;margin:0 0 24px">Bangun semuanya sebelum layar mana pun. Tidak ada layar yang boleh menulis gaya barisnya sendiri.</p>
+<table class="rm-t">
+<thead><tr><th style="width:20%">Komponen</th><th style="width:38%">Props</th><th>Spesifikasi</th></tr></thead>
+<tbody>
+<tr><td><strong>Button</strong></td><td class="rm-mono">variant: 'primary'|'secondary'|'ghost', label, onPress, disabled, loading, block</td><td>Tinggi 48 (44 pada dialog). Label 15/800, rata kiri saat <span class="rm-mono">block</span>. primary: isi <span class="rm-mono">accent</span>, teks <span class="rm-mono">onAccent</span>; ditekan <span class="rm-mono">accent700</span>. secondary: border 1px <span class="rm-mono">divider</span>. disabled: opacity 0.45. loading: label diganti spinner + teks "Menyimpan…".</td></tr>
+<tr><td><strong>Tag</strong></td><td class="rm-mono">tone: 'solid'|'tint'|'outline'|'accent', label, icon?</td><td>Padding 4×8 (outline 3×8), 10–11px/800, letterSpacing 0.5, uppercase. solid = isi <span class="rm-mono">text</span>; tint = isi <span class="rm-mono">accent200</span> teks <span class="rm-mono">accent800</span>; accent = isi <span class="rm-mono">accent</span>. <strong>Selalu ada label teks.</strong></td></tr>
+<tr><td><strong>Avatar</strong></td><td class="rm-mono">size: 24|28|32|48|56, initials, tone?</td><td>Persegi, isi <span class="rm-mono">text</span> (atau <span class="rm-mono">accent</span> untuk lambang organisasi), inisial <span class="rm-mono">onInk</span> 800. Grup: gap 2–4, sisanya "+N" pada <span class="rm-mono">neutral300</span>.</td></tr>
+<tr><td><strong>SectionHeader</strong></td><td class="rm-mono">title, action?, onAction?</td><td>Gaya <span class="rm-mono">type.section</span>, warna <span class="rm-mono">textMuted</span>, padding 16 kiri/kanan, 20 atas / 10 bawah. Aksi di kanan: 12px/800 <span class="rm-mono">accent</span>.</td></tr>
+<tr><td><strong>Card</strong></td><td class="rm-mono">children, onPress?, inverted?</td><td>Isi <span class="rm-mono">surface</span>, radius 0, tanpa bayangan, margin horizontal 16. <span class="rm-mono">inverted</span> = isi <span class="rm-mono">accent</span> teks <span class="rm-mono">onAccent</span>, lebar penuh tanpa margin.</td></tr>
+<tr><td><strong>ListItem</strong></td><td class="rm-mono">title, subtitle?, leading?, trailing?, onPress?</td><td>Tinggi min 64, padding 13–14×14, garis bawah 1px <span class="rm-mono">divider</span> kecuali baris terakhir. Ditekan: latar <span class="rm-mono">surfaceAlt</span>.</td></tr>
+<tr><td><strong>TransactionItem</strong></td><td class="rm-mono">kind:'in'|'out', title, meta, amount, status?</td><td>Leading: kotak 28×28 border 1px <span class="rm-mono">divider</span> berisi <span class="rm-mono">+</span> / <span class="rm-mono">−</span> (800). Judul 14/800. Meta 11.5 <span class="rm-mono">textMuted</span>, akhiri dengan kata "Masuk"/"Keluar". Nilai <span class="rm-mono">numRow</span>, warna <span class="rm-mono">income</span>/<span class="rm-mono">expense</span>, selalu berprefiks tanda.</td></tr>
+<tr><td><strong>EventItem</strong></td><td class="rm-mono">date, title, time, place, progress?, people?, state?</td><td>Blok tanggal kiri lebar 48, border kanan 2px — <span class="rm-mono">accent</span> bila akan datang, <span class="rm-mono">divider</span> bila belum terjadwal. Hari 10/800 uppercase, tanggal 26/800, bulan 11/600.</td></tr>
+<tr><td><strong>TaskItem</strong></td><td class="rm-mono">title, meta, done, priority?, onToggle</td><td>Kotak 20×20; selesai = isi <span class="rm-mono">text</span> + ✓ <span class="rm-mono">onInk</span>, judul dicoret opacity 0.5. Area sentuh 48 lewat hitSlop.</td></tr>
+<tr><td><strong>BalanceDisplay</strong></td><td class="rm-mono">label, amount, meta, income, expense, variant</td><td>Nilai <span class="rm-mono">numHero</span> warna <span class="rm-mono">balance</span>. Baris masuk/keluar dipisah garis 2px <span class="rm-mono">rule</span> di atas dan garis vertikal 1px di tengah.</td></tr>
+<tr><td><strong>ReportSummary</strong></td><td class="rm-mono">opening, income, expense, closing, status</td><td>Bingkai 2px <span class="rm-mono">text</span>. Tiga baris 14px dengan garis 1px; baris "Uang keluar" ditutup garis 2px; saldo akhir 26/800.</td></tr>
+<tr><td><strong>Progress</strong></td><td class="rm-mono">variant:'segmented'|'bar', value, total, label</td><td>Tinggi 10 (6 pada kartu ringkas). segmented: gap 2, terisi <span class="rm-mono">text</span>, kosong <span class="rm-mono">neutral300</span>. bar: <span class="rm-mono">accent</span> untuk iuran, <span class="rm-mono">text</span> untuk tugas. <strong>Wajib disertai angka.</strong></td></tr>
+<tr><td><strong>BottomSheet</strong></td><td class="rm-mono">visible, title, onClose, children</td><td>Backdrop <span class="rm-mono">rgba(32,30,29,0.45)</span>. Panel <span class="rm-mono">bg</span>, garis atas 2px <span class="rm-mono">text</span>, <span class="rm-mono">shadow.md</span>. Masuk 240ms translateY, keluar 180ms. Tutup: tap backdrop, tombol ✕, atau tarik ke bawah.</td></tr>
+<tr><td><strong>Dialog</strong></td><td class="rm-mono">visible, title, body, confirmLabel, onConfirm, onCancel</td><td>Hanya untuk aksi tak terpulihkan. <span class="rm-mono">shadow.lg</span>, margin 24, dua tombol 48 sejajar — Batal (secondary) kiri, aksi (primary) kanan.</td></tr>
+<tr><td><strong>Toast</strong></td><td class="rm-mono">message, actionLabel?, onAction?</td><td>Isi <span class="rm-mono">text</span>, teks <span class="rm-mono">onInk</span>, posisi 74 dari bawah (di atas tab bar), margin 12. 2.6 detik; 6 detik bila ada "Urungkan".</td></tr>
+<tr><td><strong>Segmented</strong></td><td class="rm-mono">options (maks 3), value, onChange</td><td>Border 1px <span class="rm-mono">divider</span>, pembatas 1px antar opsi. Aktif: isi <span class="rm-mono">text</span>, teks <span class="rm-mono">onInk</span>. Tinggi 44.</td></tr>
+<tr><td><strong>Tabs</strong></td><td class="rm-mono">items, value, onChange</td><td>Rata kiri, gap 20, padding vertikal 14, garis bawah kontainer 2px <span class="rm-mono">rule</span>; aktif ditandai garis 2px <span class="rm-mono">accent</span> yang menimpa garis kontainer.</td></tr>
+<tr><td><strong>EmptyState</strong></td><td class="rm-mono">title, body, actionLabel?, onAction?</td><td>Rata kiri, kotak 28×28 border 2px sebagai tanda, judul 15/800, isi 13 <span class="rm-mono">textMuted</span>, satu tombol secondary.</td></tr>
+<tr><td><strong>Skeleton</strong></td><td class="rm-mono">width, height</td><td>Blok <span class="rm-mono">#e3e0e0</span>, radius 0. Kedip opacity 0.55↔1 selama 1.2 detik. Tanpa gelombang, tanpa kilau.</td></tr>
+<tr><td><strong>ErrorState</strong></td><td class="rm-mono">title, body, onRetry, staleAt?</td><td>Border kiri 4px <span class="rm-mono">accent</span>, judul <span class="rm-mono">accent700</span>. Selalu sebutkan data terakhir yang berhasil dimuat.</td></tr>
+</tbody>
+</table>
+</section>
+
+<section class="rm-sec">
+<div class="rm-num">06 — Spesifikasi layar</div>
+<h2 style="font-size:32px;margin:12px 0 24px">Sepuluh layar</h2>
+
+<table class="rm-t">
+<thead><tr><th style="width:15%">Layar</th><th style="width:42%">Susunan dari atas</th><th>Perilaku &amp; catatan</th></tr></thead>
+<tbody>
+<tr><td><strong>01 Splash</strong></td><td>Latar penuh <span class="rm-mono">accent</span>. Lambang 44×44 <span class="rm-mono">bg</span> · wordmark 44/800 dua baris · garis 2px lebar 64 · janji produk 17px · dua tombol (isi <span class="rm-mono">bg</span> / outline) · baris keterangan 12px.</td><td>Tampil maksimal 1.2 detik saat memuat sesi; setelah itu langsung ke Home bila sudah masuk. Tanpa animasi logo.</td></tr>
+<tr><td><strong>02 Login</strong></td><td>Tombol kembali · judul 34/800 · penjelasan 14 <span class="rm-mono">textMuted</span> · field nomor (prefiks +62 di kotak terpisah) · field kode organisasi (opsional) · tombol primary · catatan privasi 12.5 · kartu organisasi terdeteksi di kaki layar.</td><td>Keyboard numerik. Validasi setelah blur, pesan galat 12.5px <span class="rm-mono">accent700</span> di bawah field. Langkah OTP memakai layar yang sama dengan enam kotak 48×56.</td></tr>
+<tr><td><strong>03 Home</strong></td><td>Header (lambang · nama org + pemilih ▾ · avatar) · sapaan · <strong>BalanceDisplay</strong> · <strong>Card inverted "Perlu tindakan"</strong> · Kegiatan terdekat (EventItem) · Tugas saya (maks 2) · Pengumuman (border kiri 4px) · Aktivitas terbaru (2 transaksi).</td><td>Urutan tidak boleh diubah: saldo dulu, lalu yang menuntut tindakan. Kartu merah hanya muncul bila ada tindakan tertunda; bila kosong, blok dihapus (bukan diganti pesan). Tap saldo → Kas. Tarik untuk menyegarkan.</td></tr>
+<tr><td><strong>04 Kegiatan</strong></td><td>Header + tombol cari · Segmented (Akan datang / Berjalan / Selesai) · daftar berkelompok per bulan dengan SectionHeader · tombol secondary "+ Buat kegiatan baru" di akhir daftar.</td><td>Pengelompokan waktu, bukan abjad. Kegiatan tanpa jadwal masuk kelompok "Perencanaan" dengan blok tanggal abu-abu. Empty state per segmen.</td></tr>
+<tr><td><strong>05 Event Detail</strong></td><td>Header (← · judul · Bagikan) · tag hitung mundur · judul 30/800 · blok Kapan/Di mana dua kolom · Tabs (Ringkasan / Tugas / Anggaran) · konten tab · bar aksi bawah "Konfirmasi kehadiran saya".</td><td>Ringkasan: progres bersegmen, jumlah peserta/panitia, blok "Saya di kegiatan ini", catatan panitia. Tugas: TaskItem yang bisa diketuk, memicu toast + memperbarui progres di Home dan Kegiatan. Anggaran: nilai anggaran, batang terpakai, daftar transaksi kegiatan, tombol catat pengeluaran (hanya bendahara/ketua).</td></tr>
+<tr><td><strong>06 Kas</strong></td><td>Header + "+ Catat" · BalanceDisplay dengan rincian dompet · <strong>Card inverted "Transparansi kas"</strong> · Segmented periode · Aktivitas terbaru (4) · blok Iuran bulan berjalan dengan batang <span class="rm-mono">accent</span>.</td><td>"+ Catat" hanya untuk bendahara dan ketua; bagi anggota tombol disembunyikan. Transaksi menunggu approval memakai Tag tint di baris meta, tidak diberi warna berbeda.</td></tr>
+<tr><td><strong>07 Transparansi</strong></td><td>Header (← · judul · pengalih mode gelap) · <strong>blok poster merah</strong> (bulan · saldo 40/800 · kalimat "Uang organisasi kita jelas.") · ReportSummary · daftar Laporan dengan status · catatan kaki · bar aksi bawah: "Bagikan ke WhatsApp" (primary) + "PDF" (secondary).</td><td>Layar penanda produk. Blok merah adalah satu-satunya bidang penuh aksen di alur ini. Tombol bagikan membuka BottomSheet pratinjau pesan (teks persis di bagian 08), lalu <span class="rm-mono">Linking.openURL('whatsapp://send?text=…')</span> dengan fallback ke <span class="rm-mono">Share.share()</span>.</td></tr>
+<tr><td><strong>08 Report Detail</strong></td><td>Header (← · judul · Tag status) · judul laporan 28/800 + penyusun &amp; penyetuju · ReportSummary · "Uang masuk menurut sumber" (batang tinta) · "Uang keluar menurut pos" (batang <span class="rm-mono">expense</span>) · semua catatan · tombol "Ajukan pertanyaan" · bar aksi bawah Bagikan.</td><td>Batang: label kiri lebar 96, batang lentur, nilai kanan lebar 88 rata kanan. Setiap catatan menyebut ada/tidaknya bukti. Laporan berstatus <span class="rm-mono">DRAF</span> menampilkan pita "Belum terbit — belum bisa dibagikan" dan tombol bagikan dinonaktifkan dengan alasan.</td></tr>
+<tr><td><strong>09 Notifikasi</strong></td><td>Header + "Tandai dibaca" · kelompok <strong>Perlu tindakan</strong> (border kiri 4px <span class="rm-mono">accent</span>) · kelompok Sedang berjalan (kartu voting berbingkai 2px) · kelompok Kabar lain.</td><td>Maksimal tiga kelompok. Item tindakan menavigasi langsung ke tempat penyelesaiannya. Tidak ada notifikasi "X menyukai" atau sejenisnya. Badge tab = jumlah item di kelompok pertama.</td></tr>
+<tr><td><strong>10 Profil &amp; Organisasi</strong></td><td>Header (← · judul) · blok identitas (avatar 56 · nama 22/800 · peran · dua Tag) · tiga statistik dalam kolom bergaris · kartu organisasi · daftar menu organisasi (Anggota, Iuran, Inventaris, Dokumen, Sponsor) · daftar menu akun (Pengaturan, Keluar).</td><td>"Keluar dari organisasi" memakai Dialog konfirmasi. Menu di luar sepuluh layar inti belum dirancang — jangan mengarang isinya.</td></tr>
+<tr><td><strong>11 Mode gelap</strong></td><td>Transparansi dengan token <span class="rm-mono">dark</span>.</td><td>Inversi token saja; tata letak identik. Ikuti <span class="rm-mono">useColorScheme()</span>, dengan pengalih manual di Pengaturan.</td></tr>
+</tbody>
+</table>
+</section>
+
+<section class="rm-sec">
+<div class="rm-num">07 — State &amp; interaksi</div>
+<h2 style="font-size:32px;margin:12px 0 24px">Perilaku wajib</h2>
+<div class="rm-grid3">
+<div class="rm-cell"><div class="rm-lab">Ditekan</div><p style="font-size:13.5px;margin:8px 0 0">Semua elemen yang bisa diketuk memakai <span class="rm-mono">Pressable</span> dengan latar <span class="rm-mono">surfaceAlt</span> saat ditekan (kartu &amp; baris) atau <span class="rm-mono">accent700</span> (tombol primary). Tanpa efek riak bawaan Android — setel <span class="rm-mono">android_ripple={null}</span>.</p></div>
+<div class="rm-cell"><div class="rm-lab">Memuat</div><p style="font-size:13.5px;margin:8px 0 0">Skeleton per blok, bukan spinner layar penuh. Home memuat tiga blok skeleton: saldo, kegiatan, aktivitas. Tombol yang mengirim data masuk state <span class="rm-mono">loading</span> dan mengunci diri.</p></div>
+<div class="rm-cell"><div class="rm-lab">Kosong</div><p style="font-size:13.5px;margin:8px 0 0">Setiap daftar punya EmptyState dengan kalimat spesifik dan satu jalan keluar. Tidak pernah "Tidak ada data".</p></div>
+<div class="rm-cell"><div class="rm-lab">Galat</div><p style="font-size:13.5px;margin:8px 0 0">Galat jaringan tidak mengosongkan layar: tampilkan data cache dengan pita "Data per 24 Agu, 19.40" dan tombol Coba lagi.</p></div>
+<div class="rm-cell"><div class="rm-lab">Luring</div><p style="font-size:13.5px;margin:8px 0 0">Transaksi yang dicatat saat luring disimpan lokal dengan Tag tint "MENUNGGU KIRIM" dan dikirim otomatis saat daring.</p></div>
+<div class="rm-cell"><div class="rm-lab">Umpan balik</div><p style="font-size:13.5px;margin:8px 0 0">Setiap aksi yang mengubah data memunculkan Toast. Aksi yang bisa dibatalkan memberi "Urungkan" 6 detik. Getaran halus (<span class="rm-mono">Haptics.selectionAsync</span>) saat menandai tugas selesai.</p></div>
+</div>
+</section>
+
+<section class="rm-sec">
+<div class="rm-num">08 — Format &amp; salinan teks</div>
+<h2 style="font-size:32px;margin:12px 0 24px">Jangan diterjemahkan ulang</h2>
+<div class="rm-grid2" style="gap:40px;align-items:start">
+<div>
+<div class="rm-lab" style="margin-bottom:10px">Format</div>
+<table class="rm-t"><tbody>
+<tr><td style="width:34%">Uang</td><td class="rm-mono">Rp8.450.000</td></tr>
+<tr><td>Uang bertanda</td><td class="rm-mono">+Rp500.000 / −Rp350.000</td></tr>
+<tr><td>Tanda minus</td><td class="rm-mono">U+2212</td></tr>
+<tr><td>Tanggal pendek</td><td class="rm-mono">24 Agu</td></tr>
+<tr><td>Tanggal penuh</td><td class="rm-mono">Sabtu, 29 Agustus</td></tr>
+<tr><td>Waktu</td><td class="rm-mono">08.00 – 17.00</td></tr>
+<tr><td>Pemisah meta</td><td class="rm-mono"> · </td></tr>
+<tr><td>Singkatan</td><td>Hanya di statistik profil (<span class="rm-mono">Rp1,2jt</span>). Tidak pernah di layar kas atau laporan.</td></tr>
+</tbody></table>
+<div class="rm-lab" style="margin:24px 0 10px">Glosarium</div>
+<table class="rm-t"><tbody>
+<tr><td style="width:50%">Uang masuk / Uang keluar</td><td class="text-muted">bukan Debit / Kredit</td></tr>
+<tr><td>Saldo awal / Saldo akhir</td><td class="text-muted">bukan Opening / Closing</td></tr>
+<tr><td>Belum bayar / Lunas</td><td class="text-muted">bukan Tunggakan / Settled</td></tr>
+<tr><td>Menunggu approval</td><td class="text-muted">bukan Pending review</td></tr>
+<tr><td>Terbit / Draf</td><td class="text-muted">bukan Published / Draft</td></tr>
+<tr><td>Perlu tindakan</td><td class="text-muted">bukan Action items</td></tr>
+<tr><td>Panitia / Peserta</td><td class="text-muted">bukan Committee / Attendees</td></tr>
+</tbody></table>
+</div>
+<div>
+<div class="rm-lab" style="margin-bottom:10px">Pesan WhatsApp — teks persis</div>
+<div class="rm-code" style="white-space:pre-wrap">*Laporan Kas {Bulan} {Tahun}*
+{Nama Organisasi} — {Wilayah}
+
+Saldo awal: {saldoAwal}
+Uang masuk: +{masuk}
+Uang keluar: −{keluar}
+*Saldo akhir: {saldoAkhir}*
+
+Rincian lengkap dan bukti:
+{tautanLaporan}</div>
+<p style="font-size:13px;margin-top:12px">Tautan mengarah ke halaman web publik laporan; bisa dibuka tanpa memasang aplikasi. Sheet pratinjau menampilkan teks ini apa adanya sebelum dikirim, dengan tombol kedua "Salin tautan saja".</p>
+<div class="rm-lab" style="margin:24px 0 10px">Contoh notifikasi</div>
+<table class="rm-t"><tbody>
+<tr><td>"Anda ditugaskan sebagai PIC konsumsi."</td></tr>
+<tr><td>"Iuran Agustus belum dibayar."</td></tr>
+<tr><td>"Transaksi Rp2.000.000 menunggu approval."</td></tr>
+<tr><td>"Voting turnamen berakhir 2 jam lagi."</td></tr>
+</tbody></table>
+</div>
+</div>
+</section>
+
+<section class="rm-sec">
+<div class="rm-num">09 — Aksesibilitas</div>
+<h2 style="font-size:32px;margin:12px 0 24px">Kriteria terima</h2>
+<table class="rm-t">
+<thead><tr><th style="width:26%">Hal</th><th>Kriteria yang bisa diuji</th></tr></thead>
+<tbody>
+<tr><td>Target sentuh</td><td>Setiap <span class="rm-mono">Pressable</span> ≥ 48×48 termasuk hitSlop. Jarak antar target ≥ 8.</td></tr>
+<tr><td>Kontras</td><td>Teks isi ≥ 4.5:1, teks ≥ 19px/800 ≥ 3:1. Diperiksa pada mode terang dan gelap.</td></tr>
+<tr><td>Tanpa warna</td><td>Tangkapan layar dalam grayscale masih menyampaikan seluruh status. Uji ini bagian dari definition of done.</td></tr>
+<tr><td>Label pembaca layar</td><td>Nilai uang: <span class="rm-mono">accessibilityLabel="Uang masuk, iuran anggota, lima ratus ribu rupiah, 24 Agustus"</span>. Batang progres: <span class="rm-mono">accessibilityRole="progressbar"</span> + <span class="rm-mono">accessibilityValue={{ '{' }}min:0,max:4,now:3{{ '}' }}</span>.</td></tr>
+<tr><td>Tombol ikon</td><td>Wajib <span class="rm-mono">accessibilityLabel</span>; ikon tanpa label hanya di header.</td></tr>
+<tr><td>Penskalaan teks</td><td>Diuji pada 200%. Baris masuk/keluar di BalanceDisplay beralih ke susunan vertikal di atas 130%. Angka saldo tidak pernah terpotong atau di-<span class="rm-mono">numberOfLines</span>.</td></tr>
+<tr><td>Fokus</td><td>Setelah sheet tertutup, fokus kembali ke elemen pemicu. Modal memakai <span class="rm-mono">accessibilityViewIsModal</span>.</td></tr>
+<tr><td>Gerak</td><td>Bila "kurangi gerak" aktif: sheet muncul tanpa translasi, toast tanpa fade.</td></tr>
+</tbody>
+</table>
+</section>
+
+<section class="rm-sec">
+<div class="rm-num">10 — Urutan kerja &amp; batasan</div>
+<div class="rm-grid2" style="gap:40px;align-items:start">
+<div>
+<h2 style="font-size:32px;margin:12px 0 20px">Urutan pengerjaan</h2>
+<table class="rm-t"><tbody>
+<tr><td style="width:12%"><strong>1</strong></td><td><span class="rm-mono">theme.ts</span> + <span class="rm-mono">type.ts</span> + font Archivo</td></tr>
+<tr><td><strong>2</strong></td><td>Primitif: Button, Tag, Avatar, Card, ListItem, SectionHeader</td></tr>
+<tr><td><strong>3</strong></td><td>Komponen domain: TransactionItem, EventItem, TaskItem, BalanceDisplay, ReportSummary, Progress</td></tr>
+<tr><td><strong>4</strong></td><td>Lapisan: BottomSheet, Dialog, Toast · state kosong/memuat/galat</td></tr>
+<tr><td><strong>5</strong></td><td>Navigator + header kustom + tab bar</td></tr>
+<tr><td><strong>6</strong></td><td>Layar: Home → Kas → Transparansi → Report Detail (alur penanda) → Kegiatan → Event Detail → Notifikasi → Profil → Login → Splash</td></tr>
+<tr><td><strong>7</strong></td><td>Mode gelap · penskalaan teks · uji grayscale</td></tr>
+</tbody></table>
+</div>
+<div>
+<h2 style="font-size:32px;margin:12px 0 20px">Jangan</h2>
+<table class="rm-t"><tbody>
+<tr><td>Jangan menambahkan <span class="rm-mono">borderRadius</span> di mana pun.</td></tr>
+<tr><td>Jangan memberi bayangan pada kartu di dalam layar — bayangan hanya untuk sheet, dialog, toast.</td></tr>
+<tr><td>Jangan memakai FAB melayang; aksi utama adalah tombol blok di bar bawah.</td></tr>
+<tr><td>Jangan menambah tab kelima.</td></tr>
+<tr><td>Jangan memakai hijau untuk pemasukan — semantiknya tanda, tag, dan tinta.</td></tr>
+<tr><td>Jangan menampilkan lebih dari satu tombol <span class="rm-mono">primary</span> per layar.</td></tr>
+<tr><td>Jangan memakai emoji, ilustrasi, atau maskot di UI.</td></tr>
+<tr><td>Jangan menyembunyikan data keuangan berdasarkan peran — hanya tombol yang berbeda.</td></tr>
+<tr><td>Jangan mengarang layar di luar sepuluh layar inti; ajukan pertanyaan lebih dulu.</td></tr>
+</tbody></table>
+</div>
+</div>
+</section>
+
+<section class="rm-sec">
+<div class="rm-num">Penutup</div>
+<h2 style="font-size:34px;margin:12px 0 16px;max-width:22ch">Yang masih terbuka</h2>
+<div class="rm-grid3">
+<div class="rm-cell"><div class="rm-lab">Belum dirancang</div><p style="font-size:13.5px;margin:8px 0 0">Anggota &amp; peran, inventaris, dokumen, sponsor, layar voting penuh, pembuatan kegiatan, pencarian, filter lanjutan, onboarding organisasi baru.</p></div>
+<div class="rm-cell"><div class="rm-lab">Perlu keputusan produk</div><p style="font-size:13.5px;margin:8px 0 0">Apakah pembayaran iuran mendukung transfer otomatis atau hanya pencatatan manual; siapa yang berhak menerbitkan laporan; berapa lama data cache dianggap sahih.</p></div>
+<div class="rm-cell"><div class="rm-lab">Perlu materi asli</div><p style="font-size:13.5px;margin:8px 0 0">Lambang organisasi, foto kegiatan untuk galeri dokumentasi, dan berkas font Archivo berlisensi untuk paket aplikasi.</p></div>
+</div>
+</section>
+
+</div>
+</x-dc>
+</body>
+</html>

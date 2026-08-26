@@ -30,6 +30,12 @@ class EventResource extends JsonResource
                 'name' => $this->pic->user->name,
             ] : null),
             'tasks' => EventTaskResource::collection($this->whenLoaded('tasks')),
+            'committees' => $this->whenLoaded('committees', fn () => $this->committees->map(fn ($c) => [
+                'id' => $c->id,
+                'membershipId' => $c->membership_id,
+                'name' => $c->membership->user->name,
+                'roleTitle' => $c->role_title,
+            ])),
             'participants' => $this->whenLoaded('participants', fn () => $this->participants->map(fn ($p) => [
                 'id' => $p->id,
                 'membershipId' => $p->membership_id,
@@ -37,6 +43,10 @@ class EventResource extends JsonResource
                 'status' => $p->status->value,
                 'statusLabel' => $p->status->label(),
             ])),
+            // Cheap counts for list views (via withCount()) that don't
+            // want the full member lists above.
+            'committeeCount' => $this->whenCounted('committees'),
+            'participantCount' => $this->whenCounted('participants'),
         ];
     }
 }

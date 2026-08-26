@@ -58,4 +58,28 @@ class EventTaskTest extends TestCase
             'priority' => 'MEDIUM',
         ])->assertCreated()->assertJsonPath('data.title', 'Booking tempat');
     }
+
+    public function test_the_assignee_can_update_their_own_task_status_but_another_member_cannot()
+    {
+        $organization = Organization::factory()->create();
+        $assignee = $this->memberWithRole($organization, OrganizationRole::Member);
+        $other = $this->memberWithRole($organization, OrganizationRole::Member);
+        $event = Event::factory()->create(['organization_id' => $organization->id]);
+        $assigneeMembership = $assignee->memberships()->first();
+        $task = EventTask::factory()->create([
+            'event_id' => $event->id,
+            'assignee_membership_id' => $assigneeMembership->id,
+        ]);
+
+        Sanctum::actingAs($other);
+
+        $this->patchJson("/api/v1/events/{$event->id}/tasks/{$task->id}/status", ['status' => 'DONE'])
+            ->assertForbidden();
+
+        Sanctum::actingAs($assignee);
+
+        $this->patchJson("/api/v1/events/{$event->id}/tasks/{$task->id}/status", ['status' => 'DONE'])
+            ->assertOk()
+            ->assertJsonPath('data.status', 'DONE');
+    }
 }

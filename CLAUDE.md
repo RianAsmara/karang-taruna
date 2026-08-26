@@ -6,8 +6,7 @@ Your primary responsibility is to build a production-ready Laravel 13 applicatio
 
 ==================================================
 
-1. PRODUCT
-   ==================================================
+1. # PRODUCT
 
 PROJECT NAME
 
@@ -18,30 +17,30 @@ PRODUCT DESCRIPTION
 RukunMuda is a modern community management platform for Indonesian
 youth organizations and local communities, including:
 
-* Karang Taruna
-* Pemuda Kampung
-* Pemuda RT/RW
-* Community organizations
+- Karang Taruna
+- Pemuda Kampung
+- Pemuda RT/RW
+- Community organizations
 
 The application helps organizations manage:
 
-* members
-* events
-* committees
-* tasks
-* community activities
-* cash
-* member dues
-* event budgets
-* financial reports
-* financial transparency
-* attendance
-* voting
-* inventory
-* sponsors
-* announcements
-* documents
-* activity points
+- members
+- events
+- committees
+- tasks
+- community activities
+- cash
+- member dues
+- event budgets
+- financial reports
+- financial transparency
+- attendance
+- voting
+- inventory
+- sponsors
+- announcements
+- documents
+- activity points
 
 The core product principle is:
 
@@ -55,8 +54,7 @@ The application should answer:
 "Bagaimana organisasi pemuda bisa mengelola kegiatan dan uang organisasi
 dengan rapi, transparan, dan mudah?"
 
-==================================================
-2. CRITICAL ARCHITECTURE DECISION
+================================================== 2. CRITICAL ARCHITECTURE DECISION
 =================================
 
 Use ONE Laravel application for:
@@ -73,29 +71,29 @@ Final repository structure:
 
 rukunmuda/
 ├── laravel/
-│   ├── app/
-│   ├── bootstrap/
-│   ├── config/
-│   ├── database/
-│   ├── public/
-│   ├── resources/
-│   │   ├── js/
-│   │   └── views/
-│   ├── routes/
-│   │   ├── web.php
-│   │   └── api.php
-│   ├── storage/
-│   ├── tests/
-│   ├── composer.json
-│   └── package.json
+│ ├── app/
+│ ├── bootstrap/
+│ ├── config/
+│ ├── database/
+│ ├── public/
+│ ├── resources/
+│ │ ├── js/
+│ │ └── views/
+│ ├── routes/
+│ │ ├── web.php
+│ │ └── api.php
+│ ├── storage/
+│ ├── tests/
+│ ├── composer.json
+│ └── package.json
 │
 ├── mobile/
-│   ├── app/
-│   ├── components/
-│   ├── lib/
-│   ├── assets/
-│   ├── package.json
-│   └── ...
+│ ├── app/
+│ ├── components/
+│ ├── lib/
+│ ├── assets/
+│ ├── package.json
+│ └── ...
 │
 ├── docs/
 ├── infra/
@@ -112,8 +110,7 @@ The web application is a Laravel React/Inertia client.
 
 Neither web nor mobile should implement independent business rules.
 
-==================================================
-3. LARAVEL VERSION
+================================================== 3. LARAVEL VERSION
 ==================
 
 Use:
@@ -129,20 +126,19 @@ documentation when necessary.
 
 Do not blindly apply patterns from older Laravel versions.
 
-==================================================
-4. LARAVEL FRONTEND
+================================================== 4. LARAVEL FRONTEND
 ===================
 
 Use the official Laravel React Starter Kit.
 
 Technology:
 
-* React 19
-* TypeScript
-* Inertia 3
-* shadcn/ui
-* Tailwind CSS v4
-* Vite
+- React 19
+- TypeScript
+- Inertia 3
+- shadcn/ui
+- Tailwind CSS v4
+- Vite
 
 Do NOT create a separate Vite React application for the web.
 
@@ -155,27 +151,26 @@ React Starter Kit.
 
 Do not unnecessarily replace the starter kit architecture.
 
-==================================================
-5. MOBILE
+================================================== 5. MOBILE
 =========
 
 React Native + Expo.
 
 Use:
 
-* React Native
-* Expo
-* TypeScript
-* Expo Router
-* TanStack Query
-* Zustand only where genuinely needed
-* React Hook Form
-* Zod where appropriate
-* NativeWind or the project's established styling approach
-* Expo SecureStore
-* Expo Camera
-* Expo Notifications
-* Expo Image Picker
+- React Native
+- Expo
+- TypeScript
+- Expo Router
+- TanStack Query
+- Zustand only where genuinely needed
+- React Hook Form
+- Zod where appropriate
+- NativeWind or the project's established styling approach
+- Expo SecureStore
+- Expo Camera
+- Expo Notifications
+- Expo Image Picker
 
 Mobile communicates with:
 
@@ -183,26 +178,25 @@ Laravel REST API
 
 Mobile must NOT directly access PostgreSQL.
 
-==================================================
-6. BACKEND TECHNOLOGY
+================================================== 6. BACKEND TECHNOLOGY
 =====================
 
 Use:
 
-* Laravel 13
-* PHP version supported by Laravel 13
-* PostgreSQL
-* Redis
-* Laravel Sanctum
-* Laravel Queue
-* Laravel Notifications
-* Laravel Scheduler
-* Laravel Filesystem
-* Laravel Policies
-* Laravel Events/Listeners
-* Laravel Jobs
-* Laravel Cache
-* Laravel HTTP Client
+- Laravel 13
+- PHP version supported by Laravel 13
+- PostgreSQL
+- Redis
+- Laravel Sanctum
+- Laravel Queue
+- Laravel Notifications
+- Laravel Scheduler
+- Laravel Filesystem
+- Laravel Policies
+- Laravel Events/Listeners
+- Laravel Jobs
+- Laravel Cache
+- Laravel HTTP Client
 
 Object storage:
 
@@ -220,8 +214,7 @@ Code formatting:
 
 Laravel Pint
 
-==================================================
-7. FOLLOW LARAVEL BEST PRACTICES
+================================================== 7. FOLLOW LARAVEL BEST PRACTICES
 ================================
 
 This requirement is STRICT.
@@ -230,39 +223,39 @@ Prefer Laravel-native solutions before introducing custom abstractions.
 
 Use:
 
-* Eloquent ORM
-* Form Requests
-* Policies
-* Gates
-* API Resources
-* Events
-* Listeners
-* Jobs
-* Notifications
-* Mail
-* Queues
-* Cache
-* Scheduler
-* Service Container
-* Dependency Injection
-* Database Transactions
-* Model relationships
-* Eloquent scopes
-* Enums
-* Value Objects where useful
+- Eloquent ORM
+- Form Requests
+- Policies
+- Gates
+- API Resources
+- Events
+- Listeners
+- Jobs
+- Notifications
+- Mail
+- Queues
+- Cache
+- Scheduler
+- Service Container
+- Dependency Injection
+- Database Transactions
+- Model relationships
+- Eloquent scopes
+- Enums
+- Value Objects where useful
 
 Do NOT blindly create generic abstractions.
 
 Avoid unnecessary:
 
-* Repository interfaces for every model
-* Generic CRUD services
-* Generic BaseRepository
-* Generic BaseService
-* Generic BaseController
-* unnecessary DTO layers
-* unnecessary interfaces
-* unnecessary design patterns
+- Repository interfaces for every model
+- Generic CRUD services
+- Generic BaseRepository
+- Generic BaseService
+- Generic BaseController
+- unnecessary DTO layers
+- unnecessary interfaces
+- unnecessary design patterns
 
 Laravel's conventions should be the default.
 
@@ -277,8 +270,7 @@ ApproveFinancialTransactionAction
 
 Do not create classes simply to wrap one Eloquent call.
 
-==================================================
-8. APPLICATION LAYERS
+================================================== 8. APPLICATION LAYERS
 =====================
 
 Keep Laravel's normal architecture.
@@ -287,34 +279,33 @@ Controllers should be thin.
 
 Controllers are responsible for:
 
-* receiving requests
-* authorization
-* calling the appropriate application operation
-* returning Inertia responses or API Resources
+- receiving requests
+- authorization
+- calling the appropriate application operation
+- returning Inertia responses or API Resources
 
 Business rules belong in:
 
-* Models when they naturally belong to the model
-* Actions/Services for multi-step business operations
-* Policies for authorization
-* Form Requests for request validation
-* Events/Listeners for side effects
-* Jobs for asynchronous work
+- Models when they naturally belong to the model
+- Actions/Services for multi-step business operations
+- Policies for authorization
+- Form Requests for request validation
+- Events/Listeners for side effects
+- Jobs for asynchronous work
 
 Do not put large business logic inside controllers.
 
-==================================================
-9. MULTI-TENANCY
+================================================== 9. MULTI-TENANCY
 ================
 
 RukunMuda is a multi-tenant SaaS.
 
 Organization represents:
 
-* Karang Taruna
-* Pemuda Kampung
-* RT/RW youth group
-* Community organization
+- Karang Taruna
+- Pemuda Kampung
+- RT/RW youth group
+- Community organization
 
 Core relationship:
 
@@ -346,8 +337,7 @@ and application context.
 
 Prevent cross-organization data access.
 
-==================================================
-10. ORGANIZATION ROLES
+================================================== 10. ORGANIZATION ROLES
 ======================
 
 Initial roles:
@@ -378,8 +368,7 @@ manageMembers
 manageEvent
 manageOrganization
 
-==================================================
-11. AUTHENTICATION
+================================================== 11. AUTHENTICATION
 ==================
 
 WEB:
@@ -391,12 +380,12 @@ Do not replace it unnecessarily.
 
 Support:
 
-* registration
-* login
-* logout
-* password reset
-* email verification
-* profile/settings
+- registration
+- login
+- logout
+- password reset
+- email verification
+- profile/settings
 
 MOBILE:
 
@@ -404,10 +393,10 @@ Use Laravel Sanctum for API authentication.
 
 Support:
 
-* login
-* logout
-* token revocation
-* device/session management where appropriate
+- login
+- logout
+- token revocation
+- device/session management where appropriate
 
 Do not implement a custom JWT system unless there is a documented
 technical requirement.
@@ -416,12 +405,11 @@ Do not invent a custom authentication protocol.
 
 Never store:
 
-* plaintext passwords
-* raw long-lived secrets
-* sensitive authentication information in logs
+- plaintext passwords
+- raw long-lived secrets
+- sensitive authentication information in logs
 
-==================================================
-12. DOMAIN MODEL
+================================================== 12. DOMAIN MODEL
 ================
 
 Initial models:
@@ -474,8 +462,7 @@ ReportShareLog
 Notification-related models should use Laravel's notification system
 where appropriate.
 
-==================================================
-13. EVENTS
+================================================== 13. EVENTS
 ==========
 
 Event statuses:
@@ -488,21 +475,21 @@ CANCELLED
 
 Event contains:
 
-* title
-* description
-* location
-* start_at
-* end_at
-* PIC
-* committee
-* participants
-* tasks
-* budget
-* financial transactions
-* attendance
-* documents
-* photos
-* sponsors
+- title
+- description
+- location
+- start_at
+- end_at
+- PIC
+- committee
+- participants
+- tasks
+- budget
+- financial transactions
+- attendance
+- documents
+- photos
+- sponsors
 
 Event lifecycle:
 
@@ -515,18 +502,17 @@ IDEA
 
 Use PHP backed enums for statuses where appropriate.
 
-==================================================
-14. TASKS
+================================================== 14. TASKS
 =========
 
 Event tasks:
 
-* title
-* description
-* assignee
-* status
-* priority
-* due_date
+- title
+- description
+- assignee
+- status
+- priority
+- due_date
 
 Statuses:
 
@@ -537,22 +523,21 @@ DONE
 
 Support:
 
-* comments
-* attachments
-* activity history
+- comments
+- attachments
+- activity history
 
-==================================================
-15. FINANCE
+================================================== 15. FINANCE
 ===========
 
 Finance is a critical domain.
 
 Financial accounts:
 
-* Kas Pemuda
-* Kas Olahraga
-* Kas Sosial
-* Kas Event
+- Kas Pemuda
+- Kas Olahraga
+- Kas Sosial
+- Kas Event
 
 Transaction types:
 
@@ -562,15 +547,15 @@ TRANSFER
 
 Transaction fields:
 
-* financial_account_id
-* category_id
-* amount
-* transaction_type
-* description
-* transaction_date
-* event_id nullable
-* created_by
-* status
+- financial_account_id
+- category_id
+- amount
+- transaction_type
+- description
+- transaction_date
+- event_id nullable
+- created_by
+- status
 
 Transaction statuses:
 
@@ -585,8 +570,7 @@ Use database constraints for important invariants.
 
 Never silently modify historical financial records.
 
-==================================================
-16. MONEY REPRESENTATION
+================================================== 16. MONEY REPRESENTATION
 ========================
 
 Do NOT use floating point numbers for money.
@@ -607,8 +591,7 @@ for Indonesian Rupiah transactions.
 
 Money calculations must be deterministic.
 
-==================================================
-17. FINANCIAL APPROVAL
+================================================== 17. FINANCIAL APPROVAL
 ======================
 
 Organizations may enable:
@@ -631,16 +614,15 @@ Use Policies for authorization.
 
 Use database transactions around approval operations.
 
-==================================================
-18. MEMBER DUES
+================================================== 18. MEMBER DUES
 ===============
 
 Support:
 
-* monthly dues
-* event dues
-* special contributions
-* donations
+- monthly dues
+- event dues
+- special contributions
+- donations
 
 Example:
 
@@ -654,31 +636,30 @@ UNPAID
 
 Calculate:
 
-* paid amount
-* outstanding amount
-* payment history
+- paid amount
+- outstanding amount
+- payment history
 
-==================================================
-19. EVENT BUDGET
+================================================== 19. EVENT BUDGET
 ================
 
 Each event can have:
 
 INCOME:
 
-* member contribution
-* sponsor
-* donation
-* ticket
+- member contribution
+- sponsor
+- donation
+- ticket
 
 EXPENSE:
 
-* equipment
-* venue
-* food
-* prize
-* transportation
-* documentation
+- equipment
+- venue
+- food
+- prize
+- transportation
+- documentation
 
 Display:
 
@@ -686,8 +667,7 @@ planned
 actual
 variance
 
-==================================================
-20. FINANCIAL TRANSPARENCY
+================================================== 20. FINANCIAL TRANSPARENCY
 ==========================
 
 Transparency is a FIRST-CLASS FEATURE.
@@ -720,8 +700,7 @@ Default:
 
 MEMBERS
 
-==================================================
-21. TRANSPARENCY DASHBOARD
+================================================== 21. TRANSPARENCY DASHBOARD
 ==========================
 
 Create a dedicated:
@@ -732,13 +711,13 @@ navigation item.
 
 Show:
 
-* current balance
-* total income
-* total expenses
-* net cash flow
-* recent transactions
-* monthly reports
-* event reports
+- current balance
+- total income
+- total expenses
+- net cash flow
+- recent transactions
+- monthly reports
+- event reports
 
 Example:
 
@@ -770,8 +749,7 @@ Iuran anggota
 Sponsor
 +Rp2.000.000
 
-==================================================
-22. FINANCIAL REPORT
+================================================== 22. FINANCIAL REPORT
 ====================
 
 FinancialReport is a first-class domain model.
@@ -815,16 +793,14 @@ Never allow administrators to manually type the final balance.
 Calculation:
 
 opening balance
-+
-approved income
----------------
+
+- ## approved income
 
 # approved expense
 
 closing balance
 
-==================================================
-23. PUBLISHED REPORT INTEGRITY
+================================================== 23. PUBLISHED REPORT INTEGRITY
 ==============================
 
 Once published:
@@ -839,54 +815,52 @@ Create a revision.
 
 FinancialReportRevision:
 
-* financial_report_id
-* revision_number
-* snapshot
-* created_by
-* created_at
+- financial_report_id
+- revision_number
+- snapshot
+- created_by
+- created_at
 
 A published report must retain its historical state.
 
-==================================================
-24. FINANCIAL AUDIT TRAIL
+================================================== 24. FINANCIAL AUDIT TRAIL
 =========================
 
 Track:
 
-* transaction creation
-* transaction modification
-* transaction approval
-* transaction rejection
-* report publication
-* report archival
-* report revision
+- transaction creation
+- transaction modification
+- transaction approval
+- transaction rejection
+- report publication
+- report archival
+- report revision
 
 Record:
 
-* actor
-* action
-* model
-* model ID
-* previous values where appropriate
-* new values where appropriate
-* timestamp
-* organization
+- actor
+- action
+- model
+- model ID
+- previous values where appropriate
+- new values where appropriate
+- timestamp
+- organization
 
 Use Laravel's event/listener mechanisms where appropriate.
 
 Do not create an unnecessarily complex audit system before it is needed.
 
-==================================================
-25. FINANCIAL EVIDENCE
+================================================== 25. FINANCIAL EVIDENCE
 ======================
 
 Transactions may contain:
 
-* receipts
-* invoices
-* transfer proof
-* purchase photos
-* payment receipts
+- receipts
+- invoices
+- transfer proof
+- purchase photos
+- payment receipts
 
 Use Laravel Filesystem.
 
@@ -896,18 +870,17 @@ MinIO/S3-compatible storage.
 
 Validate:
 
-* MIME type
-* extension
-* file size
-* authorization
+- MIME type
+- extension
+- file size
+- authorization
 
 Do not expose private files through predictable public URLs.
 
 Use authorized download endpoints or temporary signed URLs where
 appropriate.
 
-==================================================
-26. WHATSAPP SHARING
+================================================== 26. WHATSAPP SHARING
 ====================
 
 WhatsApp is a DISTRIBUTION CHANNEL.
@@ -946,8 +919,7 @@ Do NOT implement unofficial WhatsApp automation.
 
 Do NOT claim automatic WhatsApp group delivery.
 
-==================================================
-27. SHAREABLE REPORT
+================================================== 27. SHAREABLE REPORT
 ====================
 
 Published reports have stable URLs.
@@ -966,19 +938,18 @@ Can be accessed without login.
 
 Report page displays:
 
-* organization
-* reporting period
-* opening balance
-* income
-* expense
-* closing balance
-* summary
-* publication timestamp
-* revision
-* status
+- organization
+- reporting period
+- opening balance
+- income
+- expense
+- closing balance
+- summary
+- publication timestamp
+- revision
+- status
 
-==================================================
-28. REPORT QR CODE
+================================================== 28. REPORT QR CODE
 ==================
 
 Published reports may generate a QR code.
@@ -991,8 +962,7 @@ Physical community notice board.
 
 QR points to the official report URL.
 
-==================================================
-29. REPORT SHARE LOG
+================================================== 29. REPORT SHARE LOG
 ====================
 
 Create:
@@ -1001,10 +971,10 @@ ReportShareLog
 
 Fields:
 
-* report_id
-* channel
-* shared_by
-* shared_at
+- report_id
+- channel
+- shared_by
+- shared_at
 
 Channels:
 
@@ -1016,8 +986,7 @@ Do not make sharing logs a critical financial record.
 
 They are distribution metadata.
 
-==================================================
-30. PUBLIC TRANSPARENCY
+================================================== 30. PUBLIC TRANSPARENCY
 =======================
 
 Organizations may enable:
@@ -1026,26 +995,25 @@ Organizations may enable:
 
 Show:
 
-* current balance
-* published monthly reports
-* event reports
-* income/expense summaries
+- current balance
+- published monthly reports
+- event reports
+- income/expense summaries
 
 Never expose:
 
-* member personal data
-* private donor information
-* internal audit notes
-* sensitive metadata
+- member personal data
+- private donor information
+- internal audit notes
+- sensitive metadata
 
-==================================================
-31. ATTENDANCE
+================================================== 31. ATTENDANCE
 ==============
 
 Support:
 
-* manual attendance
-* QR attendance
+- manual attendance
+- QR attendance
 
 Attendance session belongs to an event.
 
@@ -1053,13 +1021,12 @@ Prevent duplicate attendance.
 
 Record:
 
-* member
-* event
-* timestamp
-* status
+- member
+- event
+- timestamp
+- status
 
-==================================================
-32. VOTING
+================================================== 32. VOTING
 ==========
 
 Support community voting.
@@ -1076,28 +1043,27 @@ ABSTAIN
 
 Support:
 
-* start_at
-* end_at
-* anonymous/non-anonymous
-* eligible voters
-* results
-* audit history
+- start_at
+- end_at
+- anonymous/non-anonymous
+- eligible voters
+- results
+- audit history
 
 One eligible member may vote only once.
 
 Use database uniqueness constraints to enforce this.
 
-==================================================
-33. INVENTORY
+================================================== 33. INVENTORY
 =============
 
 Inventory:
 
-* name
-* category
-* quantity
-* condition
-* location
+- name
+- category
+- quantity
+- condition
+- location
 
 Examples:
 
@@ -1113,50 +1079,47 @@ BORROWED
 RETURNED
 OVERDUE
 
-==================================================
-34. SPONSORS
+================================================== 34. SPONSORS
 ============
 
 Sponsors can belong to events.
 
 Track:
 
-* sponsor
-* contact
-* package
-* expected contribution
-* actual contribution
-* agreement
-* notes
+- sponsor
+- contact
+- package
+- expected contribution
+- actual contribution
+- agreement
+- notes
 
-==================================================
-35. DOCUMENTS
+================================================== 35. DOCUMENTS
 =============
 
 Prepare architecture for:
 
-* proposal
-* RAB
-* attendance report
-* financial report
-* LPJ
+- proposal
+- RAB
+- attendance report
+- financial report
+- LPJ
 
 Documents should be generated from structured application data.
 
 Do not treat PDFs as the primary source of truth.
 
-==================================================
-36. NOTIFICATIONS
+================================================== 36. NOTIFICATIONS
 =================
 
 Use Laravel Notifications.
 
 Architecture should support:
 
-* database notifications
-* email
-* push notifications later
-* WhatsApp Business API later
+- database notifications
+- email
+- push notifications later
+- WhatsApp Business API later
 
 Examples:
 
@@ -1170,40 +1133,37 @@ Examples:
 
 Use queues for notifications that do not need to block HTTP requests.
 
-==================================================
-37. QUEUES
+================================================== 37. QUEUES
 ==========
 
 Use Laravel Queue for:
 
-* notification delivery
-* report generation
-* PDF generation
-* image processing
-* email
-* future WhatsApp Business API
-* other expensive asynchronous tasks
+- notification delivery
+- report generation
+- PDF generation
+- image processing
+- email
+- future WhatsApp Business API
+- other expensive asynchronous tasks
 
 Do not queue operations that must immediately return authoritative
 financial results.
 
-==================================================
-38. SCHEDULER
+================================================== 38. SCHEDULER
 =============
 
 Use Laravel Scheduler for:
 
-* overdue tasks
-* unpaid dues reminders
-* report reminders
-* scheduled notifications
-* cleanup operations
+- overdue tasks
+- unpaid dues reminders
+- report reminders
+- scheduled notifications
+- cleanup operations
 
 Do not create operating-system cron logic inside application code
 when Laravel Scheduler can handle it.
 
-==================================================
-39. WEB NAVIGATION
+================================================== 39. WEB NAVIGATION
 ==================
 
 Primary navigation:
@@ -1222,26 +1182,25 @@ Pengumuman
 
 Dashboard:
 
-* saldo kas
-* event terdekat
-* task saya
-* iuran
-* transaksi terbaru
-* activity
-* transparency summary
+- saldo kas
+- event terdekat
+- task saya
+- iuran
+- transaksi terbaru
+- activity
+- transparency summary
 
-==================================================
-40. WEB UX
+================================================== 40. WEB UX
 ==========
 
 The UI should be:
 
-* modern
-* clean
-* friendly
-* trustworthy
-* community-oriented
-* mobile responsive
+- modern
+- clean
+- friendly
+- trustworthy
+- community-oriented
+- mobile responsive
 
 Primary language:
 
@@ -1259,8 +1218,7 @@ Avoid unnecessary dashboards.
 
 Keep workflows understandable for non-technical users.
 
-==================================================
-41. MOBILE UX
+================================================== 41. MOBILE UX
 =============
 
 Mobile should prioritize:
@@ -1287,25 +1245,23 @@ Pengeluaran:
 
 [ Lihat Transparansi ]
 
-==================================================
-42. OFFLINE CONSIDERATION
+================================================== 42. OFFLINE CONSIDERATION
 =========================
 
 Mobile must tolerate unreliable internet.
 
 MVP:
 
-* cache important read data
-* retry failed requests
-* optimistic UI where safe
-* visible offline status
+- cache important read data
+- retry failed requests
+- optimistic UI where safe
+- visible offline status
 
 Do not implement complicated offline synchronization in MVP.
 
 Financial writes should never be silently accepted offline.
 
-==================================================
-43. API
+================================================== 43. API
 =======
 
 Use REST API.
@@ -1365,19 +1321,18 @@ GET /api/v1/finance/reports/{report}/qr
 
 Use:
 
-* API Resources
-* Form Requests
-* Policies
-* pagination
-* filtering
-* sorting
-* validation
-* consistent error responses
+- API Resources
+- Form Requests
+- Policies
+- pagination
+- filtering
+- sorting
+- validation
+- consistent error responses
 
 Do not expose Eloquent models directly as uncontrolled API responses.
 
-==================================================
-44. API VERSIONING
+================================================== 44. API VERSIONING
 ==================
 
 Use:
@@ -1388,8 +1343,7 @@ Do not introduce API versioning complexity beyond what is necessary.
 
 Maintain backward compatibility once mobile clients are released.
 
-==================================================
-45. DATABASE
+================================================== 45. DATABASE
 ============
 
 PostgreSQL.
@@ -1418,8 +1372,7 @@ Do not add soft deletes to every table.
 
 Use soft deletes only where business requirements justify them.
 
-==================================================
-46. FINANCIAL DATABASE INTEGRITY
+================================================== 46. FINANCIAL DATABASE INTEGRITY
 ================================
 
 Financial invariants must be enforced at both:
@@ -1430,19 +1383,18 @@ database level where practical.
 
 Examples:
 
-* amount must be positive
-* valid transaction type
-* valid account relationship
-* unique membership
-* unique vote response
-* valid report revision number
+- amount must be positive
+- valid transaction type
+- valid account relationship
+- unique membership
+- unique vote response
+- valid report revision number
 
 Use database transactions for multi-record financial operations.
 
 Never calculate financial totals using floating point arithmetic.
 
-==================================================
-47. ELOQUENT
+================================================== 47. ELOQUENT
 ============
 
 Use Eloquent relationships.
@@ -1472,11 +1424,11 @@ hasMany revisions
 
 Use:
 
-* casts
-* enums
-* scopes
-* relationships
-* accessors only when appropriate
+- casts
+- enums
+- scopes
+- relationships
+- accessors only when appropriate
 
 Avoid N+1 queries.
 
@@ -1484,8 +1436,7 @@ Use eager loading deliberately.
 
 Use query scopes for reusable filtering logic.
 
-==================================================
-48. VALIDATION
+================================================== 48. VALIDATION
 ==============
 
 Use Form Request classes for complex request validation.
@@ -1500,8 +1451,7 @@ Frontend validation is for UX only.
 
 Backend validation is authoritative.
 
-==================================================
-49. AUTHORIZATION
+================================================== 49. AUTHORIZATION
 =================
 
 Use Laravel Policies.
@@ -1518,8 +1468,7 @@ OrganizationPolicy
 
 Do not rely on frontend hiding buttons for security.
 
-==================================================
-50. DATABASE TRANSACTIONS
+================================================== 50. DATABASE TRANSACTIONS
 =========================
 
 Use:
@@ -1530,15 +1479,14 @@ for operations that must be atomic.
 
 Examples:
 
-* approve transaction
-* publish report
-* create event with required related records
-* member payment processing
+- approve transaction
+- publish report
+- create event with required related records
+- member payment processing
 
 Never leave financial operations partially committed.
 
-==================================================
-51. CACHING
+================================================== 51. CACHING
 ===========
 
 Use Laravel Cache.
@@ -1547,17 +1495,16 @@ Cache only data where there is a measurable benefit.
 
 Good candidates:
 
-* dashboard aggregates
-* organization settings
-* expensive reports
+- dashboard aggregates
+- organization settings
+- expensive reports
 
 Never cache mutable financial values without a clear invalidation
 strategy.
 
 Financial correctness is more important than cache performance.
 
-==================================================
-52. FILE STORAGE
+================================================== 52. FILE STORAGE
 ================
 
 Use Laravel Filesystem.
@@ -1576,8 +1523,7 @@ S3/MinIO
 
 Private files must not be publicly accessible by default.
 
-==================================================
-53. OBSERVABILITY
+================================================== 53. OBSERVABILITY
 =================
 
 Use Laravel logging.
@@ -1600,30 +1546,28 @@ sensitive personal data unnecessarily
 
 Prepare for OpenTelemetry if required by deployment.
 
-==================================================
-54. SECURITY
+================================================== 54. SECURITY
 ============
 
 Follow Laravel security practices.
 
 Implement:
 
-* authentication
-* authorization
-* CSRF protection for web
-* rate limiting
-* secure password hashing
-* input validation
-* output escaping
-* file upload validation
-* tenant isolation
-* secure file access
-* secure API authentication
+- authentication
+- authorization
+- CSRF protection for web
+- rate limiting
+- secure password hashing
+- input validation
+- output escaping
+- file upload validation
+- tenant isolation
+- secure file access
+- secure API authentication
 
 Do not disable Laravel security features without a documented reason.
 
-==================================================
-55. TESTING
+================================================== 55. TESTING
 ===========
 
 Use Pest.
@@ -1656,28 +1600,26 @@ Unit tests
 
 Prefer feature tests for real application behavior.
 
-==================================================
-56. FACTORIES AND SEEDERS
+================================================== 56. FACTORIES AND SEEDERS
 =========================
 
 Create realistic factories.
 
 Create development seeders for:
 
-* organization
-* users
-* memberships
-* events
-* transactions
-* reports
-* dues
+- organization
+- users
+- memberships
+- events
+- transactions
+- reports
+- dues
 
 Seeders must produce internally consistent financial data.
 
 Do not create fake financial numbers that violate balance calculations.
 
-==================================================
-57. CODE QUALITY
+================================================== 57. CODE QUALITY
 ================
 
 Use:
@@ -1702,8 +1644,7 @@ type any
 
 unless there is a documented reason.
 
-==================================================
-58. DOCUMENTATION
+================================================== 58. DOCUMENTATION
 =================
 
 Create:
@@ -1722,20 +1663,19 @@ docs/
 
 Document:
 
-* architecture
-* local setup
-* database
-* authentication
-* authorization
-* tenancy
-* finance
-* transparency
-* WhatsApp sharing
-* testing
-* deployment
+- architecture
+- local setup
+- database
+- authentication
+- authorization
+- tenancy
+- finance
+- transparency
+- WhatsApp sharing
+- testing
+- deployment
 
-==================================================
-59. DOCKER
+================================================== 59. DOCKER
 ==========
 
 Provide Docker Compose for local development.
@@ -1755,8 +1695,7 @@ Laravel application should be easy to run locally.
 Do not unnecessarily containerize the React Native development
 environment.
 
-==================================================
-60. ENVIRONMENT
+================================================== 60. ENVIRONMENT
 ===============
 
 Provide:
@@ -1771,31 +1710,29 @@ development
 test
 production
 
-==================================================
-61. CI
+================================================== 61. CI
 ======
 
 Prepare GitHub Actions.
 
 Checks:
 
-* composer install
-* Laravel Pint
-* Pest
-* PHPStan/Larastan if configured
-* frontend lint
-* TypeScript check
-* frontend build
+- composer install
+- Laravel Pint
+- Pest
+- PHPStan/Larastan if configured
+- frontend lint
+- TypeScript check
+- frontend build
 
 CI must fail on:
 
-* test failure
-* lint failure
-* type failure
-* build failure
+- test failure
+- lint failure
+- type failure
+- build failure
 
-==================================================
-62. MOBILE IS NOT THE FIRST PRIORITY
+================================================== 62. MOBILE IS NOT THE FIRST PRIORITY
 ====================================
 
 IMPORTANT:
@@ -1810,8 +1747,7 @@ transparency, and API contracts are stable.
 
 Mobile should initially exist only as a planned client.
 
-==================================================
-63. DEVELOPMENT PHASES
+================================================== 63. DEVELOPMENT PHASES
 ======================
 
 PHASE 0 — ARCHITECTURE
@@ -1837,142 +1773,136 @@ docs/decisions.md
 
 Document:
 
-* Laravel architecture
-* domain boundaries
-* database schema
-* tenancy
-* RBAC
-* finance
-* transparency
-* API
-* mobile integration
+- Laravel architecture
+- domain boundaries
+- database schema
+- tenancy
+- RBAC
+- finance
+- transparency
+- API
+- mobile integration
 
 STOP.
 
 Wait for approval.
 
-==================================================
-64. PHASE 1 — LARAVEL FOUNDATION
+================================================== 64. PHASE 1 — LARAVEL FOUNDATION
 ================================
 
 Focus ONLY on Laravel.
 
 Implement:
 
-* Laravel 13
-* official React Starter Kit
-* authentication
-* PostgreSQL
-* Redis
-* configuration
-* organization
-* users
-* organization memberships
-* roles
-* policies
-* basic dashboard
-* localization
-* base UI layout
+- Laravel 13
+- official React Starter Kit
+- authentication
+- PostgreSQL
+- Redis
+- configuration
+- organization
+- users
+- organization memberships
+- roles
+- policies
+- basic dashboard
+- localization
+- base UI layout
 
 Do not implement mobile yet.
 
-==================================================
-65. PHASE 2 — MEMBERS AND EVENTS
+================================================== 65. PHASE 2 — MEMBERS AND EVENTS
 ================================
 
 Implement:
 
-* member management
-* member profile
-* events
-* committees
-* tasks
-* announcements
+- member management
+- member profile
+- events
+- committees
+- tasks
+- announcements
 
 Add:
 
-* migrations
-* models
-* factories
-* policies
-* Form Requests
-* controllers
-* Inertia pages
-* tests
+- migrations
+- models
+- factories
+- policies
+- Form Requests
+- controllers
+- Inertia pages
+- tests
 
-==================================================
-66. PHASE 3 — FINANCE
+================================================== 66. PHASE 3 — FINANCE
 =====================
 
 Implement:
 
-* financial accounts
-* categories
-* transactions
-* approval
-* member dues
-* event budgets
+- financial accounts
+- categories
+- transactions
+- approval
+- member dues
+- event budgets
 
 Add complete:
 
-* validation
-* authorization
-* audit trail
-* tests
+- validation
+- authorization
+- audit trail
+- tests
 
 Finance must be reliable before moving forward.
 
-==================================================
-67. PHASE 4 — TRANSPARENCY
+================================================== 67. PHASE 4 — TRANSPARENCY
 ==========================
 
 Implement:
 
-* transparency dashboard
-* financial reports
-* report publication
-* report revisions
-* report visibility
-* shareable URLs
-* QR codes
-* WhatsApp share message
-* share logs
-* optional public transparency page
+- transparency dashboard
+- financial reports
+- report publication
+- report revisions
+- report visibility
+- shareable URLs
+- QR codes
+- WhatsApp share message
+- share logs
+- optional public transparency page
 
 This is a critical milestone.
 
-==================================================
-68. PHASE 5 — API
+================================================== 68. PHASE 5 — API
 =================
 
 After Laravel domain logic is stable:
 
 Implement REST API for:
 
-* authentication
-* organization
-* members
-* events
-* tasks
-* finance
-* reports
-* transparency
-* attendance
+- authentication
+- organization
+- members
+- events
+- tasks
+- finance
+- reports
+- transparency
+- attendance
 
 Use:
 
-* Sanctum
-* API Resources
-* Form Requests
-* Policies
+- Sanctum
+- API Resources
+- Form Requests
+- Policies
 
 The API must reuse the same business/domain logic as the web
 application.
 
 Do NOT duplicate business logic in API controllers.
 
-==================================================
-69. PHASE 6 — MOBILE
+================================================== 69. PHASE 6 — MOBILE
 ====================
 
 Only after API contracts are stable:
@@ -1983,45 +1913,42 @@ mobile/
 
 Implement:
 
-* authentication
-* dashboard
-* events
-* tasks
-* transparency
-* attendance
-* notifications
+- authentication
+- dashboard
+- events
+- tasks
+- transparency
+- attendance
+- notifications
 
 Mobile consumes Laravel API.
 
-==================================================
-70. PHASE 7 — ADDITIONAL FEATURES
+================================================== 70. PHASE 7 — ADDITIONAL FEATURES
 =================================
 
 Implement:
 
-* voting
-* inventory
-* sponsors
-* document generation
-* activity points
+- voting
+- inventory
+- sponsors
+- document generation
+- activity points
 
-==================================================
-71. PHASE 8 — PRODUCTION HARDENING
+================================================== 71. PHASE 8 — PRODUCTION HARDENING
 ==================================
 
 Implement:
 
-* performance optimization
-* query optimization
-* caching where justified
-* security hardening
-* observability
-* backups
-* CI/CD
-* deployment documentation
+- performance optimization
+- query optimization
+- caching where justified
+- security hardening
+- observability
+- backups
+- CI/CD
+- deployment documentation
 
-==================================================
-72. CLAUDE CODE WORKING RULES
+================================================== 72. CLAUDE CODE WORKING RULES
 =============================
 
 Before changing anything:
@@ -2041,48 +1968,45 @@ Before changing anything:
 13. Run frontend lint/typecheck when frontend changes.
 14. Update documentation when architecture changes.
 
-==================================================
-73. IMPORTANT — DO NOT OVER-ENGINEER
+================================================== 73. IMPORTANT — DO NOT OVER-ENGINEER
 ====================================
 
 Do NOT automatically introduce:
 
-* repositories for every model
-* interfaces for every class
-* DTOs everywhere
-* CQRS
-* event sourcing
-* microservices
-* generic service layers
-* generic CRUD abstractions
+- repositories for every model
+- interfaces for every class
+- DTOs everywhere
+- CQRS
+- event sourcing
+- microservices
+- generic service layers
+- generic CRUD abstractions
 
 Only introduce advanced architecture when the domain genuinely requires
 it.
 
 Prefer simple, explicit, idiomatic Laravel code.
 
-==================================================
-74. IMPORTANT — FINANCIAL SAFETY
+================================================== 74. IMPORTANT — FINANCIAL SAFETY
 ================================
 
 Financial correctness has higher priority than convenience.
 
 Never:
 
-* use floating point money
-* silently modify published reports
-* bypass authorization
-* trust client organization IDs
-* expose private financial data
-* allow duplicate payments accidentally
-* allow duplicate voting
-* allow duplicate attendance
-* calculate financial totals inconsistently
+- use floating point money
+- silently modify published reports
+- bypass authorization
+- trust client organization IDs
+- expose private financial data
+- allow duplicate payments accidentally
+- allow duplicate voting
+- allow duplicate attendance
+- calculate financial totals inconsistently
 
 Every financial invariant must be explicit.
 
-==================================================
-75. IMPORTANT — SOURCE OF TRUTH
+================================================== 75. IMPORTANT — SOURCE OF TRUTH
 ===============================
 
 RukunMuda Laravel database is the source of truth.
@@ -2109,8 +2033,7 @@ LINK TO SOURCE OF TRUTH
 
 Never make WhatsApp messages or PDFs authoritative.
 
-==================================================
-76. FIRST ACTION
+================================================== 76. FIRST ACTION
 ================
 
 Your FIRST action is:
@@ -2142,24 +2065,23 @@ DO NOT CREATE THE FINANCE MODULE YET.
 
 WAIT FOR USER APPROVAL BEFORE STARTING PHASE 1.
 
-==================================================
-77. DEFINITION OF DONE
+================================================== 77. DEFINITION OF DONE
 ======================
 
 A feature is not considered complete until:
 
-* database migration exists
-* model exists where appropriate
-* validation exists
-* authorization exists
-* business logic is implemented
-* UI is implemented
-* error states are handled
-* loading states are handled
-* tests exist
-* lint passes
-* static analysis passes where configured
-* documentation is updated where appropriate
+- database migration exists
+- model exists where appropriate
+- validation exists
+- authorization exists
+- business logic is implemented
+- UI is implemented
+- error states are handled
+- loading states are handled
+- tests exist
+- lint passes
+- static analysis passes where configured
+- documentation is updated where appropriate
 
 Do not mark incomplete functionality as complete.
 
@@ -2226,3 +2148,16 @@ transparansi sudah benar, baru API distabilkan, kemudian React Native
 dibangun di atas API tersebut. Itu akan jauh mengurangi risiko kita
 harus mengubah mobile berkali-kali karena business logic Laravel masih
 berubah.
+
+## Mobile design
+
+Spec: `docs/design/README.md`. Per-screen refs: `docs/design/screens/`.
+Screenshots: `docs/design/shots/`.
+
+- Tokens live in `mobile/src/theme/`. No color, font, or spacing literal in a screen file.
+- Radius is 0 everywhere, including avatars, inputs, sheets, dialogs.
+- Money always goes through `format.ts` and uses tabular figures.
+- Status is never color alone — always sign + label + color.
+- Indonesian copy is verbatim from the screen refs.
+- Where a screenshot and a spec table disagree, the table wins.
+- Only the 11 specified screens exist. Anything else: ask first.

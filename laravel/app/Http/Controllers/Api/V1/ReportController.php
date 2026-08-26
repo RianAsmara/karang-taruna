@@ -35,7 +35,9 @@ class ReportController extends Controller
                 'canDelete' => $user?->can('delete', $report) ?? false,
                 'shareUrl' => route('reports.show', $report),
                 'qrUrl' => route('api.v1.finance.reports.qr', $report),
+                'pdfUrl' => route('reports.pdf', $report),
             ],
+            'categoryBreakdown' => $report->categoryBreakdown(),
         ]);
     }
 
@@ -52,6 +54,7 @@ class ReportController extends Controller
         return response()->json([
             'shareUrl' => route('reports.show', $report),
             'qrUrl' => route('api.v1.finance.reports.qr', $report),
+            'pdfUrl' => route('reports.pdf', $report),
         ]);
     }
 

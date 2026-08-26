@@ -36,6 +36,7 @@ export interface SharedData {
     quote: { message: string; author: string };
     auth: Auth;
     currentOrganization: CurrentOrganization | null;
+    unreadNotificationsCount: number;
     [key: string]: unknown;
 }
 

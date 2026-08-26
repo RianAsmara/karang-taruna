@@ -157,4 +157,39 @@ class FinancialReport extends Model
             'closing_balance' => $openingBalance + $totalIncome - $totalExpense,
         ];
     }
+
+    /**
+     * Income/expense grouped by category name for this report's own
+     * period — the bar-chart breakdown on Report Detail. Same
+     * APPROVED-only, TRANSFER-excluded scope as calculateFigures(),
+     * just grouped instead of summed. A transaction can't be missing a
+     * category (StoreFinancialTransactionRequest requires one for
+     * INCOME/EXPENSE), but 'Lainnya' is a safety-net label, not an
+     * expected case.
+     *
+     * @return array{income: list<array{label: string, amount: int}>, expense: list<array{label: string, amount: int}>}
+     */
+    public function categoryBreakdown(): array
+    {
+        $byType = FinancialTransaction::query()
+            ->where('organization_id', $this->organization_id)
+            ->where('status', TransactionStatus::Approved)
+            ->whereIn('transaction_type', [TransactionType::Income, TransactionType::Expense])
+            ->whereBetween('transaction_date', [$this->period_start, $this->period_end])
+            ->with('category:id,name')
+            ->get()
+            ->groupBy(fn (FinancialTransaction $t) => $t->transaction_type->value);
+
+        $summarize = fn ($transactions) => $transactions
+            ->groupBy(fn (FinancialTransaction $t) => $t->category?->name ?? 'Lainnya')
+            ->map(fn ($group, $label) => ['label' => $label, 'amount' => (int) $group->sum('amount')])
+            ->sortByDesc('amount')
+            ->values()
+            ->all();
+
+        return [
+            'income' => $summarize($byType->get(TransactionType::Income->value, collect())),
+            'expense' => $summarize($byType->get(TransactionType::Expense->value, collect())),
+        ];
+    }
 }

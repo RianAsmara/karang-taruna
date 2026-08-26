@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-bad2173c-197c-48a1-8911-42bb01cf56b4/styles.css">
+<script src="_ds/modernist-bad2173c-197c-48a1-8911-42bb01cf56b4/_ds_bundle.js"></script>
+<style>
+body{margin:0;background:#f3f2f2}
+.rm-doc{max-width:1160px;margin:0 auto;padding:0 40px 120px}
+.rm-sec{padding:56px 0 0;border-top:2px solid var(--color-divider);margin-top:56px}
+.rm-num{font-family:var(--font-heading);font-weight:800;font-size:13px;letter-spacing:.08em;color:var(--color-accent)}
+.rm-grid2{display:grid;grid-template-columns:1fr 1fr;gap:32px}
+.rm-grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:32px}
+.rm-grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
+.rm-cell{border-top:2px solid var(--color-divider);padding-top:14px}
+.rm-lab{font-family:var(--font-heading);font-weight:800;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 55%,transparent)}
+.rm-t{width:100%;border-collapse:collapse;font-size:13.5px}
+.rm-t th{text-align:left;font-family:var(--font-heading);font-weight:800;font-size:11px;letter-spacing:.09em;text-transform:uppercase;padding:8px 14px 8px 0;border-bottom:2px solid var(--color-divider)}
+.rm-t td{padding:11px 14px 11px 0;border-bottom:1px solid color-mix(in srgb,var(--color-text) 15%,transparent);vertical-align:top}
+.rm-mono{font-family:ui-monospace,Menlo,monospace;font-size:12px}
+.rm-spec{background:#fff;border:1px solid color-mix(in srgb,var(--color-text) 18%,transparent);padding:20px}
+.rm-num-f{font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1}
+</style>
+</helmet>
+
+<div class="rm-doc">
+
+<header style="padding:64px 0 40px">
+<div style="display:flex;align-items:baseline;gap:14px;margin-bottom:28px">
+<span style="display:inline-block;width:22px;height:22px;background:var(--color-accent)"></span>
+<span style="font-family:var(--font-heading);font-weight:800;font-size:15px;letter-spacing:.16em;text-transform:uppercase">RukunMuda</span>
+<span class="rm-lab" style="margin-left:auto">Dokumen 1 dari 3 · Foundations</span>
+</div>
+<h1 style="font-size:64px;line-height:1.02;letter-spacing:-0.03em;max-width:16ch;margin:0 0 24px">Urus kegiatan dan kas kampung dengan rapi.</h1>
+<p style="font-size:19px;line-height:1.5;max-width:56ch;margin:0 0 32px">Fondasi desain untuk aplikasi mobile RukunMuda: prinsip UX, arsitektur informasi, model navigasi, alur pengguna, dan sistem desain lengkap. Dokumen ini menetapkan bahasa visual sebelum satu layar pun dibangun.</p>
+<div style="display:flex;gap:0;border-top:2px solid var(--color-divider);border-bottom:2px solid var(--color-divider)">
+<div style="flex:1;padding:16px 20px 16px 0"><div class="rm-lab">Dokumen 1</div><div style="font-family:var(--font-heading);font-weight:800;font-size:17px">Foundations</div><div style="font-size:12.5px;color:color-mix(in srgb,var(--color-text) 60%,transparent)">Prinsip, IA, alur, token, komponen</div></div>
+<div style="flex:1;padding:16px 20px;border-left:1px solid var(--color-divider)"><div class="rm-lab">Dokumen 2</div><div style="font-family:var(--font-heading);font-weight:800;font-size:17px">Core Screens</div><div style="font-size:12.5px;color:color-mix(in srgb,var(--color-text) 60%,transparent)">10 layar, prototipe bisa ditekan</div></div>
+<div style="flex:1;padding:16px 20px;border-left:1px solid var(--color-divider)"><div class="rm-lab">Dokumen 3</div><div style="font-family:var(--font-heading);font-weight:800;font-size:17px">RN Handoff</div><div style="font-size:12.5px;color:color-mix(in srgb,var(--color-text) 60%,transparent)">Spesifikasi implementasi</div></div>
+</div>
+</header>
+
+<section class="rm-sec" style="border-top-width:2px">
+<div class="rm-num">00 — Asumsi &amp; keputusan awal</div>
+<h2 style="font-size:34px;margin:12px 0 24px;max-width:22ch">Tiga keputusan yang perlu Anda setujui</h2>
+<div class="rm-grid3">
+<div class="rm-cell"><div class="rm-lab" style="color:var(--color-accent)">Keputusan 01</div><h4 style="margin:8px 0 8px">Merah bukan warna "bahaya"</h4><p style="font-size:13.5px;margin:0">Sistem Modernist adalah palet mono: satu aksen merah. Di produk keuangan merah biasanya berarti rugi. Di RukunMuda merah adalah <em>warna merek</em> — dipakai untuk aksi utama, penanda bagian, dan poster. Status keuangan tidak pernah dibedakan lewat warna saja.</p></div>
+<div class="rm-cell"><div class="rm-lab" style="color:var(--color-accent)">Keputusan 02</div><h4 style="margin:8px 0 8px">Angka adalah gambar</h4><p style="font-size:13.5px;margin:0">Tanpa ilustrasi, tanpa gradien, tanpa kartu melayang. Yang membawa halaman adalah tipografi angka: saldo kas diset 44px/800 tabular. Hierarki dibangun dari ukuran dan garis, bukan dekorasi.</p></div>
+<div class="rm-cell"><div class="rm-lab" style="color:var(--color-accent)">Keputusan 03</div><h4 style="margin:8px 0 8px">Sudut 0px tetap 0px</h4><p style="font-size:13.5px;margin:0">Radius nol di seluruh aplikasi, termasuk avatar (kotak, bukan lingkaran). Ini yang membuat RukunMuda tidak terlihat seperti aplikasi komunitas mana pun. Kehangatan datang dari bahasa dan kelonggaran ruang, bukan dari sudut membulat.</p></div>
+</div>
+</section>
+
+<section class="rm-sec">
+<div class="rm-num">01 — Prinsip UX</div>
+<h2 style="font-size:34px;margin:12px 0 8px">Lima prinsip produk</h2>
+<p style="max-width:52ch;margin:0 0 28px">Setiap keputusan desain di dokumen ini bisa dilacak ke salah satu prinsip berikut. Kalau sebuah layar melanggar dua prinsip, layar itu salah.</p>
+<div style="border-top:2px solid var(--color-divider)">
+<div style="display:grid;grid-template-columns:56px 1fr 1fr;gap:24px;padding:20px 0;border-bottom:1px solid color-mix(in srgb,var(--color-text) 15%,transparent)"><div style="font-family:var(--font-heading);font-weight:800;font-size:26px;color:var(--color-accent)">01</div><div><h4 style="margin:0 0 4px">Jawab sebelum ditanya</h4><p style="font-size:13.5px;margin:0;color:color-mix(in srgb,var(--color-text) 70%,transparent)">Sembilan pertanyaan anggota yang paling sering muncul harus terjawab tanpa bertanya ke pengurus.</p></div><div style="font-size:13px;padding-left:20px;border-left:1px solid var(--color-divider)">Saldo kas ada di Home, bukan tiga ketukan di dalam menu. Status iuran pribadi selalu terlihat di Home dan Profil.</div></div>
+<div style="display:grid;grid-template-columns:56px 1fr 1fr;gap:24px;padding:20px 0;border-bottom:1px solid color-mix(in srgb,var(--color-text) 15%,transparent)"><div style="font-family:var(--font-heading);font-weight:800;font-size:26px;color:var(--color-accent)">02</div><div><h4 style="margin:0 0 4px">Transparansi itu default, bukan fitur</h4><p style="font-size:13.5px;margin:0;color:color-mix(in srgb,var(--color-text) 70%,transparent)">Semua anggota melihat angka yang sama dengan bendahara. Yang dibatasi hanya kemampuan mengubah.</p></div><div style="font-size:13px;padding-left:20px;border-left:1px solid var(--color-divider)">Tidak ada layar "khusus pengurus" untuk data keuangan. Peran mengatur tombol, bukan informasi.</div></div>
+<div style="display:grid;grid-template-columns:56px 1fr 1fr;gap:24px;padding:20px 0;border-bottom:1px solid color-mix(in srgb,var(--color-text) 15%,transparent)"><div style="font-family:var(--font-heading);font-weight:800;font-size:26px;color:var(--color-accent)">03</div><div><h4 style="margin:0 0 4px">Bahasa kampung, bukan bahasa kantor</h4><p style="font-size:13.5px;margin:0;color:color-mix(in srgb,var(--color-text) 70%,transparent)">"Uang masuk", bukan "Kredit". "Belum bayar", bukan "Outstanding". Tidak ada singkatan akuntansi.</p></div><div style="font-size:13px;padding-left:20px;border-left:1px solid var(--color-divider)">Glosarium wajib ada di dokumen handoff; label tidak boleh diterjemahkan ulang oleh engineer.</div></div>
+<div style="display:grid;grid-template-columns:56px 1fr 1fr;gap:24px;padding:20px 0;border-bottom:1px solid color-mix(in srgb,var(--color-text) 15%,transparent)"><div style="font-family:var(--font-heading);font-weight:800;font-size:26px;color:var(--color-accent)">04</div><div><h4 style="margin:0 0 4px">Satu layar, satu pekerjaan</h4><p style="font-size:13.5px;margin:0;color:color-mix(in srgb,var(--color-text) 70%,transparent)">Home merangkum. Kegiatan mengelola. Kas menjelaskan. Tidak ada layar yang mencoba semuanya.</p></div><div style="font-size:13px;padding-left:20px;border-left:1px solid var(--color-divider)">Maksimal satu aksi utama per layar. Aksi lain turun ke bottom sheet.</div></div>
+<div style="display:grid;grid-template-columns:56px 1fr 1fr;gap:24px;padding:20px 0;border-bottom:2px solid var(--color-divider)"><div style="font-family:var(--font-heading);font-weight:800;font-size:26px;color:var(--color-accent)">05</div><div><h4 style="margin:0 0 4px">Sinyal bertumpuk</h4><p style="font-size:13.5px;margin:0;color:color-mix(in srgb,var(--color-text) 70%,transparent)">Status tidak pernah disampaikan lewat warna saja — selalu warna + tanda + label teks.</p></div><div style="font-size:13px;padding-left:20px;border-left:1px solid var(--color-divider)">Uang masuk: tanda + dan label "Masuk". Uang keluar: tanda − dan label "Keluar". Terbaca di layar hitam-putih dan oleh pengguna buta warna.</div></div>
+</div>
+</section>
+
+<section class="rm-sec">
+<div class="rm-num">02 — Arsitektur informasi</div>
+<h2 style="font-size:34px;margin:12px 0 8px">Peta aplikasi</h2>
+<p style="max-width:52ch;margin:0 0 28px">Empat tab utama. Semua yang bersifat pengaturan, keanggotaan, dan organisasi masuk lewat avatar di kanan atas — bukan tab.</p>
+<div class="rm-grid4" style="gap:0;border-top:2px solid var(--color-divider);border-bottom:2px solid var(--color-divider)">
+<div style="padding:18px 20px 22px 0"><div style="display:flex;align-items:center;gap:8px;margin-bottom:12px"><span style="width:10px;height:10px;background:var(--color-accent);display:inline-block"></span><span style="font-family:var(--font-heading);font-weight:800;font-size:16px">Home</span></div><div style="font-size:12.5px;color:color-mix(in srgb,var(--color-text) 60%,transparent);margin-bottom:10px">Apa yang terjadi di organisasi saya?</div><div style="font-size:13px;line-height:1.9">Ringkasan kas<br>Kegiatan terdekat<br>Tugas saya<br>Perlu tindakan<br>Pengumuman<br>Aktivitas terbaru</div></div>
+<div style="padding:18px 20px 22px;border-left:1px solid var(--color-divider)"><div style="display:flex;align-items:center;gap:8px;margin-bottom:12px"><span style="width:10px;height:10px;background:var(--color-accent);display:inline-block"></span><span style="font-family:var(--font-heading);font-weight:800;font-size:16px">Kegiatan</span></div><div style="font-size:12.5px;color:color-mix(in srgb,var(--color-text) 60%,transparent);margin-bottom:10px">Apa yang sedang kita kerjakan?</div><div style="font-size:13px;line-height:1.9">Daftar kegiatan<br>Detail kegiatan<br>· Panitia &amp; tugas<br>· Kehadiran<br>· Anggaran<br>· Dokumentasi<br>Arsip &amp; laporan kegiatan</div></div>
+<div style="padding:18px 20px 22px;border-left:1px solid var(--color-divider)"><div style="display:flex;align-items:center;gap:8px;margin-bottom:12px"><span style="width:10px;height:10px;background:var(--color-accent);display:inline-block"></span><span style="font-family:var(--font-heading);font-weight:800;font-size:16px">Kas</span></div><div style="font-size:12.5px;color:color-mix(in srgb,var(--color-text) 60%,transparent);margin-bottom:10px">Uang kita ada berapa dan ke mana?</div><div style="font-size:13px;line-height:1.9">Saldo &amp; ringkasan bulan<br>Transaksi<br>Iuran anggota<br>Dompet / rekening<br><strong>Transparansi</strong><br>Laporan bulanan<br>Sponsor</div></div>
+<div style="padding:18px 0 22px 20px;border-left:1px solid var(--color-divider)"><div style="display:flex;align-items:center;gap:8px;margin-bottom:12px"><span style="width:10px;height:10px;background:var(--color-accent);display:inline-block"></span><span style="font-family:var(--font-heading);font-weight:800;font-size:16px">Notifikasi</span></div><div style="font-size:12.5px;color:color-mix(in srgb,var(--color-text) 60%,transparent);margin-bottom:10px">Apa yang butuh saya sekarang?</div><div style="font-size:13px;line-height:1.9">Perlu tindakan<br>Semua kabar<br>Pengumuman<br>Voting berjalan</div></div>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-top:28px">
+<div><div class="rm-lab" style="margin-bottom:10px">Lewat avatar (kanan atas)</div><div style="font-size:13.5px;line-height:1.95;border-top:1px solid var(--color-divider);padding-top:10px">Profil saya · Iuran saya · Tugas saya<br>Ganti organisasi<br>Anggota &amp; peran<br>Inventaris<br>Dokumen<br>Sponsor<br>Pengaturan organisasi · Bantuan · Keluar</div></div>
+<div><div class="rm-lab" style="margin-bottom:10px">Kenapa bukan tab</div><p style="font-size:13.5px;border-top:1px solid var(--color-divider);padding-top:10px;margin:0">Inventaris, dokumen, sponsor, dan anggota dibuka beberapa kali sebulan — bukan setiap hari. Menaruhnya di tab akan menghukum empat tugas harian demi empat tugas bulanan. Voting muncul sebagai kartu di Home dan item di Notifikasi saat sedang berjalan, lalu hilang.</p></div>
+</div>
+</section>
+
+<section class="rm-sec">
+<div class="rm-num">03 — Model navigasi</div>
+<h2 style="font-size:34px;margin:12px 0 24px">Aturan navigasi</h2>
+<div class="rm-grid2">
+<div>
+<table class="rm-t">
+<thead><tr><th style="width:34%">Pola</th><th>Aturan</th></tr></thead>
+<tbody>
+<tr><td><strong>Bottom tab</strong></td><td>4 slot tetap, selalu terlihat, tinggi 56px + safe area. Tab aktif: label 800 + garis 2px merah di atas ikon. Tidak ada badge angka kecuali di Notifikasi.</td></tr>
+<tr><td><strong>Header</strong></td><td>Kiri: nama organisasi (tap = ganti organisasi). Kanan: avatar kotak 32px. Header selalu setinggi 56px, tanpa bayangan, dipisah garis 2px.</td></tr>
+<tr><td><strong>Kedalaman</strong></td><td>Maksimal 3 tingkat dari tab: Kas → Transparansi → Laporan Agustus. Lebih dalam dari itu, gunakan bottom sheet.</td></tr>
+<tr><td><strong>Bottom sheet</strong></td><td>Untuk aksi cepat &amp; pilihan (tambah transaksi, filter, ubah status tugas). Tidak pernah untuk konten yang perlu dibagikan lewat tautan.</td></tr>
+<tr><td><strong>Dialog</strong></td><td>Hanya untuk konfirmasi merusak: hapus transaksi, tolak approval, keluar dari organisasi.</td></tr>
+<tr><td><strong>Aksi utama</strong></td><td>Tidak ada FAB melayang. Aksi utama adalah tombol blok merah penuh lebar di bawah konten atau di bar aksi bawah — konsisten dengan sistem yang tidak mengenal elemen mengambang.</td></tr>
+</tbody>
+</table>
+</div>
+<div>
+<div class="rm-lab" style="margin-bottom:12px">Peran &amp; hak</div>
+<table class="rm-t">
+<thead><tr><th>Peran</th><th>Bisa lihat</th><th>Bisa ubah</th></tr></thead>
+<tbody>
+<tr><td>Anggota</td><td>Semua data keuangan, kegiatan, laporan</td><td>Tugas sendiri, kehadiran sendiri</td></tr>
+<tr><td>Panitia</td><td>Sama</td><td>+ Tugas kegiatan, dokumentasi</td></tr>
+<tr><td>Bendahara</td><td>Sama</td><td>+ Transaksi, iuran, laporan</td></tr>
+<tr><td>Ketua</td><td>Sama</td><td>+ Approval, publikasi laporan, anggota</td></tr>
+</tbody>
+</table>
+<p style="font-size:13px;margin-top:14px;color:color-mix(in srgb,var(--color-text) 70%,transparent)">Anggota tidak pernah melihat layar kosong karena peran. Yang hilang hanyalah tombol. Tombol yang tidak tersedia disembunyikan, bukan di-disable — kecuali saat ada alasan yang bisa dijelaskan ("Menunggu approval ketua").</p>
+</div>
+</div>
+</section>
+
+<section class="rm-sec">
+<div class="rm-num">04 — Alur pengguna</div>
+<h2 style="font-size:34px;margin:12px 0 24px">Empat alur inti</h2>
+<div style="display:flex;flex-direction:column;gap:0;border-top:2px solid var(--color-divider)">
+
+<div style="padding:22px 0;border-bottom:1px solid color-mix(in srgb,var(--color-text) 15%,transparent)">
+<div style="display:flex;align-items:baseline;gap:12px;margin-bottom:14px"><span class="rm-lab" style="color:var(--color-accent)">Alur A</span><strong style="font-family:var(--font-heading);font-size:17px">Anggota mengecek uang kas</strong><span style="font-size:12.5px;color:color-mix(in srgb,var(--color-text) 60%,transparent)">Frekuensi tertinggi · target &lt; 10 detik</span></div>
+<div style="display:flex;align-items:stretch;gap:0;flex-wrap:wrap">
+<div style="flex:1;min-width:150px;border-left:2px solid var(--color-accent);padding:8px 16px"><div class="rm-lab">1</div><div style="font-size:13.5px">Buka aplikasi → Home</div></div>
+<div style="flex:1;min-width:150px;border-left:1px solid var(--color-divider);padding:8px 16px"><div class="rm-lab">2</div><div style="font-size:13.5px">Saldo terbaca di blok teratas</div></div>
+<div style="flex:1;min-width:150px;border-left:1px solid var(--color-divider);padding:8px 16px"><div class="rm-lab">3</div><div style="font-size:13.5px">Tap saldo → Kas</div></div>
+<div style="flex:1;min-width:150px;border-left:1px solid var(--color-divider);padding:8px 16px"><div class="rm-lab">4</div><div style="font-size:13.5px">Lihat masuk/keluar bulan ini</div></div>
+<div style="flex:1;min-width:150px;border-left:1px solid var(--color-divider);padding:8px 16px"><div class="rm-lab">5 · Selesai</div><div style="font-size:13.5px">Scroll transaksi terbaru</div></div>
+</div>
+</div>
+
+<div style="padding:22px 0;border-bottom:1px solid color-mix(in srgb,var(--color-text) 15%,transparent)">
+<div style="display:flex;align-items:baseline;gap:12px;margin-bottom:14px"><span class="rm-lab" style="color:var(--color-accent)">Alur B</span><strong style="font-family:var(--font-heading);font-size:17px">Bendahara membagikan laporan bulanan ke WhatsApp</strong><span style="font-size:12.5px;color:color-mix(in srgb,var(--color-text) 60%,transparent)">Alur penanda produk</span></div>
+<div style="display:flex;align-items:stretch;gap:0;flex-wrap:wrap">
+<div style="flex:1;min-width:150px;border-left:2px solid var(--color-accent);padding:8px 16px"><div class="rm-lab">1</div><div style="font-size:13.5px">Kas → Transparansi</div></div>
+<div style="flex:1;min-width:150px;border-left:1px solid var(--color-divider);padding:8px 16px"><div class="rm-lab">2</div><div style="font-size:13.5px">Periksa ringkasan Agustus</div></div>
+<div style="flex:1;min-width:150px;border-left:1px solid var(--color-divider);padding:8px 16px"><div class="rm-lab">3</div><div style="font-size:13.5px">Tap "Terbitkan laporan"</div></div>
+<div style="flex:1;min-width:150px;border-left:1px solid var(--color-divider);padding:8px 16px"><div class="rm-lab">4</div><div style="font-size:13.5px">Sheet pratinjau teks + tautan</div></div>
+<div style="flex:1;min-width:150px;border-left:1px solid var(--color-divider);padding:8px 16px"><div class="rm-lab">5 · Selesai</div><div style="font-size:13.5px">Bagikan ke WhatsApp → status "Terbit"</div></div>
+</div>
+</div>
+
+<div style="padding:22px 0;border-bottom:1px solid color-mix(in srgb,var(--color-text) 15%,transparent)">
+<div style="display:flex;align-items:baseline;gap:12px;margin-bottom:14px"><span class="rm-lab" style="color:var(--color-accent)">Alur C</span><strong style="font-family:var(--font-heading);font-size:17px">Panitia menyelesaikan tugas kegiatan</strong></div>
+<div style="display:flex;align-items:stretch;gap:0;flex-wrap:wrap">
+<div style="flex:1;min-width:150px;border-left:2px solid var(--color-accent);padding:8px 16px"><div class="rm-lab">1</div><div style="font-size:13.5px">Notifikasi: "Anda PIC konsumsi"</div></div>
+<div style="flex:1;min-width:150px;border-left:1px solid var(--color-divider);padding:8px 16px"><div class="rm-lab">2</div><div style="font-size:13.5px">Buka detail kegiatan</div></div>
+<div style="flex:1;min-width:150px;border-left:1px solid var(--color-divider);padding:8px 16px"><div class="rm-lab">3</div><div style="font-size:13.5px">Tab Tugas → tandai selesai</div></div>
+<div style="flex:1;min-width:150px;border-left:1px solid var(--color-divider);padding:8px 16px"><div class="rm-lab">4</div><div style="font-size:13.5px">Persiapan naik 80% → 90%</div></div>
+<div style="flex:1;min-width:150px;border-left:1px solid var(--color-divider);padding:8px 16px"><div class="rm-lab">5 · Selesai</div><div style="font-size:13.5px">Toast + ketua dapat notifikasi</div></div>
+</div>
+</div>
+
+<div style="padding:22px 0;border-bottom:2px solid var(--color-divider)">
+<div style="display:flex;align-items:baseline;gap:12px;margin-bottom:14px"><span class="rm-lab" style="color:var(--color-accent)">Alur D</span><strong style="font-family:var(--font-heading);font-size:17px">Anggota membayar iuran bulanan</strong></div>
+<div style="display:flex;align-items:stretch;gap:0;flex-wrap:wrap">
+<div style="flex:1;min-width:150px;border-left:2px solid var(--color-accent);padding:8px 16px"><div class="rm-lab">1</div><div style="font-size:13.5px">Home: "Iuran Agustus belum dibayar"</div></div>
+<div style="flex:1;min-width:150px;border-left:1px solid var(--color-divider);padding:8px 16px"><div class="rm-lab">2</div><div style="font-size:13.5px">Tap → Iuran saya</div></div>
+<div style="flex:1;min-width:150px;border-left:1px solid var(--color-divider);padding:8px 16px"><div class="rm-lab">3</div><div style="font-size:13.5px">Pilih cara bayar (tunai / transfer)</div></div>
+<div style="flex:1;min-width:150px;border-left:1px solid var(--color-divider);padding:8px 16px"><div class="rm-lab">4</div><div style="font-size:13.5px">Unggah bukti / catat tunai</div></div>
+<div style="flex:1;min-width:150px;border-left:1px solid var(--color-divider);padding:8px 16px"><div class="rm-lab">5 · Selesai</div><div style="font-size:13.5px">Status "Menunggu konfirmasi bendahara"</div></div>
+</div>
+</div>
+</div>
+</section>
+
+<section class="rm-sec">
+<div class="rm-num">05 — Kepribadian &amp; arah visual</div>
+<h2 style="font-size:34px;margin:12px 0 24px;max-width:24ch">Serius soal uang, santai soal orang</h2>
+<div class="rm-grid2" style="gap:48px">
+<div>
+<p style="max-width:48ch">RukunMuda memakai bahasa visual Modernist tanpa dilunakkan: putih tulang, tinta hitam, satu merah, Archivo, sudut nol, garis 2px. Yang membuatnya terasa muda bukan warna pastel atau maskot — melainkan skala. Angka besar, judul besar, ruang kosong yang berani, dan label yang ditulis seperti orang bicara.</p>
+<p style="max-width:48ch">Hasilnya terlihat seperti poster kegiatan kampung yang dicetak rapi: tegas, jujur, mudah dibaca dari jauh. Bukan seperti formulir kelurahan, dan bukan seperti aplikasi bank.</p>
+<div class="rm-lab" style="margin:24px 0 10px">Suara &amp; nada</div>
+<table class="rm-t"><tbody>
+<tr><td style="width:50%"><span style="color:var(--color-accent);font-weight:800">Tulis</span> "Kas kita sekarang"</td><td><span class="text-muted">Bukan</span> "Saldo akun kas"</td></tr>
+<tr><td><span style="color:var(--color-accent);font-weight:800">Tulis</span> "Uang masuk / Uang keluar"</td><td><span class="text-muted">Bukan</span> "Debit / Kredit"</td></tr>
+<tr><td><span style="color:var(--color-accent);font-weight:800">Tulis</span> "Belum bayar"</td><td><span class="text-muted">Bukan</span> "Tunggakan"</td></tr>
+<tr><td><span style="color:var(--color-accent);font-weight:800">Tulis</span> "Siapa yang pegang"</td><td><span class="text-muted">Bukan</span> "Penanggung jawab (PIC)"</td></tr>
+<tr><td><span style="color:var(--color-accent);font-weight:800">Tulis</span> "Belum ada kegiatan bulan ini"</td><td><span class="text-muted">Bukan</span> "No data available"</td></tr>
+</tbody></table>
+</div>
+<div>
+<div class="rm-lab" style="margin-bottom:12px">Poster — perlakuan penanda</div>
+<div style="background:var(--color-accent);color:#f3f2f2;padding:28px 24px 24px">
+<div style="font-family:var(--font-heading);font-weight:800;font-size:11px;letter-spacing:.14em;text-transform:uppercase;opacity:.85">Transparansi kas · Agustus 2026</div>
+<div style="font-family:var(--font-heading);font-weight:800;font-size:44px;line-height:1.02;letter-spacing:-0.03em;margin:16px 0 8px" class="rm-num-f">Rp8.450.000</div>
+<div style="font-size:14px;max-width:26ch">Uang organisasi kita jelas. Semua anggota melihat angka yang sama.</div>
+</div>
+<p style="font-size:13px;margin-top:12px;color:color-mix(in srgb,var(--color-text) 65%,transparent)">Satu-satunya tempat merah dipakai sebagai bidang penuh: blok transparansi, pembatas bagian, dan kartu bagikan. Di layar lain merah hanya muncul pada tombol utama dan penanda kecil.</p>
+<div class="rm-lab" style="margin:28px 0 12px">Anti-pola</div>
+<div style="font-size:13.5px;line-height:1.9;border-top:1px solid var(--color-divider);padding-top:10px">Tanpa gradien · Tanpa glassmorphism · Tanpa sudut membulat · Tanpa bayangan pada kartu dalam aplikasi · Tanpa ilustrasi maskot · Tanpa emoji dalam UI · Tanpa lebih dari satu tombol merah per layar</div>
+</div>
+</div>
+</section>
+
+<section class="rm-sec">
+<div class="rm-num">06 — Sistem warna</div>
+<h2 style="font-size:34px;margin:12px 0 8px">Token warna semantik</h2>
+<p style="max-width:52ch;margin:0 0 28px">Diambil langsung dari token Modernist. Palet mono berarti status keuangan <strong>tidak boleh</strong> bergantung pada warna — lihat kolom "Penanda non-warna".</p>
+<div class="rm-grid4" style="margin-bottom:32px">
+<div><div style="height:80px;background:#f3f2f2;border:1px solid var(--color-divider)"></div><div class="rm-lab" style="margin-top:8px">Background</div><div class="rm-mono">#f3f2f2</div></div>
+<div><div style="height:80px;background:#eae9e9;border:1px solid var(--color-divider)"></div><div class="rm-lab" style="margin-top:8px">Surface</div><div class="rm-mono">#eae9e9</div></div>
+<div><div style="height:80px;background:#201e1d"></div><div class="rm-lab" style="margin-top:8px">Foreground</div><div class="rm-mono">#201e1d</div></div>
+<div><div style="height:80px;background:#ec3013"></div><div class="rm-lab" style="margin-top:8px">Primary / Accent</div><div class="rm-mono">#ec3013</div></div>
+</div>
+<div class="rm-grid4" style="margin-bottom:32px">
+<div><div style="height:56px;background:#fff2ef;border:1px solid var(--color-divider)"></div><div class="rm-mono" style="margin-top:6px">accent-100</div></div>
+<div><div style="height:56px;background:#ffe0d9;border:1px solid var(--color-divider)"></div><div class="rm-mono" style="margin-top:6px">accent-200</div></div>
+<div><div style="height:56px;background:#ae1800"></div><div class="rm-mono" style="margin-top:6px">accent-700</div></div>
+<div><div style="height:56px;background:#605d5d"></div><div class="rm-mono" style="margin-top:6px">neutral-700</div></div>
+</div>
+<table class="rm-t">
+<thead><tr><th style="width:16%">Peran</th><th style="width:20%">Token</th><th style="width:32%">Dipakai untuk</th><th>Penanda non-warna</th></tr></thead>
+<tbody>
+<tr><td><strong>Primary</strong></td><td class="rm-mono">--color-accent #ec3013</td><td>Tombol utama, tab aktif, blok transparansi</td><td>Bobot 800 + posisi</td></tr>
+<tr><td><strong>Foreground</strong></td><td class="rm-mono">#201e1d</td><td>Semua teks, semua angka saldo</td><td>—</td></tr>
+<tr><td><strong>Muted</strong></td><td class="rm-mono">text @ 55–70%</td><td>Label, waktu, keterangan</td><td>Ukuran lebih kecil</td></tr>
+<tr><td><strong>Income</strong></td><td class="rm-mono">#201e1d (tinta)</td><td>Uang masuk</td><td>Tanda <strong>+</strong>, tag "Masuk", ikon panah ke bawah-dalam</td></tr>
+<tr><td><strong>Expense</strong></td><td class="rm-mono">accent-700 #ae1800</td><td>Uang keluar</td><td>Tanda <strong>−</strong>, tag "Keluar", ikon panah ke atas-luar</td></tr>
+<tr><td><strong>Balance</strong></td><td class="rm-mono">#201e1d, 800, tabular</td><td>Saldo — selalu netral, tidak pernah merah</td><td>Ukuran 44px</td></tr>
+<tr><td><strong>Success</strong></td><td class="rm-mono">isi #201e1d, teks #f3f2f2</td><td>Lunas, selesai, terbit</td><td>Ikon centang + label</td></tr>
+<tr><td><strong>Warning</strong></td><td class="rm-mono">isi accent-200, teks accent-800</td><td>Menunggu approval, mendekati tenggat</td><td>Ikon jam + label</td></tr>
+<tr><td><strong>Destructive</strong></td><td class="rm-mono">#ec3013</td><td>Hapus, tolak, keluar</td><td>Selalu lewat dialog konfirmasi</td></tr>
+<tr><td><strong>Info</strong></td><td class="rm-mono">neutral-700 #605d5d</td><td>Catatan sistem, draf</td><td>Ikon info + label</td></tr>
+</tbody>
+</table>
+<div class="rm-grid2" style="margin-top:32px;gap:32px">
+<div><div class="rm-lab" style="margin-bottom:10px">Mode gelap</div><p style="font-size:13.5px;margin:0">Inversi token, bukan tema baru. Background <span class="rm-mono">#1a1918</span>, surface <span class="rm-mono">#242221</span>, foreground <span class="rm-mono">#f3f2f2</span>, divider tinta terang 35%. Aksen naik satu langkah ke <span class="rm-mono">accent-500 #ff563c</span> agar rasio kontras tetap ≥ 4.5:1 pada latar gelap. Uang keluar memakai <span class="rm-mono">accent-400</span>. Satu layar gelap disertakan di dokumen 2.</p></div>
+<div><div class="rm-lab" style="margin-bottom:10px">Kontras</div><p style="font-size:13.5px;margin:0">Tinta pada background: 14.8:1. Merah pada background: 3.6:1 — cukup untuk teks ≥ 19px/800, ikon, dan chrome, <strong>tidak</strong> untuk teks isi. Teks isi berwarna memakai accent-700 (7.4:1). Putih pada bidang merah: 4.1:1, dipakai hanya untuk teks ≥ 16px/600.</p></div>
+</div>
+</section>
+
+<section class="rm-sec">
+<div class="rm-num">07 — Tipografi</div>
+<h2 style="font-size:34px;margin:12px 0 24px">Satu keluarga, sembilan peran</h2>
+<div style="display:grid;grid-template-columns:200px 1fr;gap:0;border-top:2px solid var(--color-divider)">
+<div style="padding:16px 0;border-bottom:1px solid color-mix(in srgb,var(--color-text) 15%,transparent)"><div class="rm-lab">Display</div><div class="rm-mono">40 / 42 / 800 / -0.03em</div></div>
+<div style="padding:16px 0 16px 24px;border-bottom:1px solid color-mix(in srgb,var(--color-text) 15%,transparent);border-left:1px solid var(--color-divider)"><div style="font-family:var(--font-heading);font-weight:800;font-size:40px;line-height:1.05;letter-spacing:-0.03em">Kas Pemuda</div></div>
+<div style="padding:16px 0;border-bottom:1px solid color-mix(in srgb,var(--color-text) 15%,transparent)"><div class="rm-lab">Heading</div><div class="rm-mono">26 / 30 / 800 / -0.02em</div></div>
+<div style="padding:16px 0 16px 24px;border-bottom:1px solid color-mix(in srgb,var(--color-text) 15%,transparent);border-left:1px solid var(--color-divider)"><div style="font-family:var(--font-heading);font-weight:800;font-size:26px;line-height:1.15;letter-spacing:-0.02em">Turnamen Voli Antar RT</div></div>
+<div style="padding:16px 0;border-bottom:1px solid color-mix(in srgb,var(--color-text) 15%,transparent)"><div class="rm-lab">Title</div><div class="rm-mono">17 / 22 / 800</div></div>
+<div style="padding:16px 0 16px 24px;border-bottom:1px solid color-mix(in srgb,var(--color-text) 15%,transparent);border-left:1px solid var(--color-divider)"><div style="font-family:var(--font-heading);font-weight:800;font-size:17px">Iuran anggota Agustus</div></div>
+<div style="padding:16px 0;border-bottom:1px solid color-mix(in srgb,var(--color-text) 15%,transparent)"><div class="rm-lab">Section heading</div><div class="rm-mono">11 / 14 / 800 / +0.09em / UPPER</div></div>
+<div style="padding:16px 0 16px 24px;border-bottom:1px solid color-mix(in srgb,var(--color-text) 15%,transparent);border-left:1px solid var(--color-divider)"><div class="rm-lab">Aktivitas terbaru</div></div>
+<div style="padding:16px 0;border-bottom:1px solid color-mix(in srgb,var(--color-text) 15%,transparent)"><div class="rm-lab">Body</div><div class="rm-mono">15 / 23 / 400</div></div>
+<div style="padding:16px 0 16px 24px;border-bottom:1px solid color-mix(in srgb,var(--color-text) 15%,transparent);border-left:1px solid var(--color-divider)"><div style="font-size:15px;line-height:1.55;max-width:44ch">Semua pemasukan dan pengeluaran dicatat lengkap dengan bukti. Anggota bisa membukanya kapan saja.</div></div>
+<div style="padding:16px 0;border-bottom:1px solid color-mix(in srgb,var(--color-text) 15%,transparent)"><div class="rm-lab">Body small</div><div class="rm-mono">13 / 19 / 400</div></div>
+<div style="padding:16px 0 16px 24px;border-bottom:1px solid color-mix(in srgb,var(--color-text) 15%,transparent);border-left:1px solid var(--color-divider)"><div style="font-size:13px">Dicatat oleh Rina · 24 Agustus, 19.40</div></div>
+<div style="padding:16px 0;border-bottom:1px solid color-mix(in srgb,var(--color-text) 15%,transparent)"><div class="rm-lab">Caption</div><div class="rm-mono">11 / 15 / 600 / +0.06em</div></div>
+<div style="padding:16px 0 16px 24px;border-bottom:1px solid color-mix(in srgb,var(--color-text) 15%,transparent);border-left:1px solid var(--color-divider)"><div style="font-size:11px;font-weight:600;letter-spacing:.06em">3 dari 4 tugas selesai</div></div>
+<div style="padding:16px 0;border-bottom:1px solid color-mix(in srgb,var(--color-text) 15%,transparent)"><div class="rm-lab">Numeric — saldo</div><div class="rm-mono">44 / 46 / 800 / tabular</div></div>
+<div style="padding:16px 0 16px 24px;border-bottom:1px solid color-mix(in srgb,var(--color-text) 15%,transparent);border-left:1px solid var(--color-divider)"><div class="rm-num-f" style="font-family:var(--font-heading);font-weight:800;font-size:44px;line-height:1.02;letter-spacing:-0.03em">Rp8.450.000</div></div>
+<div style="padding:16px 0;border-bottom:1px solid color-mix(in srgb,var(--color-text) 15%,transparent)"><div class="rm-lab">Numeric — ringkasan</div><div class="rm-mono">20 / 24 / 800 / tabular</div></div>
+<div style="padding:16px 0 16px 24px;border-bottom:1px solid color-mix(in srgb,var(--color-text) 15%,transparent);border-left:1px solid var(--color-divider)"><div class="rm-num-f" style="font-family:var(--font-heading);font-weight:800;font-size:20px">+Rp2.350.000</div></div>
+<div style="padding:16px 0;border-bottom:2px solid var(--color-divider)"><div class="rm-lab">Numeric — baris</div><div class="rm-mono">15 / 20 / 800 / tabular</div></div>
+<div style="padding:16px 0 16px 24px;border-bottom:2px solid var(--color-divider);border-left:1px solid var(--color-divider)"><div class="rm-num-f" style="font-family:var(--font-heading);font-weight:800;font-size:15px">−Rp350.000</div></div>
+</div>
+<div class="rm-grid2" style="margin-top:24px;gap:32px">
+<p style="font-size:13.5px;margin:0">Semua angka memakai <span class="rm-mono">font-variant-numeric: tabular-nums</span> agar kolom rupiah rata. Format: <span class="rm-mono">Rp</span> tanpa spasi, pemisah ribuan titik, tanpa desimal. Nilai di atas sepuluh juta tetap ditulis penuh — tidak ada singkatan "8,4jt" pada layar keuangan.</p>
+<p style="font-size:13.5px;margin:0">Archivo dimuat pada bobot 400, 600, dan 800. Bobot 600 hanya untuk caption dan label tab; judul selalu 800. Tidak ada italic dan tidak ada bobot 300.</p>
+</div>
+</section>
+
+<section class="rm-sec">
+<div class="rm-num">08 — Ruang, garis, elevasi</div>
+<h2 style="font-size:34px;margin:12px 0 24px">Sistem tata letak</h2>
+<div class="rm-grid2" style="gap:40px">
+<div>
+<div class="rm-lab" style="margin-bottom:12px">Skala ruang (basis 4)</div>
+<div style="display:flex;flex-direction:column;gap:8px">
+<div style="display:flex;align-items:center;gap:12px"><span class="rm-mono" style="width:64px">space-1</span><span style="height:14px;width:4px;background:var(--color-accent)"></span><span class="rm-mono">4px — jarak ikon ke label</span></div>
+<div style="display:flex;align-items:center;gap:12px"><span class="rm-mono" style="width:64px">space-2</span><span style="height:14px;width:8px;background:var(--color-accent)"></span><span class="rm-mono">8px — dalam komponen</span></div>
+<div style="display:flex;align-items:center;gap:12px"><span class="rm-mono" style="width:64px">space-3</span><span style="height:14px;width:12px;background:var(--color-accent)"></span><span class="rm-mono">12px — baris daftar</span></div>
+<div style="display:flex;align-items:center;gap:12px"><span class="rm-mono" style="width:64px">space-4</span><span style="height:14px;width:16px;background:var(--color-accent)"></span><span class="rm-mono">16px — margin layar</span></div>
+<div style="display:flex;align-items:center;gap:12px"><span class="rm-mono" style="width:64px">space-6</span><span style="height:14px;width:24px;background:var(--color-accent)"></span><span class="rm-mono">24px — antar blok</span></div>
+<div style="display:flex;align-items:center;gap:12px"><span class="rm-mono" style="width:64px">space-8</span><span style="height:14px;width:32px;background:var(--color-accent)"></span><span class="rm-mono">32px — antar bagian</span></div>
+<div style="display:flex;align-items:center;gap:12px"><span class="rm-mono" style="width:64px">space-12</span><span style="height:14px;width:48px;background:var(--color-accent)"></span><span class="rm-mono">48px — sebelum judul besar</span></div>
+</div>
+<div class="rm-lab" style="margin:28px 0 12px">Garis</div>
+<div style="border-top:2px solid var(--color-divider);padding-top:10px;font-size:13.5px;line-height:1.9">Pembatas bagian: 2px tinta 40%<br>Pembatas baris: 1px tinta 15%<br>Garis bawah aksen: 2px merah, lebar 40px, penanda judul bagian utama</div>
+</div>
+<div>
+<div class="rm-lab" style="margin-bottom:12px">Grid layar mobile</div>
+<table class="rm-t"><tbody>
+<tr><td style="width:52%">Lebar acuan</td><td class="rm-mono">390 × 844 (iPhone 14)</td></tr>
+<tr><td>Margin kiri/kanan</td><td class="rm-mono">16px</td></tr>
+<tr><td>Lebar konten</td><td class="rm-mono">358px</td></tr>
+<tr><td>Tinggi header</td><td class="rm-mono">56px + status bar</td></tr>
+<tr><td>Tinggi bottom tab</td><td class="rm-mono">56px + safe area</td></tr>
+<tr><td>Target sentuh minimum</td><td class="rm-mono">48 × 48px</td></tr>
+<tr><td>Tinggi baris daftar</td><td class="rm-mono">64px (satu baris) / 76px (dua baris)</td></tr>
+<tr><td>Radius</td><td class="rm-mono">0px — tanpa pengecualian</td></tr>
+</tbody></table>
+<div class="rm-lab" style="margin:28px 0 12px">Elevasi</div>
+<p style="font-size:13.5px;margin:0 0 12px">Di dalam layar tidak ada elevasi: pemisahan dilakukan oleh garis dan warna permukaan. Bayangan hanya untuk lapisan yang benar-benar mengambang di atas layar.</p>
+<div style="display:flex;gap:12px">
+<div style="flex:1;background:#fff;box-shadow:var(--shadow-sm);padding:12px;font-size:12px">shadow-sm<br><span class="text-muted">Toast</span></div>
+<div style="flex:1;background:#fff;box-shadow:var(--shadow-md);padding:12px;font-size:12px">shadow-md<br><span class="text-muted">Bottom sheet</span></div>
+<div style="flex:1;background:#fff;box-shadow:var(--shadow-lg);padding:12px;font-size:12px">shadow-lg<br><span class="text-muted">Dialog</span></div>
+</div>
+<div class="rm-lab" style="margin:28px 0 12px">Ikonografi</div>
+<p style="font-size:13.5px;margin:0">Lucide, stroke 1.75px, ukuran 20px di baris dan 24px di tab. Ikon selalu berpasangan dengan label teks; tidak ada tombol ikon tanpa label kecuali di header (kembali, cari, avatar).</p>
+</div>
+</div>
+</section>
+
+<section class="rm-sec">
+<div class="rm-num">09 — Arsitektur komponen</div>
+<h2 style="font-size:34px;margin:12px 0 8px">Pustaka komponen</h2>
+<p style="max-width:52ch;margin:0 0 32px">Spesimen di bawah dirender pada lebar konten sebenarnya (358px). Semua layar di dokumen 2 hanya menyusun ulang komponen ini — tidak ada layar yang mendesain ulang elemennya sendiri.</p>
+
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:40px 32px">
+
+<div>
+<div class="rm-lab" style="border-bottom:2px solid var(--color-divider);padding-bottom:8px;margin-bottom:16px">Button — 4 tingkat</div>
+<div style="display:flex;flex-direction:column;gap:10px">
+<button class="btn btn-primary btn-block" style="min-height:48px;padding-inline:16px;font-size:15px;margin-top:0">Bagikan ke WhatsApp</button>
+<button class="btn btn-secondary btn-block" style="min-height:48px;padding-inline:16px;font-size:15px;margin-top:0">Unduh PDF</button>
+<button class="btn btn-ghost" style="align-self:flex-start;font-size:14px">Lihat semua transaksi</button>
+<button class="btn btn-primary btn-block" style="min-height:48px;padding-inline:16px;font-size:15px;margin-top:0" disabled>Menunggu approval ketua</button>
+</div>
+<p style="font-size:12.5px;margin-top:12px;color:color-mix(in srgb,var(--color-text) 65%,transparent)">Label rata kiri, tinggi 48px, tanpa radius. Satu tombol merah per layar.</p>
+</div>
+
+<div>
+<div class="rm-lab" style="border-bottom:2px solid var(--color-divider);padding-bottom:8px;margin-bottom:16px">Badge / Tag</div>
+<div style="display:flex;flex-wrap:wrap;gap:8px">
+<span style="display:inline-flex;align-items:center;gap:5px;background:#201e1d;color:#f3f2f2;font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;padding:4px 8px">✓ Lunas</span>
+<span style="display:inline-flex;align-items:center;gap:5px;background:#ffe0d9;color:#7c1405;font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;padding:4px 8px">◷ Menunggu</span>
+<span style="display:inline-flex;align-items:center;gap:5px;background:transparent;border:1px solid var(--color-divider);font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;padding:3px 8px">Draf</span>
+<span style="display:inline-flex;align-items:center;gap:5px;background:var(--color-accent);color:#f3f2f2;font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;padding:4px 8px">Belum bayar</span>
+<span style="display:inline-flex;align-items:center;gap:5px;background:transparent;border:1px solid var(--color-divider);font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;padding:3px 8px">Panitia</span>
+</div>
+<p style="font-size:12.5px;margin-top:12px;color:color-mix(in srgb,var(--color-text) 65%,transparent)">Setiap tag membawa kata, bukan hanya warna. Ikon opsional di depan.</p>
+<div class="rm-lab" style="border-bottom:2px solid var(--color-divider);padding-bottom:8px;margin:24px 0 16px">Avatar</div>
+<div style="display:flex;gap:10px;align-items:flex-end">
+<span style="width:48px;height:48px;background:#201e1d;color:#f3f2f2;display:flex;align-items:center;justify-content:center;font-family:var(--font-heading);font-weight:800;font-size:17px">RA</span>
+<span style="width:32px;height:32px;background:#201e1d;color:#f3f2f2;display:flex;align-items:center;justify-content:center;font-family:var(--font-heading);font-weight:800;font-size:12px">DW</span>
+<span style="width:24px;height:24px;background:var(--color-accent);color:#f3f2f2;display:flex;align-items:center;justify-content:center;font-family:var(--font-heading);font-weight:800;font-size:10px">SN</span>
+<span style="display:flex;gap:2px"><span style="width:24px;height:24px;background:#201e1d;color:#f3f2f2;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800">AR</span><span style="width:24px;height:24px;background:#605d5d;color:#f3f2f2;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800">BP</span><span style="width:24px;height:24px;background:#d7d3d3;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800">+6</span></span>
+</div>
+<p style="font-size:12.5px;margin-top:12px;color:color-mix(in srgb,var(--color-text) 65%,transparent)">Kotak, bukan lingkaran. Inisial dua huruf.</p>
+</div>
+
+<div>
+<div class="rm-lab" style="border-bottom:2px solid var(--color-divider);padding-bottom:8px;margin-bottom:16px">Balance Display</div>
+<div style="background:#fff;padding:20px 16px">
+<div class="rm-lab">Kas Pemuda Karya Bakti</div>
+<div class="rm-num-f" style="font-family:var(--font-heading);font-weight:800;font-size:44px;line-height:1.02;letter-spacing:-0.03em;margin:10px 0 4px">Rp8.450.000</div>
+<div style="font-size:12.5px;color:color-mix(in srgb,var(--color-text) 60%,transparent);margin-bottom:16px">Diperbarui 24 Agu, 19.40</div>
+<div style="display:flex;border-top:2px solid var(--color-divider)">
+<div style="flex:1;padding:12px 12px 0 0"><div class="rm-lab">Masuk · Agustus</div><div class="rm-num-f" style="font-family:var(--font-heading);font-weight:800;font-size:20px;margin-top:4px">+Rp2.350.000</div></div>
+<div style="flex:1;padding:12px 0 0 12px;border-left:1px solid var(--color-divider)"><div class="rm-lab">Keluar · Agustus</div><div class="rm-num-f" style="font-family:var(--font-heading);font-weight:800;font-size:20px;margin-top:4px;color:#ae1800">−Rp1.850.000</div></div>
+</div>
+</div>
+</div>
+
+<div>
+<div class="rm-lab" style="border-bottom:2px solid var(--color-divider);padding-bottom:8px;margin-bottom:16px">Transaction Item</div>
+<div style="background:#fff">
+<div style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid color-mix(in srgb,var(--color-text) 15%,transparent)">
+<span style="width:32px;height:32px;border:1px solid var(--color-divider);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;flex:none">+</span>
+<div style="flex:1;min-width:0"><div style="font-family:var(--font-heading);font-weight:800;font-size:15px">Iuran anggota</div><div style="font-size:12.5px;color:color-mix(in srgb,var(--color-text) 60%,transparent)">24 Agu · Rina · Masuk</div></div>
+<div class="rm-num-f" style="font-family:var(--font-heading);font-weight:800;font-size:15px">+Rp500.000</div>
+</div>
+<div style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid color-mix(in srgb,var(--color-text) 15%,transparent)">
+<span style="width:32px;height:32px;border:1px solid var(--color-divider);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;flex:none;color:#ae1800">−</span>
+<div style="flex:1;min-width:0"><div style="font-family:var(--font-heading);font-weight:800;font-size:15px">Konsumsi kegiatan</div><div style="font-size:12.5px;color:color-mix(in srgb,var(--color-text) 60%,transparent)">23 Agu · Dwi · Keluar</div></div>
+<div class="rm-num-f" style="font-family:var(--font-heading);font-weight:800;font-size:15px;color:#ae1800">−Rp350.000</div>
+</div>
+<div style="display:flex;align-items:center;gap:12px;padding:14px 16px">
+<span style="width:32px;height:32px;border:1px solid var(--color-divider);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;flex:none">+</span>
+<div style="flex:1;min-width:0"><div style="font-family:var(--font-heading);font-weight:800;font-size:15px">Sponsor turnamen</div><div style="font-size:12.5px;color:color-mix(in srgb,var(--color-text) 60%,transparent);display:flex;align-items:center;gap:6px">22 Agu · Ketua<span style="background:#ffe0d9;color:#7c1405;font-size:10px;font-weight:800;letter-spacing:.05em;padding:2px 5px">MENUNGGU</span></div></div>
+<div class="rm-num-f" style="font-family:var(--font-heading);font-weight:800;font-size:15px">+Rp2.000.000</div>
+</div>
+</div>
+</div>
+
+<div>
+<div class="rm-lab" style="border-bottom:2px solid var(--color-divider);padding-bottom:8px;margin-bottom:16px">Event Item</div>
+<div style="background:#fff;padding:16px">
+<div style="display:flex;gap:14px">
+<div style="flex:none;width:52px;border-right:2px solid var(--color-accent);padding-right:10px"><div class="rm-lab" style="color:var(--color-accent)">Sab</div><div style="font-family:var(--font-heading);font-weight:800;font-size:28px;line-height:1">29</div><div style="font-size:11px;font-weight:600">Agu</div></div>
+<div style="flex:1;min-width:0">
+<div style="font-family:var(--font-heading);font-weight:800;font-size:17px;line-height:1.2">Turnamen Voli Antar RT</div>
+<div style="font-size:12.5px;color:color-mix(in srgb,var(--color-text) 65%,transparent);margin-top:4px">08.00–17.00 · Lapangan Kampung</div>
+<div style="display:flex;align-items:center;gap:8px;margin-top:10px"><span style="font-size:11px;font-weight:600;letter-spacing:.05em">PERSIAPAN 80%</span><span style="flex:1;height:6px;background:#d7d3d3;display:block"><span style="display:block;width:80%;height:6px;background:#201e1d"></span></span></div>
+<div style="display:flex;align-items:center;gap:6px;margin-top:10px"><span style="width:20px;height:20px;background:#201e1d;color:#f3f2f2;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800">AR</span><span style="width:20px;height:20px;background:#605d5d;color:#f3f2f2;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800">BP</span><span style="font-size:12px;color:color-mix(in srgb,var(--color-text) 65%,transparent)">8 panitia · 24 peserta</span></div>
+</div>
+</div>
+</div>
+</div>
+
+<div>
+<div class="rm-lab" style="border-bottom:2px solid var(--color-divider);padding-bottom:8px;margin-bottom:16px">Task Item</div>
+<div style="background:#fff">
+<div style="display:flex;align-items:flex-start;gap:12px;padding:14px 16px;border-bottom:1px solid color-mix(in srgb,var(--color-text) 15%,transparent)"><span style="width:20px;height:20px;background:#201e1d;color:#f3f2f2;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex:none;margin-top:2px">✓</span><div style="flex:1"><div style="font-family:var(--font-heading);font-weight:800;font-size:15px;text-decoration:line-through;opacity:.5">Sewa lapangan</div><div style="font-size:12px;color:color-mix(in srgb,var(--color-text) 60%,transparent)">Agus · selesai 20 Agu</div></div></div>
+<div style="display:flex;align-items:flex-start;gap:12px;padding:14px 16px"><span style="width:20px;height:20px;border:1.5px solid var(--color-divider);flex:none;margin-top:2px"></span><div style="flex:1"><div style="font-family:var(--font-heading);font-weight:800;font-size:15px">Dokumentasi</div><div style="font-size:12px;color:color-mix(in srgb,var(--color-text) 60%,transparent);display:flex;align-items:center;gap:6px">Sinta · tenggat 28 Agu <span style="background:var(--color-accent);color:#f3f2f2;font-size:10px;font-weight:800;padding:2px 5px">PENTING</span></div></div></div>
+</div>
+</div>
+
+<div>
+<div class="rm-lab" style="border-bottom:2px solid var(--color-divider);padding-bottom:8px;margin-bottom:16px">Segmented Control &amp; Tabs</div>
+<div style="display:flex;border:1px solid var(--color-divider);background:#fff;margin-bottom:16px">
+<span style="flex:1;text-align:center;padding:11px 8px;background:#201e1d;color:#f3f2f2;font-family:var(--font-heading);font-weight:800;font-size:13px">Bulan ini</span>
+<span style="flex:1;text-align:center;padding:11px 8px;font-family:var(--font-heading);font-weight:800;font-size:13px;border-left:1px solid var(--color-divider)">3 bulan</span>
+<span style="flex:1;text-align:center;padding:11px 8px;font-family:var(--font-heading);font-weight:800;font-size:13px;border-left:1px solid var(--color-divider)">Semua</span>
+</div>
+<div style="display:flex;gap:20px;border-bottom:2px solid var(--color-divider)">
+<span style="padding-bottom:10px;border-bottom:2px solid var(--color-accent);margin-bottom:-2px;font-family:var(--font-heading);font-weight:800;font-size:14px">Ringkasan</span>
+<span style="padding-bottom:10px;font-family:var(--font-heading);font-weight:800;font-size:14px;color:color-mix(in srgb,var(--color-text) 50%,transparent)">Tugas</span>
+<span style="padding-bottom:10px;font-family:var(--font-heading);font-weight:800;font-size:14px;color:color-mix(in srgb,var(--color-text) 50%,transparent)">Anggaran</span>
+</div>
+</div>
+
+<div>
+<div class="rm-lab" style="border-bottom:2px solid var(--color-divider);padding-bottom:8px;margin-bottom:16px">Report Summary</div>
+<div style="border:2px solid #201e1d;background:#fff">
+<div style="display:flex;justify-content:space-between;align-items:baseline;padding:14px 16px;border-bottom:2px solid #201e1d"><span style="font-family:var(--font-heading);font-weight:800;font-size:15px">Laporan Agustus 2026</span><span style="background:#201e1d;color:#f3f2f2;font-size:10px;font-weight:800;letter-spacing:.05em;padding:3px 6px">TERBIT</span></div>
+<div style="padding:4px 16px 12px">
+<div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid color-mix(in srgb,var(--color-text) 15%,transparent);font-size:13.5px"><span>Saldo awal</span><span class="rm-num-f" style="font-weight:800">Rp7.950.000</span></div>
+<div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid color-mix(in srgb,var(--color-text) 15%,transparent);font-size:13.5px"><span>Uang masuk</span><span class="rm-num-f" style="font-weight:800">+Rp2.350.000</span></div>
+<div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:2px solid #201e1d;font-size:13.5px"><span>Uang keluar</span><span class="rm-num-f" style="font-weight:800;color:#ae1800">−Rp1.850.000</span></div>
+<div style="display:flex;justify-content:space-between;align-items:baseline;padding:12px 0 0"><span style="font-family:var(--font-heading);font-weight:800;font-size:15px">Saldo akhir</span><span class="rm-num-f" style="font-family:var(--font-heading);font-weight:800;font-size:24px">Rp8.450.000</span></div>
+</div>
+</div>
+</div>
+
+<div>
+<div class="rm-lab" style="border-bottom:2px solid var(--color-divider);padding-bottom:8px;margin-bottom:16px">Progress Indicator</div>
+<div style="background:#fff;padding:16px">
+<div style="display:flex;justify-content:space-between;font-size:11px;font-weight:600;letter-spacing:.05em;margin-bottom:8px"><span>PERSIAPAN KEGIATAN</span><span>3 DARI 4 · 80%</span></div>
+<div style="display:flex;gap:2px;height:10px"><span style="flex:1;background:#201e1d"></span><span style="flex:1;background:#201e1d"></span><span style="flex:1;background:#201e1d"></span><span style="flex:1;background:#d7d3d3"></span></div>
+<div style="margin-top:16px"><div style="display:flex;justify-content:space-between;font-size:11px;font-weight:600;letter-spacing:.05em;margin-bottom:8px"><span>IURAN AGUSTUS TERKUMPUL</span><span>18 DARI 24</span></div><div style="height:10px;background:#d7d3d3"><span style="display:block;width:75%;height:10px;background:var(--color-accent)"></span></div></div>
+</div>
+<p style="font-size:12.5px;margin-top:12px;color:color-mix(in srgb,var(--color-text) 65%,transparent)">Batang bersegmen untuk hitungan tugas; batang penuh untuk persentase. Selalu disertai angka.</p>
+</div>
+
+<div>
+<div class="rm-lab" style="border-bottom:2px solid var(--color-divider);padding-bottom:8px;margin-bottom:16px">List Item &amp; Search</div>
+<div style="display:flex;align-items:center;gap:8px;border:1px solid var(--color-divider);background:#fff;padding:11px 12px;margin-bottom:12px;font-size:14px;color:color-mix(in srgb,var(--color-text) 50%,transparent)">⌕ Cari transaksi atau anggota</div>
+<div style="background:#fff">
+<div style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid color-mix(in srgb,var(--color-text) 15%,transparent)"><span style="width:36px;height:36px;background:#201e1d;color:#f3f2f2;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px">RA</span><div style="flex:1"><div style="font-family:var(--font-heading);font-weight:800;font-size:15px">Rina Andriani</div><div style="font-size:12.5px;color:color-mix(in srgb,var(--color-text) 60%,transparent)">Bendahara</div></div><span style="background:#201e1d;color:#f3f2f2;font-size:10px;font-weight:800;padding:3px 6px">✓ LUNAS</span></div>
+<div style="display:flex;align-items:center;gap:12px;padding:14px 16px"><span style="width:36px;height:36px;background:#605d5d;color:#f3f2f2;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px">BP</span><div style="flex:1"><div style="font-family:var(--font-heading);font-weight:800;font-size:15px">Bayu Pratama</div><div style="font-size:12.5px;color:color-mix(in srgb,var(--color-text) 60%,transparent)">Anggota</div></div><span style="background:var(--color-accent);color:#f3f2f2;font-size:10px;font-weight:800;padding:3px 6px">BELUM BAYAR</span></div>
+</div>
+</div>
+
+<div>
+<div class="rm-lab" style="border-bottom:2px solid var(--color-divider);padding-bottom:8px;margin-bottom:16px">Bottom Sheet</div>
+<div style="background:#fff;box-shadow:var(--shadow-md);border-top:2px solid #201e1d">
+<div style="padding:16px;border-bottom:1px solid color-mix(in srgb,var(--color-text) 15%,transparent);display:flex;justify-content:space-between;align-items:center"><span style="font-family:var(--font-heading);font-weight:800;font-size:17px">Catat transaksi</span><span style="font-size:18px;color:color-mix(in srgb,var(--color-text) 55%,transparent)">✕</span></div>
+<div style="padding:16px;display:flex;flex-direction:column;gap:12px">
+<div style="display:flex;border:1px solid var(--color-divider)"><span style="flex:1;text-align:center;padding:10px;background:#201e1d;color:#f3f2f2;font-weight:800;font-size:13px">+ Uang masuk</span><span style="flex:1;text-align:center;padding:10px;font-weight:800;font-size:13px;border-left:1px solid var(--color-divider)">− Uang keluar</span></div>
+<div class="field"><label>Jumlah</label><div class="input" style="display:flex;align-items:center;min-height:44px;font-weight:800">Rp500.000</div></div>
+<button class="btn btn-primary btn-block" style="min-height:48px;padding-inline:16px;font-size:15px;margin-top:0">Simpan transaksi</button>
+</div>
+</div>
+</div>
+
+<div>
+<div class="rm-lab" style="border-bottom:2px solid var(--color-divider);padding-bottom:8px;margin-bottom:16px">Dialog &amp; Toast</div>
+<div style="background:#fff;box-shadow:var(--shadow-lg);padding:20px 16px;margin-bottom:16px">
+<div style="font-family:var(--font-heading);font-weight:800;font-size:17px;margin-bottom:6px">Hapus transaksi ini?</div>
+<p style="font-size:13.5px;margin:0 0 16px">Catatan "Konsumsi kegiatan −Rp350.000" akan hilang dari laporan Agustus. Tindakan ini tercatat di riwayat.</p>
+<div style="display:flex;gap:8px"><button class="btn btn-secondary" style="flex:1;min-height:44px;justify-content:center">Batal</button><button class="btn btn-primary" style="flex:1;min-height:44px;justify-content:center">Hapus</button></div>
+</div>
+<div style="background:#201e1d;color:#f3f2f2;padding:14px 16px;display:flex;align-items:center;gap:10px;box-shadow:var(--shadow-sm)"><span style="font-weight:800">✓</span><span style="font-size:13.5px;flex:1">Tugas "Dokumentasi" selesai.</span><span style="font-size:12px;font-weight:800;color:#ff9783">URUNGKAN</span></div>
+</div>
+
+<div>
+<div class="rm-lab" style="border-bottom:2px solid var(--color-divider);padding-bottom:8px;margin-bottom:16px">Empty · Loading · Error</div>
+<div style="background:#fff;padding:24px 16px;text-align:left;border-bottom:1px solid var(--color-divider)">
+<div style="width:28px;height:28px;border:2px solid #201e1d;margin-bottom:12px"></div>
+<div style="font-family:var(--font-heading);font-weight:800;font-size:15px">Belum ada kegiatan bulan ini</div>
+<p style="font-size:13px;margin:4px 0 12px;color:color-mix(in srgb,var(--color-text) 65%,transparent)">Kegiatan yang dibuat pengurus akan muncul di sini.</p>
+<button class="btn btn-secondary" style="min-height:44px">Buat kegiatan</button>
+</div>
+<div style="background:#fff;padding:16px;border-bottom:1px solid var(--color-divider)">
+<div style="height:12px;width:45%;background:#e3e0e0;margin-bottom:10px"></div>
+<div style="height:32px;width:70%;background:#e3e0e0;margin-bottom:14px"></div>
+<div style="height:10px;width:100%;background:#e3e0e0;margin-bottom:6px"></div>
+<div style="height:10px;width:80%;background:#e3e0e0"></div>
+<div class="rm-lab" style="margin-top:12px">Skeleton — kedip 1.2s, tanpa gelombang</div>
+</div>
+<div style="background:#fff;padding:20px 16px;border-left:4px solid var(--color-accent)">
+<div style="font-family:var(--font-heading);font-weight:800;font-size:15px;color:#ae1800">Gagal memuat data kas</div>
+<p style="font-size:13px;margin:4px 0 12px">Periksa koneksi internet Anda, lalu coba lagi. Data terakhir ditampilkan per 24 Agu, 19.40.</p>
+<button class="btn btn-secondary" style="min-height:44px">Coba lagi</button>
+</div>
+</div>
+
+</div>
+
+<div class="rm-lab" style="margin:40px 0 12px">Inventaris lengkap &amp; status</div>
+<table class="rm-t">
+<thead><tr><th style="width:22%">Komponen</th><th style="width:26%">Varian</th><th style="width:30%">State</th><th>Catatan</th></tr></thead>
+<tbody>
+<tr><td>Button</td><td>Primary · Secondary · Ghost · Block · Icon</td><td>default · hover · pressed · disabled · loading</td><td>Tinggi 48px; label rata kiri pada varian block</td></tr>
+<tr><td>Icon Button</td><td>36 × 36 (header) · 48 × 48 (aksi)</td><td>default · pressed · disabled</td><td>Wajib <span class="rm-mono">accessibilityLabel</span></td></tr>
+<tr><td>Avatar</td><td>24 · 32 · 48 · grup bertumpuk</td><td>berinisial · berfoto · placeholder</td><td>Persegi</td></tr>
+<tr><td>Badge / Tag</td><td>solid · tint · outline · accent</td><td>statis</td><td>Selalu ada teks</td></tr>
+<tr><td>Card</td><td>flat · bergaris · terbalik (merah)</td><td>default · pressed</td><td>Tanpa bayangan di dalam layar</td></tr>
+<tr><td>List Item</td><td>1 baris · 2 baris · dengan avatar · dengan nilai</td><td>default · pressed · terpilih · disabled</td><td>Tinggi min. 64px</td></tr>
+<tr><td>Transaction Item</td><td>masuk · keluar · menunggu approval</td><td>default · pressed</td><td>Tanda +/− + tag + warna</td></tr>
+<tr><td>Event Item</td><td>ringkas · dengan progres · lampau</td><td>default · pressed</td><td>Blok tanggal kiri, garis merah 2px</td></tr>
+<tr><td>Task Item</td><td>belum · selesai · terlambat</td><td>default · pressed · toggling</td><td>Kotak centang persegi</td></tr>
+<tr><td>Balance Display</td><td>utama · ringkas (Home) · terbalik</td><td>default · loading · error</td><td>44px / 28px tabular</td></tr>
+<tr><td>Report Summary</td><td>bulanan · kegiatan</td><td>draf · terbit</td><td>Bingkai tinta 2px</td></tr>
+<tr><td>Progress Indicator</td><td>bersegmen · penuh · lingkaran kecil</td><td>0% · sebagian · 100%</td><td>Wajib disertai angka</td></tr>
+<tr><td>Bottom Sheet</td><td>aksi · formulir · pilihan</td><td>masuk 240ms · keluar 180ms</td><td>Tarik ke bawah untuk tutup</td></tr>
+<tr><td>Dialog</td><td>konfirmasi · merusak</td><td>default</td><td>Hanya untuk aksi tak terpulihkan</td></tr>
+<tr><td>Tabs / Segmented</td><td>tab dalam layar · segmented periode</td><td>aktif · non-aktif · pressed</td><td>Segmented maks. 3 opsi</td></tr>
+<tr><td>Empty / Loading / Error</td><td>per bagian &amp; per layar</td><td>—</td><td>Selalu ada satu aksi pemulihan</td></tr>
+<tr><td>Toast</td><td>netral · dengan urungkan</td><td>3 detik · 6 detik dengan aksi</td><td>Tinta penuh, di atas tab bar</td></tr>
+<tr><td>Search / Filter</td><td>bar cari · sheet filter</td><td>kosong · terisi · tanpa hasil</td><td>Filter aktif tampil sebagai tag</td></tr>
+<tr><td>Date Picker</td><td>tanggal tunggal · rentang bulan</td><td>default · terpilih · di luar rentang</td><td>Kalender persegi, tanpa lingkaran</td></tr>
+</tbody>
+</table>
+</section>
+
+<section class="rm-sec">
+<div class="rm-num">10 — Aksesibilitas</div>
+<h2 style="font-size:34px;margin:12px 0 24px">Ketentuan yang mengikat</h2>
+<div class="rm-grid3">
+<div class="rm-cell"><div class="rm-lab">Kontras</div><p style="font-size:13.5px;margin:8px 0 0">Teks isi ≥ 4.5:1, teks besar ≥ 3:1. Merah tidak dipakai untuk teks di bawah 19px — gunakan accent-700. Semua tag diperiksa pada kedua mode.</p></div>
+<div class="rm-cell"><div class="rm-lab">Sentuh</div><p style="font-size:13.5px;margin:8px 0 0">Minimum 48 × 48px termasuk area tak terlihat. Jarak antar target ≥ 8px. Kotak centang tugas punya area sentuh 48px meski terlihat 20px.</p></div>
+<div class="rm-cell"><div class="rm-lab">Status tanpa warna</div><p style="font-size:13.5px;margin:8px 0 0">Setiap status membawa teks. Uji: cetak layar dalam hitam-putih — semua informasi harus tetap terbaca.</p></div>
+<div class="rm-cell"><div class="rm-lab">Ukuran teks pengguna</div><p style="font-size:13.5px;margin:8px 0 0">Mendukung penskalaan hingga 200%. Tata letak baris beralih ke susunan vertikal di atas 130%. Angka saldo tidak pernah terpotong.</p></div>
+<div class="rm-cell"><div class="rm-lab">Pembaca layar</div><p style="font-size:13.5px;margin:8px 0 0">Nilai uang dibacakan lengkap: "Uang masuk, iuran anggota, lima ratus ribu rupiah, 24 Agustus". Bukan "+Rp500.000".</p></div>
+<div class="rm-cell"><div class="rm-lab">Gerak</div><p style="font-size:13.5px;margin:8px 0 0">Transisi ≤ 240ms, hanya opasitas dan translasi. Menghormati "kurangi gerak" — sheet muncul tanpa animasi.</p></div>
+</div>
+</section>
+
+<section class="rm-sec">
+<div class="rm-num">Selanjutnya</div>
+<h2 style="font-size:34px;margin:12px 0 16px;max-width:20ch">Dokumen 2 — sepuluh layar inti</h2>
+<p style="max-width:52ch;margin:0 0 20px">Splash · Login · Home · Kegiatan · Detail Kegiatan · Kas · Transparansi · Detail Laporan · Notifikasi · Profil &amp; Organisasi. Semuanya disusun dari komponen di bagian 09, dalam prototipe yang bisa ditekan, plus satu layar mode gelap.</p>
+<p style="font-size:13.5px;max-width:52ch;color:color-mix(in srgb,var(--color-text) 65%,transparent)">Setelah itu dokumen 3: catatan implementasi React Native — nama token, struktur navigasi, peta komponen, dan spesifikasi tiap layar untuk agen engineering.</p>
+</section>
+
+</div>
+</x-dc>
+</body>
+</html>

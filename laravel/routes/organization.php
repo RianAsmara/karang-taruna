@@ -8,6 +8,7 @@ use App\Http\Controllers\EventTaskController;
 use App\Http\Controllers\FinancialAccountController;
 use App\Http\Controllers\FinancialCategoryController;
 use App\Http\Controllers\FinancialReportController;
+use App\Http\Controllers\FinancialTransactionAttachmentController;
 use App\Http\Controllers\FinancialTransactionController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\MemberDueController;
@@ -67,6 +68,10 @@ Route::middleware(['auth', 'current-org'])->group(function () {
     Route::post('finance/transactions/{transaction}/submit', [FinancialTransactionController::class, 'submit'])->name('finance.transactions.submit');
     Route::post('finance/transactions/{transaction}/approve', [FinancialTransactionController::class, 'approve'])->name('finance.transactions.approve');
     Route::post('finance/transactions/{transaction}/reject', [FinancialTransactionController::class, 'reject'])->name('finance.transactions.reject');
+
+    Route::post('finance/transactions/{transaction}/attachments', [FinancialTransactionAttachmentController::class, 'store'])->name('finance.transactions.attachments.store');
+    Route::delete('finance/transactions/{transaction}/attachments/{attachment}', [FinancialTransactionAttachmentController::class, 'destroy'])->name('finance.transactions.attachments.destroy');
+    Route::get('finance/transactions/{transaction}/attachments/{attachment}/download', [FinancialTransactionAttachmentController::class, 'download'])->name('finance.transactions.attachments.download');
 
     Route::get('finance/dues', [MemberDueController::class, 'index'])->name('finance.dues.index');
     Route::post('finance/dues', [MemberDueController::class, 'store'])->name('finance.dues.store');

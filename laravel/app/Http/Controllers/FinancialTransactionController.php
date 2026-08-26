@@ -87,6 +87,7 @@ class FinancialTransactionController extends Controller
             'event:id,title',
             'creator:id,name',
             'reviewer:id,name',
+            'attachments.uploader:id,name',
         ]);
 
         return Inertia::render('finance/transactions/show', [
@@ -106,11 +107,21 @@ class FinancialTransactionController extends Controller
                 'creatorName' => $transaction->creator->name,
                 'reviewerName' => $transaction->reviewer?->name,
                 'reviewedAt' => $transaction->reviewed_at?->toIso8601String(),
+                'attachments' => $transaction->attachments->map(fn ($attachment) => [
+                    'id' => $attachment->id,
+                    'originalName' => $attachment->original_name,
+                    'mimeType' => $attachment->mime_type,
+                    'sizeBytes' => $attachment->size_bytes,
+                    'uploaderName' => $attachment->uploader->name,
+                    'uploadedAt' => $attachment->created_at->toIso8601String(),
+                    'downloadUrl' => route('finance.transactions.attachments.download', [$transaction, $attachment]),
+                ]),
             ],
             'canEdit' => Auth::user()->can('update', $transaction),
             'canDelete' => Auth::user()->can('delete', $transaction),
             'canSubmit' => Auth::user()->can('submit', $transaction),
             'canReview' => Auth::user()->can('review', $transaction),
+            'canManageEvidence' => Auth::user()->can('manageEvidence', $transaction),
         ]);
     }
 

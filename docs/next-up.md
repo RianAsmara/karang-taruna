@@ -670,6 +670,58 @@ after each area rather than batched at the end.
 below): Attendance, Activity points, the vote-creation flow, and Phase
 8 hardening.
 
+## 2026-08-27 (later still) — Mobile Step 8 built: Voting; Step 7 deferred
+
+Continued the mobile build order. **Step 8 (Voting, screens 26-28)**
+needed zero backend changes — the API (built 2026-08-26) already covers
+list/detail/respond/results exactly as the screens need, and unlike
+vote *creation* (still an open product decision), the read-only +
+respond-only scope of these three screens was never blocked on it.
+Built `VotingScreen` (26, open-then-closed grouping — backend already
+sorts this), `VotingDetailScreen` (27, disclosure block, checkbox/radio
+options via the existing `VoteOption` component, confirm dialog, the
+"vote closes between selecting and confirming" edge case routing to
+results with the spec's exact message), `VotingResultScreen` (28,
+winner block, result-mode `VoteOption` rows, anonymity restatement,
+pengurus-only breakdown, "Bagikan hasil"). Routed as `voting/index`,
+`voting/[id]/index`, `voting/[id]/hasil` (nested dynamic segment,
+mirroring the existing top-level-stack-per-domain pattern), wired into
+Profil's "Organisasi saya" section per `mobile-ux.md`'s exact
+menu order. `tsc`/`expo lint` clean — a real lint catch and fix along
+the way: syncing `selected` from server data via `useEffect` +
+`setState` tripped `react-hooks/set-state-in-effect`; fixed to the
+render-time "adjust state" pattern, keyed on the vote's `id` so a
+background refetch mid-edit can't silently wipe an in-progress
+selection. **Not device-verified this session** (no physical device
+connected). One deliberate simplification: the closed-votes list
+doesn't show each vote's winning option as its subtitle (screen 26's
+literal spec) — that needs a separate `results` call per vote with no
+batch endpoint to avoid N+1 fetches, so the list shows only a "Ditutup"
+tag instead; and the "Urungkan" (undo) toast action on submit (screen
+27) wasn't wired — there's no API capability to revert to "no vote at
+all" once submitted (only replace), so only a plain confirmation toast
+shows, matching the same not-yet-wired state `SharePreview`'s
+`onShare`/`onCopy` already have elsewhere in this app.
+
+**Step 7 (Buat Organisasi) — scoped and then deferred.** Backend
+gap-check: `POST /api/v1/organizations` already exists and reuses
+`CreateOrganizationAction`, but only accepts `name` — screen 33's
+4-step spec (name+type, kelurahan/kota, an invite step reusing the
+already-deferred screen 15, then confirmation) needs schema this app
+doesn't have. Asked the user, who chose the minimal scope (name only,
+no new columns). But scoping the screen itself surfaced a deeper block
+that made building it pointless right now: **neither of the spec's two
+entry points actually work.** Splash's "Buat organisasi baru" is for a
+signed-out user, and mobile has no signup/register screen at all (login
+only, against an existing account) — that's a whole separate feature,
+not part of this step. Profil's "org switcher" entry point doesn't
+exist either — mobile has no switch-organization UI anywhere, and
+`useCurrentOrganization()` assumes exactly one org per user throughout
+the app, so even a signed-in user creating a second org would have no
+way to actually reach or use it afterward. Asked again; user chose to
+defer Step 7 entirely, same treatment as Undang Anggota — nothing built,
+both entry-point buttons stay pointed at their existing honest stubs.
+
 ## 1. Attendance domain — entirely unbuilt, spans all three surfaces
 
 No `Attendance`/`AttendanceSession` migration, model, policy, or
@@ -686,7 +738,20 @@ opens an honest "sedang disiapkan" stub rather than a fake confirmation
 mobile screen/flow, not just an API to wire. Largest single item on
 this list; ask before starting the mobile-design half of it.
 
-## 2. Activity points and the vote-creation flow
+## 2. Mobile: no signup, no org-switching, no Buat Organisasi (Step 7)
+
+Mobile has no register/signup screen (login only, against an account
+that already exists) and no "switch organization" UI, even though
+`mobile-ux.md`'s own "behind the avatar" menu lists "Ganti organisasi."
+Found while scoping Step 7 (screen 33, `mobile-screens.md`) — both of
+its spec'd entry points (anonymous Splash CTA, Profil's org switcher)
+depend on one of these two missing pieces, so the create-organization
+screen itself was never built; deferred alongside Undang Anggota rather
+than built with no way to reach it. `POST /api/v1/organizations` (name
+only) is ready and unblocked whenever an entry point exists — see the
+2026-08-27 dated entry above for the full reasoning.
+
+## 3. Activity points and the vote-creation flow
 
 **Activity points** — no models/migrations for this at all yet (master
 prompt's domain model list). **Vote creation** — Voting's web and API
@@ -694,7 +759,7 @@ surfaces are both read-only by design (list/detail/respond/results);
 "who may create a vote" is left as an explicitly open product decision
 in `mobile-ux.md`, not something to invent unprompted.
 
-## 3. Phase 8 hardening — not started
+## 4. Phase 8 hardening — not started
 
 Performance/query optimization, caching, security hardening beyond
 what's in place, deeper observability (structured logging exists, no

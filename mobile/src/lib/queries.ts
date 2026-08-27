@@ -780,3 +780,82 @@ export function useUpdateSponsorContributionStatus(id: string) {
     },
   });
 }
+
+export interface ApiVoteOption {
+  id: string;
+  label: string;
+}
+
+export interface ApiVote {
+  id: string;
+  question: string;
+  description: string | null;
+  anonymous: boolean;
+  editable: boolean;
+  maxSelections: number;
+  startAt: string;
+  endAt: string;
+  isOpen: boolean;
+  isEligible: boolean;
+  hasResponded: boolean;
+  participationCount: number;
+  eligibleCount: number;
+  options: ApiVoteOption[];
+  myOptionIds: string[];
+  event?: { id: string; title: string } | null;
+}
+
+export interface ApiVoteResultOption {
+  id: string;
+  label: string;
+  count: number;
+  percent: number | null;
+}
+
+export interface ApiVoteResult {
+  id: string;
+  question: string;
+  anonymous: boolean;
+  closedAt: string;
+  participationCount: number;
+  eligibleCount: number;
+  options: ApiVoteResultOption[];
+  winningOptionIds: string[];
+  isTie: boolean;
+  breakdown: { id: string; label: string; members: { id: string; name: string }[] }[] | null;
+}
+
+export function useVotes() {
+  return useQuery({
+    queryKey: ['votes'],
+    queryFn: () => apiFetch<Collection<ApiVote>>('/votes'),
+  });
+}
+
+export function useVote(id: string) {
+  return useQuery({
+    queryKey: ['vote', id],
+    queryFn: () => apiFetch<{ data: ApiVote }>(`/votes/${id}`),
+    enabled: Boolean(id),
+  });
+}
+
+export function useVoteResults(id: string, enabled: boolean) {
+  return useQuery({
+    queryKey: ['vote', id, 'results'],
+    queryFn: () => apiFetch<{ data: ApiVoteResult }>(`/votes/${id}/results`),
+    enabled: Boolean(id) && enabled,
+  });
+}
+
+export function useSubmitVoteResponse(id: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (optionIds: string[]) => apiFetch<{ data: ApiVote }>(`/votes/${id}/responses`, { method: 'POST', body: { option_ids: optionIds } }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['votes'] });
+      queryClient.invalidateQueries({ queryKey: ['vote', id] });
+      queryClient.invalidateQueries({ queryKey: ['vote', id, 'results'] });
+    },
+  });
+}

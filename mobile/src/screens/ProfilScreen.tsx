@@ -136,7 +136,8 @@ export function ProfilScreen() {
             onPress={() => router.push('/anggota')}
           />
           <ListItem title="Inventaris" onPress={() => router.push('/inventaris')} />
-          <ListItem title="Dokumen" onPress={() => router.push('/dokumen')} isLast />
+          <ListItem title="Dokumen" onPress={() => router.push('/dokumen')} />
+          <ListItem title="Voting" onPress={() => router.push('/voting')} isLast />
         </View>
 
         <SectionHeader title="Akun" />

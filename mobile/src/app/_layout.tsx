@@ -39,6 +39,7 @@ function RootStack() {
       <Stack.Screen name="inventaris" />
       <Stack.Screen name="dokumen" />
       <Stack.Screen name="sponsor" />
+      <Stack.Screen name="voting" />
       <Stack.Screen name="pencarian" />
       <Stack.Screen name="iuran-saya" options={{ presentation: "modal" }} />
       <Stack.Screen name="belum-tersedia/[topic]" />

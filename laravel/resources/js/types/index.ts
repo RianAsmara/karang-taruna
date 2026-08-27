@@ -21,7 +21,7 @@ export interface NavItem {
     isActive?: boolean;
 }
 
-export type OrganizationRole = 'OWNER' | 'ADMIN' | 'TREASURER' | 'COMMITTEE' | 'MEMBER' | 'RESIDENT';
+export type OrganizationRole = 'KETUA' | 'BENDAHARA' | 'SEKRETARIS' | 'ANGGOTA';
 
 export interface CurrentOrganization {
     id: string;
@@ -46,6 +46,7 @@ export interface User {
     email: string;
     avatar?: string;
     email_verified_at: string | null;
+    is_superadmin?: boolean;
     created_at: string;
     updated_at: string;
     [key: string]: unknown; // This allows for additional properties...

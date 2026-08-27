@@ -20,7 +20,7 @@ class EventPolicy
 
     public function create(User $user, Organization $organization): bool
     {
-        return $user->isOrganizerOf($organization);
+        return $user->isPengurusOf($organization);
     }
 
     public function update(User $user, Event $event): bool
@@ -30,6 +30,6 @@ class EventPolicy
 
     public function delete(User $user, Event $event): bool
     {
-        return $user->isOrganizerOf($event->organization);
+        return $user->isChairOf($event->organization);
     }
 }

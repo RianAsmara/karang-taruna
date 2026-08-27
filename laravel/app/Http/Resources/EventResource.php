@@ -18,6 +18,8 @@ class EventResource extends JsonResource
             'id' => $this->id,
             'title' => $this->title,
             'description' => $this->description,
+            'category' => $this->category?->value,
+            'categoryLabel' => $this->category?->label(),
             'location' => $this->location,
             'startAt' => $this->start_at->toIso8601String(),
             'endAt' => $this->end_at?->toIso8601String(),
@@ -29,6 +31,11 @@ class EventResource extends JsonResource
                 'id' => $this->pic->id,
                 'name' => $this->pic->user->name,
             ] : null),
+            'sponsor' => $this->whenLoaded('sponsor', fn () => $this->sponsor ? [
+                'id' => $this->sponsor->id,
+                'name' => $this->sponsor->name,
+            ] : null),
+            'budgetAmount' => $this->whenLoaded('budgetTransaction', fn () => $this->budgetTransaction?->amount),
             'tasks' => EventTaskResource::collection($this->whenLoaded('tasks')),
             'committees' => $this->whenLoaded('committees', fn () => $this->committees->map(fn ($c) => [
                 'id' => $c->id,

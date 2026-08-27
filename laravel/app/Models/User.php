@@ -26,6 +26,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'phone',
+        'show_phone_to_members',
     ];
 
     /**
@@ -48,6 +50,8 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'show_phone_to_members' => 'boolean',
+            'is_superadmin' => 'boolean',
         ];
     }
 
@@ -86,29 +90,71 @@ class User extends Authenticatable
     }
 
     /**
-     * OWNER/ADMIN — the roles that manage organization structure (members,
-     * events, announcements) rather than day-to-day bookkeeping.
+     * KETUA only — the sole chair, one per organization. Manages
+     * organization structure (members, roles, events, announcements) and
+     * is the only role that inherits every other role's abilities.
      */
-    public function isOrganizerOf(Organization $organization): bool
+    public function isChairOf(Organization $organization): bool
     {
-        return in_array($this->roleIn($organization), [
-            OrganizationRole::Owner,
-            OrganizationRole::Admin,
-        ], true);
+        return $this->roleIn($organization) === OrganizationRole::Ketua;
     }
 
     /**
-     * OWNER/ADMIN/TREASURER — the roles that may create and manage
-     * day-to-day financial records (accounts, categories, transactions,
-     * dues). Approval of a PENDING transaction is still restricted to
-     * isOrganizerOf() — see FinancialTransactionPolicy.
+     * KETUA/BENDAHARA — the roles that may create and manage day-to-day
+     * financial records (accounts, categories, transactions, dues). The
+     * chair inherits treasurer abilities so a small organization where one
+     * person holds both isn't blocked — see mobile-ux.md's report-approval
+     * edge case. Approval of a PENDING transaction is still restricted to
+     * isChairOf() — see FinancialTransactionPolicy.
      */
     public function isTreasurerOf(Organization $organization): bool
     {
         return in_array($this->roleIn($organization), [
-            OrganizationRole::Owner,
-            OrganizationRole::Admin,
-            OrganizationRole::Treasurer,
+            OrganizationRole::Ketua,
+            OrganizationRole::Bendahara,
         ], true);
+    }
+
+    /**
+     * KETUA/SEKRETARIS — documents, announcements, member invitations.
+     */
+    public function isSecretaryOf(Organization $organization): bool
+    {
+        return in_array($this->roleIn($organization), [
+            OrganizationRole::Ketua,
+            OrganizationRole::Sekretaris,
+        ], true);
+    }
+
+    /**
+     * Any role except ANGGOTA — "Pengurus" is the collective UI word for
+     * anyone holding a management role (mobile-design-system.md § Roles).
+     * Used where a feature is gated to "any organizer" without being
+     * specific to treasury or secretarial work (inventory, sponsors).
+     */
+    public function isPengurusOf(Organization $organization): bool
+    {
+        $role = $this->roleIn($organization);
+
+        return $role !== null && $role !== OrganizationRole::Anggota;
+    }
+
+    /**
+     * This user's phone number, as visible to $viewer within $organization —
+     * always visible to pengurus, opt-in only for an ordinary member
+     * viewing another ordinary member. See mobile-ux.md § Open product
+     * decisions ("the design assumes opt-in").
+     */
+    public function phoneVisibleTo(User $viewer, Organization $organization): ?string
+    {
+        if ($this->phone === null) {
+            return null;
+        }
+
+        if ($viewer->id === $this->id || $viewer->isPengurusOf($organization) || $this->show_phone_to_members) {
+            return $this->phone;
+        }
+
+        return null;
     }
 }

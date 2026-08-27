@@ -25,7 +25,7 @@ class ReportPdfTest extends TestCase
     public function test_a_member_can_download_a_visible_reports_pdf()
     {
         $organization = Organization::factory()->create();
-        $member = $this->memberWithRole($organization, OrganizationRole::Member);
+        $member = $this->memberWithRole($organization, OrganizationRole::Anggota);
         $report = FinancialReport::factory()->published()->create([
             'organization_id' => $organization->id,
             'visibility' => FinancialReportVisibility::Members,
@@ -59,7 +59,7 @@ class ReportPdfTest extends TestCase
         $outsider = User::factory()->create();
         $outsider->memberships()->create([
             'organization_id' => Organization::factory()->create()->id,
-            'role' => OrganizationRole::Owner,
+            'role' => OrganizationRole::Ketua,
         ]);
 
         $this->actingAs($outsider)->get("/reports/{$report->id}/pdf")->assertForbidden();

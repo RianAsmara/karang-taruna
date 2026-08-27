@@ -7,6 +7,7 @@ import { Card } from '@/components/Card';
 import { EmptyState } from '@/components/EmptyState';
 import { ErrorState } from '@/components/ErrorState';
 import { InfoSheet } from '@/components/InfoSheet';
+import { ListItem } from '@/components/ListItem';
 import { Progress } from '@/components/Progress';
 import { ScreenHeader } from '@/components/ScreenHeader';
 import { SectionHeader } from '@/components/SectionHeader';
@@ -140,23 +141,28 @@ export function KasScreen() {
         )}
 
         <SectionHeader title={`Iuran ${currentMonthLabel()}`} />
-        <View style={styles.duesBlock}>
-          <View style={styles.duesCaptionRow}>
-            <Text style={styles.duesCaption}>
-              {monthlyDues.paid} DARI {monthlyDues.total} ANGGOTA
-            </Text>
-            <Text style={styles.duesAmount}>{formatRupiah(monthlyDues.amount)}</Text>
+        <Pressable onPress={() => router.push('/kas/iuran')} hitSlop={theme.hitSlop} android_ripple={null} accessibilityRole="button">
+          <View style={styles.duesBlock}>
+            <View style={styles.duesCaptionRow}>
+              <Text style={styles.duesCaption}>
+                {monthlyDues.paid} DARI {monthlyDues.total} ANGGOTA
+              </Text>
+              <Text style={styles.duesAmount}>{formatRupiah(monthlyDues.amount)}</Text>
+            </View>
+            <Progress
+              variant="bar"
+              tone="accent"
+              value={monthlyDues.paid}
+              total={monthlyDues.total || 1}
+              label={`${monthlyDues.paid} dari ${monthlyDues.total} anggota sudah membayar iuran`}
+              showLabel={false}
+            />
+            <Text style={styles.duesLink}>Lihat status iuran per anggota →</Text>
           </View>
-          <Progress
-            variant="bar"
-            tone="accent"
-            value={monthlyDues.paid}
-            total={monthlyDues.total || 1}
-            label={`${monthlyDues.paid} dari ${monthlyDues.total} anggota sudah membayar iuran`}
-            showLabel={false}
-          />
-          <Text style={styles.duesLink}>Lihat status iuran per anggota →</Text>
-        </View>
+        </Pressable>
+
+        <View style={styles.spacer} />
+        <ListItem title="Sponsor" trailing={<Text style={styles.trailingArrow}>→</Text>} onPress={() => router.push('/sponsor')} isLast />
       </ScrollView>
 
       <InfoSheet
@@ -186,5 +192,6 @@ function makeStyles(theme: Theme) {
     duesCaption: { fontFamily: 'Archivo_600SemiBold', fontSize: 11, letterSpacing: 0.7, color: theme.color.textMuted },
     duesAmount: { fontFamily: 'Archivo_800ExtraBold', fontSize: 20, color: theme.color.text, fontVariant: ['tabular-nums'] },
     duesLink: { fontFamily: 'Archivo_800ExtraBold', fontSize: 13, color: theme.color.accent, marginTop: theme.space.xs },
+    trailingArrow: { fontFamily: 'Archivo_800ExtraBold', fontSize: 15, color: theme.color.textFaint },
   });
 }

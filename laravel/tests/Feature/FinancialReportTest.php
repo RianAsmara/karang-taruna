@@ -41,7 +41,7 @@ class FinancialReportTest extends TestCase
     public function test_treasurer_can_generate_a_draft_report_with_computed_figures()
     {
         $organization = Organization::factory()->create();
-        $treasurer = $this->memberWithRole($organization, OrganizationRole::Treasurer);
+        $treasurer = $this->memberWithRole($organization, OrganizationRole::Bendahara);
 
         $this->approvedTransaction($organization, $treasurer, TransactionType::Income, 1_000_000, '2026-08-05');
         $this->approvedTransaction($organization, $treasurer, TransactionType::Expense, 300_000, '2026-08-10');
@@ -69,7 +69,7 @@ class FinancialReportTest extends TestCase
     public function test_a_plain_member_cannot_generate_a_report()
     {
         $organization = Organization::factory()->create();
-        $member = $this->memberWithRole($organization, OrganizationRole::Member);
+        $member = $this->memberWithRole($organization, OrganizationRole::Anggota);
 
         $this->actingAs($member)
             ->post('/finance/reports', [
@@ -85,8 +85,8 @@ class FinancialReportTest extends TestCase
     public function test_owner_can_publish_but_treasurer_cannot()
     {
         $organization = Organization::factory()->create();
-        $owner = $this->memberWithRole($organization, OrganizationRole::Owner);
-        $treasurer = $this->memberWithRole($organization, OrganizationRole::Treasurer);
+        $owner = $this->memberWithRole($organization, OrganizationRole::Ketua);
+        $treasurer = $this->memberWithRole($organization, OrganizationRole::Bendahara);
 
         $report = FinancialReport::factory()->create([
             'organization_id' => $organization->id,
@@ -110,8 +110,8 @@ class FinancialReportTest extends TestCase
     public function test_publishing_recomputes_figures_from_transactions_approved_after_the_draft_was_made()
     {
         $organization = Organization::factory()->create();
-        $owner = $this->memberWithRole($organization, OrganizationRole::Owner);
-        $treasurer = $this->memberWithRole($organization, OrganizationRole::Treasurer);
+        $owner = $this->memberWithRole($organization, OrganizationRole::Ketua);
+        $treasurer = $this->memberWithRole($organization, OrganizationRole::Bendahara);
 
         $report = FinancialReport::factory()->create([
             'organization_id' => $organization->id,
@@ -132,7 +132,7 @@ class FinancialReportTest extends TestCase
     public function test_a_published_report_cannot_be_published_again()
     {
         $organization = Organization::factory()->create();
-        $owner = $this->memberWithRole($organization, OrganizationRole::Owner);
+        $owner = $this->memberWithRole($organization, OrganizationRole::Ketua);
         $report = FinancialReport::factory()->published()->create(['organization_id' => $organization->id]);
 
         $this->actingAs($owner)
@@ -143,7 +143,7 @@ class FinancialReportTest extends TestCase
     public function test_owner_can_archive_a_published_report()
     {
         $organization = Organization::factory()->create();
-        $owner = $this->memberWithRole($organization, OrganizationRole::Owner);
+        $owner = $this->memberWithRole($organization, OrganizationRole::Ketua);
         $report = FinancialReport::factory()->published()->create(['organization_id' => $organization->id]);
 
         $this->actingAs($owner)->post("/reports/{$report->id}/archive")->assertRedirect();
@@ -154,8 +154,8 @@ class FinancialReportTest extends TestCase
     public function test_revising_a_published_report_snapshots_history_and_recomputes_figures()
     {
         $organization = Organization::factory()->create();
-        $owner = $this->memberWithRole($organization, OrganizationRole::Owner);
-        $treasurer = $this->memberWithRole($organization, OrganizationRole::Treasurer);
+        $owner = $this->memberWithRole($organization, OrganizationRole::Ketua);
+        $treasurer = $this->memberWithRole($organization, OrganizationRole::Bendahara);
 
         $report = FinancialReport::factory()->published()->create([
             'organization_id' => $organization->id,
@@ -184,7 +184,7 @@ class FinancialReportTest extends TestCase
     public function test_a_draft_report_can_be_deleted_but_a_published_one_cannot()
     {
         $organization = Organization::factory()->create();
-        $treasurer = $this->memberWithRole($organization, OrganizationRole::Treasurer);
+        $treasurer = $this->memberWithRole($organization, OrganizationRole::Bendahara);
 
         $draft = FinancialReport::factory()->create(['organization_id' => $organization->id, 'created_by' => $treasurer->id]);
         $published = FinancialReport::factory()->published()->create(['organization_id' => $organization->id]);
@@ -198,8 +198,8 @@ class FinancialReportTest extends TestCase
     public function test_a_draft_report_is_only_visible_to_the_treasury_team()
     {
         $organization = Organization::factory()->create();
-        $treasurer = $this->memberWithRole($organization, OrganizationRole::Treasurer);
-        $member = $this->memberWithRole($organization, OrganizationRole::Member);
+        $treasurer = $this->memberWithRole($organization, OrganizationRole::Bendahara);
+        $member = $this->memberWithRole($organization, OrganizationRole::Anggota);
 
         $draft = FinancialReport::factory()->create([
             'organization_id' => $organization->id,
@@ -211,15 +211,15 @@ class FinancialReportTest extends TestCase
         $this->actingAs($member)->get("/reports/{$draft->id}")->assertForbidden();
     }
 
-    public function test_a_private_report_is_only_visible_to_owner_and_admin()
+    public function test_a_private_report_is_only_visible_to_the_chair()
     {
         $organization = Organization::factory()->create();
-        $admin = $this->memberWithRole($organization, OrganizationRole::Admin);
-        $member = $this->memberWithRole($organization, OrganizationRole::Member);
+        $chair = $this->memberWithRole($organization, OrganizationRole::Ketua);
+        $member = $this->memberWithRole($organization, OrganizationRole::Anggota);
 
         $report = FinancialReport::factory()->published()->privateVisibility()->create(['organization_id' => $organization->id]);
 
-        $this->actingAs($admin)->get("/reports/{$report->id}")->assertOk();
+        $this->actingAs($chair)->get("/reports/{$report->id}")->assertOk();
         $this->actingAs($member)->get("/reports/{$report->id}")->assertForbidden();
     }
 
@@ -248,7 +248,7 @@ class FinancialReportTest extends TestCase
         $outsider = User::factory()->create();
         $outsider->memberships()->create([
             'organization_id' => Organization::factory()->create()->id,
-            'role' => OrganizationRole::Owner,
+            'role' => OrganizationRole::Ketua,
         ]);
 
         $this->actingAs($outsider)->get("/reports/{$report->id}")->assertForbidden();
@@ -257,8 +257,8 @@ class FinancialReportTest extends TestCase
     public function test_generating_publishing_and_revising_a_report_writes_an_audit_trail()
     {
         $organization = Organization::factory()->create();
-        $owner = $this->memberWithRole($organization, OrganizationRole::Owner);
-        $treasurer = $this->memberWithRole($organization, OrganizationRole::Treasurer);
+        $owner = $this->memberWithRole($organization, OrganizationRole::Ketua);
+        $treasurer = $this->memberWithRole($organization, OrganizationRole::Bendahara);
 
         $this->actingAs($treasurer)->post('/finance/reports', [
             'title' => 'Laporan Agustus',

@@ -17,9 +17,11 @@ import { formatDateShort, formatRupiah, formatSigned } from '@/theme/format';
 import { useTheme } from '@/theme/ThemeProvider';
 import type { Theme } from '@/theme/theme';
 
-const STATUS_TAG: Record<string, { tone: 'solid' | 'outline'; label: string }> = {
+const STATUS_TAG: Record<string, { tone: 'solid' | 'outline' | 'tint'; label: string }> = {
   PUBLISHED: { tone: 'solid', label: '✓ TERBIT' },
   DRAFT: { tone: 'outline', label: 'DRAF' },
+  DIPERIKSA: { tone: 'outline', label: 'DIPERIKSA' },
+  DISETUJUI: { tone: 'tint', label: 'DISETUJUI' },
   ARCHIVED: { tone: 'outline', label: 'ARSIP' },
 };
 

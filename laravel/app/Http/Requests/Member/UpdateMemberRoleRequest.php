@@ -14,7 +14,7 @@ class UpdateMemberRoleRequest extends FormRequest
         /** @var OrganizationMembership $membership */
         $membership = $this->route('member');
 
-        if ($membership->role === OrganizationRole::Owner) {
+        if ($membership->role === OrganizationRole::Ketua) {
             return false;
         }
 
@@ -22,6 +22,10 @@ class UpdateMemberRoleRequest extends FormRequest
     }
 
     /**
+     * KETUA is excluded — the chair role changes only via a dedicated
+     * transfer (not built yet), never this general-purpose endpoint, so
+     * the organization can never end up with zero or more than one chair.
+     *
      * @return array<string, mixed>
      */
     public function rules(): array
@@ -29,7 +33,7 @@ class UpdateMemberRoleRequest extends FormRequest
         return [
             'role' => [
                 'required',
-                Rule::enum(OrganizationRole::class)->except(OrganizationRole::Owner),
+                Rule::enum(OrganizationRole::class)->except(OrganizationRole::Ketua),
             ],
         ];
     }

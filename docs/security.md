@@ -37,9 +37,11 @@
   `approveTransaction`, `manageMembers`, `manageEvent`,
   `manageOrganization`, etc.) — not inline `$user->role === 'admin'`
   checks scattered through the codebase.
-- Initial roles: `OWNER`, `ADMIN`, `TREASURER`, `COMMITTEE`, `MEMBER`,
-  `RESIDENT` (see `domain-model.md`). Policies map abilities to roles per
-  organization membership, not globally per user.
+- Current roles: `KETUA`, `BENDAHARA`, `SEKRETARIS`, `ANGGOTA` (see
+  `domain-model.md` for the migration from the original six-role set, and
+  the hierarchy — the chair inherits every other role's abilities).
+  Policies map abilities to roles per organization membership, not
+  globally per user.
 - Frontend hides UI affordances a user can't use, but every mutating
   action is re-authorized server-side regardless of what the client
   sends — the frontend check is UX only.
@@ -53,7 +55,7 @@
   report, process a member payment) runs inside `DB::transaction()` — no
   partially-committed financial state.
 - `require_transaction_approval` (per-organization) gates whether a
-  `TREASURER`-created transaction needs a separate `APPROVED` step before
+  `BENDAHARA`-created transaction needs a separate `APPROVED` step before
   it counts toward any published report. Only `APPROVED` transactions
   feed report totals.
 - Duplicate prevention is enforced at the DB level, not just application

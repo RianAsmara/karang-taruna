@@ -24,7 +24,7 @@ class EventParticipantTest extends TestCase
     public function test_a_member_can_register_for_an_event()
     {
         $organization = Organization::factory()->create();
-        $member = $this->memberWithRole($organization, OrganizationRole::Member);
+        $member = $this->memberWithRole($organization, OrganizationRole::Anggota);
         $event = Event::factory()->create(['organization_id' => $organization->id]);
 
         $this->actingAs($member)
@@ -41,7 +41,7 @@ class EventParticipantTest extends TestCase
     public function test_a_member_cannot_register_twice()
     {
         $organization = Organization::factory()->create();
-        $member = $this->memberWithRole($organization, OrganizationRole::Member);
+        $member = $this->memberWithRole($organization, OrganizationRole::Anggota);
         $event = Event::factory()->create(['organization_id' => $organization->id]);
 
         $this->actingAs($member)->post("/events/{$event->id}/participants");
@@ -54,8 +54,8 @@ class EventParticipantTest extends TestCase
     public function test_a_member_can_cancel_their_own_registration_but_not_someone_elses()
     {
         $organization = Organization::factory()->create();
-        $memberA = $this->memberWithRole($organization, OrganizationRole::Member);
-        $memberB = $this->memberWithRole($organization, OrganizationRole::Member);
+        $memberA = $this->memberWithRole($organization, OrganizationRole::Anggota);
+        $memberB = $this->memberWithRole($organization, OrganizationRole::Anggota);
         $event = Event::factory()->create(['organization_id' => $organization->id]);
 
         $this->actingAs($memberA)->post("/events/{$event->id}/participants");

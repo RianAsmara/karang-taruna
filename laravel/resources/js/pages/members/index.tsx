@@ -1,4 +1,5 @@
 import InputError from '@/components/input-error';
+import { SearchInput } from '@/components/search-input';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -22,19 +23,20 @@ interface Member {
     role: string;
     roleLabel: string;
     joinedAt: string;
-    isOwner: boolean;
+    isChair: boolean;
 }
 
 interface MembersIndexProps {
     members: Member[];
     roles: RoleOption[];
     canManageMembers: boolean;
+    filters: { search: string | null };
 }
 
 function AddMemberForm({ roles }: { roles: RoleOption[] }) {
     const { data, setData, post, processing, errors, reset } = useForm({
         email: '',
-        role: roles.find((r) => r.value === 'MEMBER')?.value ?? roles[0]?.value ?? '',
+        role: roles.find((r) => r.value === 'ANGGOTA')?.value ?? roles[0]?.value ?? '',
     });
 
     const submit: FormEventHandler = (e) => {
@@ -82,7 +84,7 @@ function AddMemberForm({ roles }: { roles: RoleOption[] }) {
     );
 }
 
-export default function MembersIndex({ members, roles, canManageMembers }: MembersIndexProps) {
+export default function MembersIndex({ members, roles, canManageMembers, filters }: MembersIndexProps) {
     const updateRole = (member: Member, role: string) => {
         router.patch(route('members.update-role', member.id), { role }, { preserveScroll: true });
     };
@@ -98,6 +100,8 @@ export default function MembersIndex({ members, roles, canManageMembers }: Membe
                 <h1 className="text-xl font-semibold">Anggota</h1>
 
                 {canManageMembers && <AddMemberForm roles={roles} />}
+
+                <SearchInput initialValue={filters.search} placeholder="Cari nama atau email…" />
 
                 <div className="border-sidebar-border/70 dark:border-sidebar-border overflow-x-auto rounded-xl border">
                     <table className="w-full text-left text-sm">
@@ -115,14 +119,14 @@ export default function MembersIndex({ members, roles, canManageMembers }: Membe
                                     <td className="px-4 py-2">{member.name}</td>
                                     <td className="px-4 py-2">{member.email}</td>
                                     <td className="px-4 py-2">
-                                        {canManageMembers && !member.isOwner ? (
+                                        {canManageMembers && !member.isChair ? (
                                             <Select value={member.role} onValueChange={(value) => updateRole(member, value)}>
                                                 <SelectTrigger className="w-40">
                                                     <SelectValue />
                                                 </SelectTrigger>
                                                 <SelectContent>
                                                     {roles
-                                                        .filter((role) => role.value !== 'OWNER')
+                                                        .filter((role) => role.value !== 'KETUA')
                                                         .map((role) => (
                                                             <SelectItem key={role.value} value={role.value}>
                                                                 {role.label}
@@ -136,7 +140,7 @@ export default function MembersIndex({ members, roles, canManageMembers }: Membe
                                     </td>
                                     {canManageMembers && (
                                         <td className="px-4 py-2">
-                                            {!member.isOwner && (
+                                            {!member.isChair && (
                                                 <Button variant="ghost" size="sm" onClick={() => removeMember(member)}>
                                                     Keluarkan
                                                 </Button>

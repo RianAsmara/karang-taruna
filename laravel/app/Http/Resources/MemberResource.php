@@ -15,14 +15,21 @@ class MemberResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $viewer = $request->user();
+
         return [
             'id' => $this->id,
             'name' => $this->user->name,
             'email' => $this->user->email,
+            'phone' => $viewer ? $this->user->phoneVisibleTo($viewer, $this->organization) : null,
             'role' => $this->role->value,
             'roleLabel' => $this->role->label(),
             'joinedAt' => $this->created_at->toIso8601String(),
-            'isOwner' => $this->role === OrganizationRole::Owner,
+            'isChair' => $this->role === OrganizationRole::Ketua,
+            // Present only for a member within the 30-day "Keluar"
+            // retention window (see MemberController::index) — a live
+            // membership never has this set.
+            'leftAt' => $this->deleted_at?->toIso8601String(),
         ];
     }
 }

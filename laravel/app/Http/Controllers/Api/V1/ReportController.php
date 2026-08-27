@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Actions\Finance\RevertDriftedReportAction;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\FinancialReportResource;
 use App\Models\FinancialReport;
@@ -18,17 +19,27 @@ class ReportController extends Controller
      * same mixed-audience rule (PUBLIC + PUBLISHED is viewable without a
      * token), same Policy, different response shape (JSON, not Inertia).
      */
-    public function show(FinancialReport $report): JsonResource
+    public function show(FinancialReport $report, RevertDriftedReportAction $revertDrifted): JsonResource
     {
         $this->authorizeView($report);
 
-        $report->loadCount('revisions');
-        $report->load(['organization:id,name', 'publisher:id,name']);
+        $report = $revertDrifted->handle($report);
 
-        $user = Auth::user();
+        $report->loadCount('revisions');
+        $report->load(['organization:id,name', 'publisher:id,name', 'submitter:id,name', 'approver:id,name']);
+
+        // This route sits outside the `auth:sanctum` middleware group
+        // (deliberately, so a guest can reach a PUBLIC report) — so
+        // `Auth::user()` (the default guard) is never populated from a
+        // Bearer token here. The `sanctum` guard resolves it directly
+        // from the request regardless of route middleware.
+        $user = Auth::guard('sanctum')->user();
 
         return (new FinancialReportResource($report))->additional([
             'meta' => [
+                'canSubmit' => $user?->can('submit', $report) ?? false,
+                'canApprove' => $user?->can('approve', $report) ?? false,
+                'canRequestRevision' => $user?->can('requestRevision', $report) ?? false,
                 'canPublish' => $user?->can('publish', $report) ?? false,
                 'canArchive' => $user?->can('archive', $report) ?? false,
                 'canRevise' => $user?->can('revise', $report) ?? false,
@@ -67,7 +78,12 @@ class ReportController extends Controller
 
     private function authorizeView(FinancialReport $report): void
     {
-        $user = Auth::user();
+        // This route sits outside the `auth:sanctum` middleware group
+        // (deliberately, so a guest can reach a PUBLIC report) — so
+        // `Auth::user()` (the default guard) is never populated from a
+        // Bearer token here. The `sanctum` guard resolves it directly
+        // from the request regardless of route middleware.
+        $user = Auth::guard('sanctum')->user();
 
         if ($user) {
             abort_unless($user->can('view', $report), 403);

@@ -1,10 +1,11 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { Linking, Pressable, Share, StyleSheet, Text, View } from 'react-native';
+import { Linking, Share, StyleSheet, Text, View } from 'react-native';
 
 import { BottomSheet } from '@/components/BottomSheet';
 import { Button } from '@/components/Button';
 import { ErrorState } from '@/components/ErrorState';
+import { ListItem } from '@/components/ListItem';
 import { ReportSummary } from '@/components/ReportSummary';
 import { ScreenHeader } from '@/components/ScreenHeader';
 import { SectionHeader } from '@/components/SectionHeader';
@@ -12,19 +13,20 @@ import { Skeleton } from '@/components/Skeleton';
 import { Tag } from '@/components/Tag';
 import { useToast } from '@/components/Toast';
 import { WEB_BASE_URL } from '@/lib/api';
-import { useCurrentOrganization, useTransparency } from '@/lib/queries';
+import { useCurrentOrganization, useReports, useTransparency } from '@/lib/queries';
 import { formatMonthYear, formatRupiah, formatSigned } from '@/theme/format';
 import { useTheme } from '@/theme/ThemeProvider';
 import type { Theme } from '@/theme/theme';
 
 export function TransparansiScreen() {
-  const { theme, scheme, toggleScheme } = useTheme();
+  const { theme } = useTheme();
   const styles = makeStyles(theme);
   const { showToast } = useToast();
   const [shareOpen, setShareOpen] = useState(false);
 
   const organization = useCurrentOrganization();
   const transparency = useTransparency();
+  const reports = useReports();
 
   if (transparency.isPending) {
     return (
@@ -50,6 +52,13 @@ export function TransparansiScreen() {
   const opening = summary.balance - summary.monthSurplus;
   const orgName = organization.data?.data.name ?? '';
   const latestReport = summary.publishedReports[0];
+
+  const myRole = organization.data?.membership.role;
+  const isTreasurer = myRole === 'KETUA' || myRole === 'BENDAHARA';
+  const isChair = myRole === 'KETUA';
+  const inProgress = (reports.data?.data ?? []).filter((r) => r.status === 'DRAFT' || r.status === 'DIPERIKSA' || r.status === 'DISETUJUI');
+  const awaitingMyReview = isChair ? inProgress.find((r) => r.status === 'DIPERIKSA') : undefined;
+  const myDraftToCompose = isTreasurer ? inProgress.find((r) => r.status === 'DRAFT') : undefined;
 
   const message = [
     `*Laporan Kas ${formatMonthYear()}*`,
@@ -77,15 +86,7 @@ export function TransparansiScreen() {
 
   return (
     <View style={styles.root}>
-      <ScreenHeader
-        title="Transparansi"
-        onBack={() => router.back()}
-        right={
-          <Pressable onPress={toggleScheme} hitSlop={theme.hitSlop} android_ripple={null} accessibilityRole="button">
-            <Text style={styles.toggle}>{scheme === 'dark' ? '☀ Terang' : '◐ Gelap'}</Text>
-          </Pressable>
-        }
-      />
+      <ScreenHeader title="Transparansi" onBack={() => router.back()} />
       <View style={{ flex: 1 }}>
         <View style={styles.poster}>
           <Text style={styles.kicker}>{formatMonthYear().toUpperCase()}</Text>
@@ -97,6 +98,28 @@ export function TransparansiScreen() {
 
         <SectionHeader title="Ringkasan bulan ini" />
         <ReportSummary opening={opening} income={summary.monthIncome} expense={summary.monthExpense} closing={summary.balance} />
+
+        {isTreasurer || isChair ? (
+          <>
+            <SectionHeader title="Kelola laporan" />
+            {isTreasurer ? (
+              <ListItem
+                title="Susun laporan"
+                subtitle={myDraftToCompose ? formatMonthYear(new Date(myDraftToCompose.periodStart)) : 'Mulai laporan bulan ini'}
+                onPress={() => router.push('/kas/susun-laporan')}
+                isLast={!awaitingMyReview}
+              />
+            ) : null}
+            {awaitingMyReview ? (
+              <ListItem
+                title="Periksa laporan"
+                subtitle={formatMonthYear(new Date(awaitingMyReview.periodStart))}
+                onPress={() => router.push(`/kas/periksa-laporan/${awaitingMyReview.id}`)}
+                isLast
+              />
+            ) : null}
+          </>
+        ) : null}
 
         <SectionHeader title="Laporan" />
         {summary.publishedReports.length === 0 ? (
@@ -169,7 +192,6 @@ export function TransparansiScreen() {
 function makeStyles(theme: Theme) {
   return StyleSheet.create({
     root: { flex: 1, backgroundColor: theme.color.bg },
-    toggle: { fontFamily: 'Archivo_800ExtraBold', fontSize: 12, color: theme.color.textMuted },
     poster: { backgroundColor: theme.color.accent, paddingVertical: theme.space.xl, paddingHorizontal: theme.layout.screenPadding },
     kicker: { fontFamily: 'Archivo_800ExtraBold', fontSize: 10, letterSpacing: 1.4, textTransform: 'uppercase', color: theme.color.onAccent, opacity: 0.9 },
     amount: { fontFamily: 'Archivo_800ExtraBold', fontSize: 40, lineHeight: 42, letterSpacing: -1.2, color: theme.color.onAccent, marginTop: theme.space.xs, fontVariant: ['tabular-nums'] },

@@ -1,3 +1,4 @@
+import { SearchInput } from '@/components/search-input';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
@@ -29,6 +30,7 @@ interface TransactionsIndexProps {
     isTreasurer: boolean;
     canCreate: boolean;
     eventId: string | null;
+    filters: { search: string | null };
 }
 
 const STATUS_VARIANT: Record<string, 'default' | 'secondary' | 'destructive' | 'outline'> = {
@@ -38,7 +40,7 @@ const STATUS_VARIANT: Record<string, 'default' | 'secondary' | 'destructive' | '
     REJECTED: 'destructive',
 };
 
-export default function TransactionsIndex({ transactions, isTreasurer, canCreate, eventId }: TransactionsIndexProps) {
+export default function TransactionsIndex({ transactions, isTreasurer, canCreate, eventId, filters }: TransactionsIndexProps) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Riwayat Transaksi" />
@@ -56,8 +58,16 @@ export default function TransactionsIndex({ transactions, isTreasurer, canCreate
                     <p className="text-muted-foreground text-sm">Menampilkan transaksi yang telah disetujui.</p>
                 )}
 
+                <SearchInput
+                    initialValue={filters.search}
+                    placeholder="Cari transaksi…"
+                    extraParams={eventId ? { event_id: eventId } : undefined}
+                />
+
                 {transactions.length === 0 ? (
-                    <p className="text-muted-foreground text-sm">Belum ada transaksi.</p>
+                    <p className="text-muted-foreground text-sm">
+                        {filters.search ? 'Tidak ada transaksi yang cocok.' : 'Belum ada transaksi.'}
+                    </p>
                 ) : (
                     <div className="grid gap-3">
                         {transactions.map((transaction) => (

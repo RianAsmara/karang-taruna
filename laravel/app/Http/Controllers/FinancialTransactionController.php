@@ -37,6 +37,12 @@ class FinancialTransactionController extends Controller
             $query->where('event_id', $request->string('event_id')->value());
         }
 
+        $search = trim((string) $request->query('search', ''));
+
+        if ($search !== '') {
+            $query->where('description', 'like', '%'.$search.'%');
+        }
+
         $transactions = $query->get()->map(fn (FinancialTransaction $transaction) => [
             'id' => $transaction->id,
             'amount' => $transaction->amount,
@@ -56,6 +62,7 @@ class FinancialTransactionController extends Controller
             'isTreasurer' => $isTreasurer,
             'canCreate' => Auth::user()->can('create', [FinancialTransaction::class, $organization]),
             'eventId' => $request->string('event_id')->value() ?: null,
+            'filters' => ['search' => $search !== '' ? $search : null],
         ]);
     }
 

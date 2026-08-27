@@ -21,20 +21,20 @@ class OrganizationMembershipPolicy
 
     public function create(User $user, Organization $organization): bool
     {
-        return $user->isOrganizerOf($organization);
+        return $user->isChairOf($organization);
     }
 
     public function update(User $user, OrganizationMembership $membership): bool
     {
-        return $user->isOrganizerOf($membership->organization);
+        return $user->isChairOf($membership->organization);
     }
 
     public function delete(User $user, OrganizationMembership $membership): bool
     {
-        if ($membership->role === OrganizationRole::Owner) {
+        if ($membership->role === OrganizationRole::Ketua) {
             return false;
         }
 
-        return $user->isOrganizerOf($membership->organization);
+        return $user->isChairOf($membership->organization);
     }
 }

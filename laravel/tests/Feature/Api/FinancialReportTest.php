@@ -31,7 +31,7 @@ class FinancialReportTest extends TestCase
     public function test_a_plain_member_only_sees_published_members_or_public_reports()
     {
         $organization = Organization::factory()->create();
-        $member = $this->memberWithRole($organization, OrganizationRole::Member);
+        $member = $this->memberWithRole($organization, OrganizationRole::Anggota);
 
         FinancialReport::factory()->create(['organization_id' => $organization->id]); // draft
         FinancialReport::factory()->published()->create(['organization_id' => $organization->id]);
@@ -44,8 +44,8 @@ class FinancialReportTest extends TestCase
     public function test_an_owner_can_publish_a_draft_report_but_a_treasurer_cannot()
     {
         $organization = Organization::factory()->create();
-        $owner = $this->memberWithRole($organization, OrganizationRole::Owner);
-        $treasurer = $this->memberWithRole($organization, OrganizationRole::Treasurer);
+        $owner = $this->memberWithRole($organization, OrganizationRole::Ketua);
+        $treasurer = $this->memberWithRole($organization, OrganizationRole::Bendahara);
         $report = FinancialReport::factory()->create([
             'organization_id' => $organization->id,
             'created_by' => $treasurer->id,
@@ -63,7 +63,7 @@ class FinancialReportTest extends TestCase
     public function test_an_owner_can_archive_a_published_report()
     {
         $organization = Organization::factory()->create();
-        $owner = $this->memberWithRole($organization, OrganizationRole::Owner);
+        $owner = $this->memberWithRole($organization, OrganizationRole::Ketua);
         $report = FinancialReport::factory()->published()->create(['organization_id' => $organization->id]);
 
         Sanctum::actingAs($owner);
@@ -92,6 +92,28 @@ class FinancialReportTest extends TestCase
             ->assertHeader('Content-Type', 'image/png');
     }
 
+    /**
+     * `show()`/`share()`/`qr()` sit outside the `auth:sanctum` middleware
+     * group (deliberately, so a guest can reach a PUBLIC report) — which
+     * means `Sanctum::actingAs()` is the wrong tool for testing them: it
+     * fakes the resolved user directly and would pass even if the real
+     * HTTP request's Bearer token was never actually parsed into a user.
+     * A real token via `withToken()` exercises the actual guard resolution
+     * these three actions depend on.
+     */
+    public function test_a_treasurer_with_a_real_bearer_token_can_view_their_orgs_draft_report()
+    {
+        $organization = Organization::factory()->create();
+        $treasurer = $this->memberWithRole($organization, OrganizationRole::Bendahara);
+        $token = $treasurer->createToken('test')->plainTextToken;
+        $report = FinancialReport::factory()->create(['organization_id' => $organization->id]); // draft, MEMBERS visibility
+
+        $this->withToken($token)
+            ->getJson("/api/v1/finance/reports/{$report->id}")
+            ->assertOk()
+            ->assertJsonPath('data.id', $report->id);
+    }
+
     public function test_a_guest_cannot_view_a_members_only_report()
     {
         $report = FinancialReport::factory()->published()->create(); // default visibility is MEMBERS
@@ -105,7 +127,7 @@ class FinancialReportTest extends TestCase
         $outsider = User::factory()->create();
         $outsider->memberships()->create([
             'organization_id' => Organization::factory()->create()->id,
-            'role' => OrganizationRole::Owner,
+            'role' => OrganizationRole::Ketua,
         ]);
 
         Sanctum::actingAs($outsider);
@@ -116,7 +138,7 @@ class FinancialReportTest extends TestCase
     public function test_show_includes_income_and_expense_grouped_by_category()
     {
         $organization = Organization::factory()->create();
-        $owner = $this->memberWithRole($organization, OrganizationRole::Owner);
+        $owner = $this->memberWithRole($organization, OrganizationRole::Ketua);
         $report = FinancialReport::factory()->published()->publicVisibility()->create([
             'organization_id' => $organization->id,
             'period_start' => '2026-08-01',

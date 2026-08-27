@@ -27,8 +27,8 @@ class OrganizationMembershipFactory extends Factory
         ];
     }
 
-    public function owner(): static
+    public function chair(): static
     {
-        return $this->state(['role' => OrganizationRole::Owner]);
+        return $this->state(['role' => OrganizationRole::Ketua]);
     }
 }

@@ -31,6 +31,12 @@ class FinancialReportResource extends JsonResource
             'closingBalance' => $this->closing_balance,
             'publishedAt' => $this->published_at?->toIso8601String(),
             'publisherName' => $this->whenLoaded('publisher', fn () => $this->publisher?->name),
+            'treasurerNote' => $this->treasurer_note,
+            'revisionReason' => $this->revision_reason,
+            'submittedAt' => $this->submitted_at?->toIso8601String(),
+            'submitterName' => $this->whenLoaded('submitter', fn () => $this->submitter?->name),
+            'approvedAt' => $this->approved_at?->toIso8601String(),
+            'approverName' => $this->whenLoaded('approver', fn () => $this->approver?->name),
             'revisionCount' => $this->whenCounted('revisions'),
             'organizationName' => $this->whenLoaded('organization', fn () => $this->organization->name),
         ];

@@ -13,7 +13,7 @@ return new class extends Migration
             $table->ulid('id')->primary();
             $table->foreignUlid('organization_id')->constrained()->cascadeOnDelete();
             $table->foreignUlid('user_id')->constrained()->cascadeOnDelete();
-            $table->string('role')->default(OrganizationRole::Member->value);
+            $table->string('role')->default(OrganizationRole::Anggota->value);
             $table->timestamps();
 
             $table->unique(['organization_id', 'user_id']);

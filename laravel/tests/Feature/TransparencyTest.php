@@ -27,7 +27,7 @@ class TransparencyTest extends TestCase
     public function test_the_dashboard_shows_the_current_balance_to_any_member()
     {
         $organization = Organization::factory()->create();
-        $member = $this->memberWithRole($organization, OrganizationRole::Member);
+        $member = $this->memberWithRole($organization, OrganizationRole::Anggota);
         $account = FinancialAccount::factory()->create(['organization_id' => $organization->id]);
 
         FinancialTransaction::factory()->create([
@@ -51,15 +51,15 @@ class TransparencyTest extends TestCase
         $response->assertInertia(fn ($page) => $page->where('balance', 800_000));
     }
 
-    public function test_only_the_owner_can_toggle_public_transparency()
+    public function test_only_the_chair_can_toggle_public_transparency()
     {
         $organization = Organization::factory()->create();
-        $owner = $this->memberWithRole($organization, OrganizationRole::Owner);
-        $admin = $this->memberWithRole($organization, OrganizationRole::Admin);
+        $chair = $this->memberWithRole($organization, OrganizationRole::Ketua);
+        $member = $this->memberWithRole($organization, OrganizationRole::Anggota);
 
-        $this->actingAs($admin)->post('/transparansi/toggle-public')->assertForbidden();
+        $this->actingAs($member)->post('/transparansi/toggle-public')->assertForbidden();
 
-        $this->actingAs($owner)->post('/transparansi/toggle-public')->assertRedirect();
+        $this->actingAs($chair)->post('/transparansi/toggle-public')->assertRedirect();
         $this->assertTrue($organization->fresh()->public_transparency_enabled);
     }
 

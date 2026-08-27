@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AnnouncementController;
+use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\EventCommitteeController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\EventParticipantController;
@@ -10,9 +11,14 @@ use App\Http\Controllers\FinancialCategoryController;
 use App\Http\Controllers\FinancialReportController;
 use App\Http\Controllers\FinancialTransactionAttachmentController;
 use App\Http\Controllers\FinancialTransactionController;
+use App\Http\Controllers\InventoryItemController;
+use App\Http\Controllers\InventoryLoanController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\MemberDueController;
+use App\Http\Controllers\SponsorController;
+use App\Http\Controllers\ThemeController;
 use App\Http\Controllers\TransparencyController;
+use App\Http\Controllers\VoteController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'current-org'])->group(function () {
@@ -85,4 +91,35 @@ Route::middleware(['auth', 'current-org'])->group(function () {
 
     Route::get('transparansi', [TransparencyController::class, 'index'])->name('transparency.index');
     Route::post('transparansi/toggle-public', [TransparencyController::class, 'toggle'])->name('transparency.toggle');
+
+    Route::get('organisasi/tema', [ThemeController::class, 'edit'])->name('theme.edit');
+    Route::post('organisasi/tema/logo', [ThemeController::class, 'uploadLogo'])->name('theme.upload-logo');
+    Route::patch('organisasi/tema', [ThemeController::class, 'update'])->name('theme.update');
+
+    Route::get('votes', [VoteController::class, 'index'])->name('votes.index');
+    Route::get('votes/{vote}', [VoteController::class, 'show'])->name('votes.show');
+    Route::post('votes/{vote}/responses', [VoteController::class, 'storeResponse'])->name('votes.responses.store');
+
+    Route::get('inventory', [InventoryItemController::class, 'index'])->name('inventory.index');
+    Route::get('inventory/create', [InventoryItemController::class, 'create'])->name('inventory.create');
+    Route::post('inventory', [InventoryItemController::class, 'store'])->name('inventory.store');
+    Route::get('inventory/{inventoryItem}', [InventoryItemController::class, 'show'])->name('inventory.show');
+    Route::get('inventory/{inventoryItem}/edit', [InventoryItemController::class, 'edit'])->name('inventory.edit');
+    Route::patch('inventory/{inventoryItem}', [InventoryItemController::class, 'update'])->name('inventory.update');
+    Route::delete('inventory/{inventoryItem}', [InventoryItemController::class, 'destroy'])->name('inventory.destroy');
+
+    Route::post('inventory/{inventoryItem}/loans', [InventoryLoanController::class, 'store'])->name('inventory.loans.store');
+    Route::post('inventory/loans/{loan}/return', [InventoryLoanController::class, 'return'])->name('inventory.loans.return');
+
+    Route::get('sponsors', [SponsorController::class, 'index'])->name('sponsors.index');
+    Route::get('sponsors/create', [SponsorController::class, 'create'])->name('sponsors.create');
+    Route::post('sponsors', [SponsorController::class, 'store'])->name('sponsors.store');
+    Route::get('sponsors/{sponsor}', [SponsorController::class, 'show'])->name('sponsors.show');
+    Route::patch('sponsors/{sponsor}/status', [SponsorController::class, 'updateStatus'])->name('sponsors.update-status');
+
+    Route::get('documents', [DocumentController::class, 'index'])->name('documents.index');
+    Route::get('documents/create', [DocumentController::class, 'create'])->name('documents.create');
+    Route::post('documents', [DocumentController::class, 'store'])->name('documents.store');
+    Route::get('documents/{document}/download', [DocumentController::class, 'download'])->name('documents.download');
+    Route::delete('documents/{document}', [DocumentController::class, 'destroy'])->name('documents.destroy');
 });

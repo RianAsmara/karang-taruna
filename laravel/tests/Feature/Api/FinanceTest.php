@@ -28,7 +28,7 @@ class FinanceTest extends TestCase
     public function test_a_member_can_list_accounts_with_their_computed_balance()
     {
         $organization = Organization::factory()->create();
-        $member = $this->memberWithRole($organization, OrganizationRole::Member);
+        $member = $this->memberWithRole($organization, OrganizationRole::Anggota);
         $account = FinancialAccount::factory()->create(['organization_id' => $organization->id]);
         FinancialTransaction::factory()->create([
             'organization_id' => $organization->id,
@@ -47,8 +47,8 @@ class FinanceTest extends TestCase
     public function test_a_plain_member_only_sees_approved_transactions_while_the_treasurer_sees_everything()
     {
         $organization = Organization::factory()->create();
-        $treasurer = $this->memberWithRole($organization, OrganizationRole::Treasurer);
-        $member = $this->memberWithRole($organization, OrganizationRole::Member);
+        $treasurer = $this->memberWithRole($organization, OrganizationRole::Bendahara);
+        $member = $this->memberWithRole($organization, OrganizationRole::Anggota);
         $account = FinancialAccount::factory()->create(['organization_id' => $organization->id]);
 
         FinancialTransaction::factory()->create([
@@ -70,7 +70,7 @@ class FinanceTest extends TestCase
     public function test_the_treasurer_can_record_a_transaction_which_starts_as_a_draft()
     {
         $organization = Organization::factory()->create();
-        $treasurer = $this->memberWithRole($organization, OrganizationRole::Treasurer);
+        $treasurer = $this->memberWithRole($organization, OrganizationRole::Bendahara);
         $account = FinancialAccount::factory()->create(['organization_id' => $organization->id]);
         $category = FinancialCategory::factory()->create([
             'organization_id' => $organization->id,
@@ -91,7 +91,7 @@ class FinanceTest extends TestCase
     public function test_a_plain_member_cannot_record_a_transaction()
     {
         $organization = Organization::factory()->create();
-        $member = $this->memberWithRole($organization, OrganizationRole::Member);
+        $member = $this->memberWithRole($organization, OrganizationRole::Anggota);
         $account = FinancialAccount::factory()->create(['organization_id' => $organization->id]);
 
         Sanctum::actingAs($member);

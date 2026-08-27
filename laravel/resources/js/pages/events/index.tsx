@@ -1,6 +1,7 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
+import { SearchInput } from '@/components/search-input';
 import { formatDateTime } from '@/lib/utils';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link } from '@inertiajs/react';
@@ -18,9 +19,10 @@ interface EventListItem {
 interface EventsIndexProps {
     events: EventListItem[];
     canCreate: boolean;
+    filters: { search: string | null };
 }
 
-export default function EventsIndex({ events, canCreate }: EventsIndexProps) {
+export default function EventsIndex({ events, canCreate, filters }: EventsIndexProps) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Kegiatan" />
@@ -34,8 +36,12 @@ export default function EventsIndex({ events, canCreate }: EventsIndexProps) {
                     )}
                 </div>
 
+                <SearchInput initialValue={filters.search} placeholder="Cari kegiatan…" />
+
                 {events.length === 0 ? (
-                    <p className="text-muted-foreground text-sm">Belum ada kegiatan.</p>
+                    <p className="text-muted-foreground text-sm">
+                        {filters.search ? 'Tidak ada kegiatan yang cocok.' : 'Belum ada kegiatan.'}
+                    </p>
                 ) : (
                     <div className="grid gap-3">
                         {events.map((event) => (

@@ -8,6 +8,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property array<string, mixed>|null $previous_values
+ * @property array<string, mixed>|null $new_values
+ */
 class AuditLog extends Model
 {
     /** @use HasFactory<AuditLogFactory> */

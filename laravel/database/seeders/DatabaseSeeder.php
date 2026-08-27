@@ -27,7 +27,11 @@ class DatabaseSeeder extends Seeder
     /**
      * Seed the application's database with a single organization, a user
      * for every role, and a sample event/task/announcement, for local
-     * development.
+     * development — then additionally call MultiOrganizationSeeder for a
+     * 3-org fixture (see its own docblock). Superadmin is never granted
+     * here — that's CLI-only by design (App\Console\Commands\GrantSuperadmin)
+     * and needs an interactive confirm, so run it yourself after seeding:
+     * `php artisan superadmin:grant superadmin@rukunmuda.test`.
      */
     public function run(): void
     {
@@ -44,19 +48,23 @@ class DatabaseSeeder extends Seeder
 
         $ownerMembership = $organization->memberships()->create([
             'user_id' => $owner->id,
-            'role' => OrganizationRole::Owner,
+            'role' => OrganizationRole::Ketua,
         ]);
 
         /** @var array<string, OrganizationMembership> $memberships */
         $memberships = ['owner' => $ownerMembership];
 
+        // 'panitia' and 'warga' are demo logins, not distinct organization
+        // roles — both hold ANGGOTA. 'panitia' is additionally assigned as
+        // this event's EventCommittee below, which is exactly how the
+        // per-event-only Panitia concept works (mobile-design-system.md § Roles).
         foreach (
             [
-                'admin' => OrganizationRole::Admin,
-                'bendahara' => OrganizationRole::Treasurer,
-                'panitia' => OrganizationRole::Committee,
-                'anggota' => OrganizationRole::Member,
-                'warga' => OrganizationRole::Resident,
+                'sekretaris' => OrganizationRole::Sekretaris,
+                'bendahara' => OrganizationRole::Bendahara,
+                'panitia' => OrganizationRole::Anggota,
+                'anggota' => OrganizationRole::Anggota,
+                'warga' => OrganizationRole::Anggota,
             ] as $localPart => $role
         ) {
             $member = User::factory()->create([
@@ -108,6 +116,12 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $this->seedFinance($organization, $event, $owner, $memberships['bendahara']->user);
+
+        // Additive: creates its own 3 organizations, doesn't touch anything
+        // seeded above. See MultiOrganizationSeeder's docblock for why it
+        // exists — tenant isolation / RBAC / superadmin testing needs more
+        // than one lonely organization to actually catch a leak.
+        $this->call(MultiOrganizationSeeder::class);
     }
 
     private function seedFinance(Organization $organization, Event $event, User $owner, User $treasurer): void

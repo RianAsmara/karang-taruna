@@ -3,6 +3,7 @@ import { useMemo, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { Avatar } from '@/components/Avatar';
+import { Button } from '@/components/Button';
 import { Dialog } from '@/components/Dialog';
 import { ErrorState } from '@/components/ErrorState';
 import { ListItem } from '@/components/ListItem';
@@ -22,7 +23,7 @@ function currentMonthPeriod(): string {
 }
 
 export function ProfilScreen() {
-  const { theme } = useTheme();
+  const { theme, scheme, toggleScheme } = useTheme();
   const styles = makeStyles(theme);
   const [leaveOpen, setLeaveOpen] = useState(false);
   const [signOutOpen, setSignOutOpen] = useState(false);
@@ -60,6 +61,23 @@ export function ProfilScreen() {
       <View style={styles.root}>
         <ScreenHeader title="Profil & organisasi" onBack={() => router.back()} />
         <ErrorState title="Gagal memuat profil" body="Periksa koneksi internet Anda, lalu coba lagi." onRetry={() => organization.refetch()} />
+        {/* Signing out only clears local state — it must never depend on
+            the same API call that just failed, or a stale/invalid session
+            becomes impossible to recover from without reinstalling. */}
+        <View style={styles.errorSignOut}>
+          <Button variant="ghost" label="Keluar akun" onPress={() => setSignOutOpen(true)} />
+        </View>
+        <Dialog
+          visible={signOutOpen}
+          title="Keluar akun?"
+          body="Anda perlu masuk kembali dengan email dan kata sandi untuk mengakses RukunMuda."
+          confirmLabel="Keluar"
+          onCancel={() => setSignOutOpen(false)}
+          onConfirm={() => {
+            setSignOutOpen(false);
+            logout().then(() => router.replace('/'));
+          }}
+        />
       </View>
     );
   }
@@ -115,21 +133,10 @@ export function ProfilScreen() {
           <ListItem
             title="Anggota & peran"
             trailing={<Text style={styles.trailingCount}>{members.data?.data.length ?? '–'}</Text>}
-            onPress={() => router.push({ pathname: '/belum-tersedia/[topic]', params: { topic: 'anggota-peran' } })}
+            onPress={() => router.push('/anggota')}
           />
-          <ListItem
-            title="Inventaris"
-            onPress={() => router.push({ pathname: '/belum-tersedia/[topic]', params: { topic: 'inventaris' } })}
-          />
-          <ListItem
-            title="Dokumen"
-            onPress={() => router.push({ pathname: '/belum-tersedia/[topic]', params: { topic: 'dokumen' } })}
-          />
-          <ListItem
-            title="Sponsor"
-            onPress={() => router.push({ pathname: '/belum-tersedia/[topic]', params: { topic: 'sponsor' } })}
-            isLast
-          />
+          <ListItem title="Inventaris" onPress={() => router.push('/inventaris')} />
+          <ListItem title="Dokumen" onPress={() => router.push('/dokumen')} isLast />
         </View>
 
         <SectionHeader title="Akun" />
@@ -138,6 +145,11 @@ export function ProfilScreen() {
             title="Pengaturan & notifikasi"
             trailing={<Text style={styles.trailingArrow}>→</Text>}
             onPress={() => router.push({ pathname: '/belum-tersedia/[topic]', params: { topic: 'pengaturan' } })}
+          />
+          <ListItem
+            title="Tema"
+            trailing={<Text style={styles.trailingCount}>{scheme === 'dark' ? 'Gelap' : 'Terang'}</Text>}
+            onPress={toggleScheme}
           />
           <ListItem title="Keluar dari organisasi" titleTone="accent" onPress={() => setLeaveOpen(true)} />
           <ListItem title="Keluar akun" titleTone="accent" onPress={() => setSignOutOpen(true)} isLast />
@@ -199,5 +211,6 @@ function makeStyles(theme: Theme) {
     orgMeta: { fontFamily: 'Archivo_400Regular', fontSize: 12.5, color: theme.color.textMuted, marginTop: 2 },
     trailingCount: { fontFamily: 'Archivo_600SemiBold', fontSize: 12.5, color: theme.color.textMuted },
     trailingArrow: { fontFamily: 'Archivo_800ExtraBold', fontSize: 15, color: theme.color.textMuted },
+    errorSignOut: { alignItems: 'center', marginTop: theme.space.lg },
   });
 }

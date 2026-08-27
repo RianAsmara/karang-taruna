@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\MemberDue;
 
+use App\Enums\MemberPaymentMethod;
 use App\Models\MemberDue;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -40,6 +41,8 @@ class RecordPaymentRequest extends FormRequest
                     ->where('organization_id', $organizationId)
                     ->where('transaction_type', 'INCOME'),
             ],
+            'method' => ['nullable', Rule::enum(MemberPaymentMethod::class)],
+            'note' => ['nullable', 'string'],
         ];
     }
 }

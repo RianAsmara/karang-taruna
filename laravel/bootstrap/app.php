@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\EnsureSuperadmin;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\ResolveCurrentOrganization;
 use Illuminate\Foundation\Application;
@@ -22,6 +23,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->alias([
             'current-org' => ResolveCurrentOrganization::class,
+            'superadmin' => EnsureSuperadmin::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

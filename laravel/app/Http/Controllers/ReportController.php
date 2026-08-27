@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\Finance\RevertDriftedReportAction;
 use App\Enums\ReportShareChannel;
 use App\Models\FinancialReport;
 use App\Support\ReportQrCode;
@@ -22,7 +23,7 @@ class ReportController extends Controller
      * link or QR code. Not gated by the 'auth' middleware: a report may
      * be legitimately viewable while logged out (PUBLIC + PUBLISHED).
      */
-    public function show(FinancialReport $report): Response|RedirectResponse
+    public function show(FinancialReport $report, RevertDriftedReportAction $revertDrifted): Response|RedirectResponse
     {
         $user = Auth::user();
 
@@ -31,6 +32,8 @@ class ReportController extends Controller
         } else {
             abort_unless($report->isPubliclyViewable(), 404);
         }
+
+        $report = $revertDrifted->handle($report);
 
         $report->load(['organization:id,name', 'publisher:id,name']);
 

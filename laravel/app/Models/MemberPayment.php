@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\MemberPaymentMethod;
 use Database\Factories\MemberPaymentFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -11,6 +12,7 @@ use Illuminate\Support\Carbon;
 
 /**
  * @property Carbon $paid_at
+ * @property MemberPaymentMethod $method
  */
 class MemberPayment extends Model
 {
@@ -22,6 +24,9 @@ class MemberPayment extends Model
         'financial_transaction_id',
         'amount',
         'paid_at',
+        'method',
+        'note',
+        'recorded_by',
     ];
 
     protected function casts(): array
@@ -29,6 +34,7 @@ class MemberPayment extends Model
         return [
             'amount' => 'integer',
             'paid_at' => 'date',
+            'method' => MemberPaymentMethod::class,
         ];
     }
 
@@ -46,5 +52,13 @@ class MemberPayment extends Model
     public function financialTransaction(): BelongsTo
     {
         return $this->belongsTo(FinancialTransaction::class);
+    }
+
+    /**
+     * @return BelongsTo<User, $this>
+     */
+    public function recorder(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'recorded_by');
     }
 }

@@ -25,6 +25,8 @@ use Illuminate\Support\Carbon;
  * @property Carbon $period_start
  * @property Carbon $period_end
  * @property Carbon|null $published_at
+ * @property Carbon|null $submitted_at
+ * @property Carbon|null $approved_at
  */
 #[ObservedBy(FinancialReportObserver::class)]
 class FinancialReport extends Model
@@ -47,6 +49,12 @@ class FinancialReport extends Model
         'published_at',
         'published_by',
         'created_by',
+        'treasurer_note',
+        'revision_reason',
+        'submitted_at',
+        'submitted_by',
+        'approved_at',
+        'approved_by',
     ];
 
     protected function casts(): array
@@ -62,6 +70,8 @@ class FinancialReport extends Model
             'total_expense' => 'integer',
             'closing_balance' => 'integer',
             'published_at' => 'datetime',
+            'submitted_at' => 'datetime',
+            'approved_at' => 'datetime',
         ];
     }
 
@@ -87,6 +97,22 @@ class FinancialReport extends Model
     public function publisher(): BelongsTo
     {
         return $this->belongsTo(User::class, 'published_by');
+    }
+
+    /**
+     * @return BelongsTo<User, $this>
+     */
+    public function submitter(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'submitted_by');
+    }
+
+    /**
+     * @return BelongsTo<User, $this>
+     */
+    public function approver(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'approved_by');
     }
 
     /**
@@ -156,6 +182,23 @@ class FinancialReport extends Model
             'total_expense' => $totalExpense,
             'closing_balance' => $openingBalance + $totalIncome - $totalExpense,
         ];
+    }
+
+    /**
+     * A DISETUJUI report's figures are frozen at approval time — but a
+     * transaction in its period can still be approved/edited afterward
+     * (approval never locks the ledger, only the report). Comparing the
+     * stored figures against a fresh recompute is how that staleness is
+     * caught (screen 31: "approval is never silently stale").
+     */
+    public function hasDriftedSinceApproval(): bool
+    {
+        $fresh = self::calculateFigures($this->organization, $this->period_start, $this->period_end);
+
+        return $fresh['opening_balance'] !== $this->opening_balance
+            || $fresh['total_income'] !== $this->total_income
+            || $fresh['total_expense'] !== $this->total_expense
+            || $fresh['closing_balance'] !== $this->closing_balance;
     }
 
     /**

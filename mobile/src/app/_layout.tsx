@@ -12,6 +12,7 @@ import { Platform, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
+import { SessionExpiredModal } from "@/components/SessionExpiredModal";
 import { ToastProvider } from "@/components/Toast";
 import { useAuth } from "@/store/useAuth";
 import { ThemeProvider, useTheme } from "@/theme/ThemeProvider";
@@ -34,6 +35,11 @@ function RootStack() {
       <Stack.Screen name="login" />
       <Stack.Screen name="(app)" />
       <Stack.Screen name="profil" options={{ presentation: "modal" }} />
+      <Stack.Screen name="anggota" />
+      <Stack.Screen name="inventaris" />
+      <Stack.Screen name="dokumen" />
+      <Stack.Screen name="sponsor" />
+      <Stack.Screen name="pencarian" />
       <Stack.Screen name="iuran-saya" options={{ presentation: "modal" }} />
       <Stack.Screen name="belum-tersedia/[topic]" />
     </Stack>
@@ -96,6 +102,7 @@ export default function RootLayout() {
               <WebFrame>
                 <RootStack />
               </WebFrame>
+              <SessionExpiredModal />
             </ToastProvider>
           </ThemeProvider>
         </SafeAreaProvider>

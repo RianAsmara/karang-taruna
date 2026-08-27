@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FinancialReportController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OrganizationController;
@@ -26,9 +27,7 @@ Route::get('reports/{report}/qr', [ReportController::class, 'qr'])->name('report
 Route::get('reports/{report}/pdf', [ReportController::class, 'pdf'])->name('reports.pdf');
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('dashboard', function () {
-        return Inertia::render('dashboard');
-    })->name('dashboard');
+    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::post('organizations', [OrganizationController::class, 'store'])->name('organizations.store');
 
@@ -36,6 +35,9 @@ Route::middleware(['auth'])->group(function () {
     Route::post('notifications/{notification}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
 
     Route::delete('reports/{report}', [FinancialReportController::class, 'destroy'])->name('reports.destroy');
+    Route::post('reports/{report}/submit', [FinancialReportController::class, 'submit'])->name('reports.submit');
+    Route::post('reports/{report}/approve', [FinancialReportController::class, 'approve'])->name('reports.approve');
+    Route::post('reports/{report}/request-revision', [FinancialReportController::class, 'requestRevision'])->name('reports.request-revision');
     Route::post('reports/{report}/publish', [FinancialReportController::class, 'publish'])->name('reports.publish');
     Route::post('reports/{report}/archive', [FinancialReportController::class, 'archive'])->name('reports.archive');
     Route::post('reports/{report}/revise', [FinancialReportController::class, 'revise'])->name('reports.revise');
@@ -44,3 +46,4 @@ Route::middleware(['auth'])->group(function () {
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
 require __DIR__.'/organization.php';
+require __DIR__.'/superadmin.php';

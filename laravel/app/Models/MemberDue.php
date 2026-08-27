@@ -14,6 +14,8 @@ use Illuminate\Support\Carbon;
 /**
  * @property MemberDueType $type
  * @property Carbon $period
+ * @property Carbon|null $notified_at
+ * @property bool $is_exempt
  */
 class MemberDue extends Model
 {
@@ -26,6 +28,8 @@ class MemberDue extends Model
         'period',
         'amount_due',
         'type',
+        'notified_at',
+        'is_exempt',
     ];
 
     protected function casts(): array
@@ -34,6 +38,8 @@ class MemberDue extends Model
             'period' => 'date',
             'amount_due' => 'integer',
             'type' => MemberDueType::class,
+            'notified_at' => 'datetime',
+            'is_exempt' => 'boolean',
         ];
     }
 
@@ -61,6 +67,17 @@ class MemberDue extends Model
         return $this->hasMany(MemberPayment::class);
     }
 
+    /**
+     * The payment that most recently moved this due forward — screen
+     * 17's "Riwayat" shows one row per period ("amount, date recorded,
+     * and who recorded it"), not one row per individual installment, so
+     * a due with several partial payments is summarized by its latest.
+     */
+    public function latestPayment(): ?MemberPayment
+    {
+        return $this->payments()->latest('paid_at')->first();
+    }
+
     public function amountPaid(): int
     {
         return (int) $this->payments()->sum('amount');
@@ -74,5 +91,20 @@ class MemberDue extends Model
     public function isPaid(): bool
     {
         return $this->amountOutstanding() === 0;
+    }
+
+    /**
+     * The member said "sudah bayar" but the treasurer hasn't recorded a
+     * matching payment yet — distinct from a partial payment, which
+     * means the treasurer already recorded *something*.
+     */
+    public function isAwaitingConfirmation(): bool
+    {
+        return $this->notified_at !== null && $this->amountPaid() === 0;
+    }
+
+    public function isPartiallyPaid(): bool
+    {
+        return ! $this->isPaid() && $this->amountPaid() > 0;
     }
 }

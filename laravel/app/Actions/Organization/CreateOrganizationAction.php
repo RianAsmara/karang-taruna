@@ -11,7 +11,7 @@ use Illuminate\Support\Str;
 class CreateOrganizationAction
 {
     /**
-     * Create a new organization and make the given user its OWNER.
+     * Create a new organization and make the given user its KETUA.
      */
     public function handle(User $user, string $name): Organization
     {
@@ -23,7 +23,7 @@ class CreateOrganizationAction
 
             $organization->memberships()->create([
                 'user_id' => $user->id,
-                'role' => OrganizationRole::Owner,
+                'role' => OrganizationRole::Ketua,
             ]);
 
             return $organization;

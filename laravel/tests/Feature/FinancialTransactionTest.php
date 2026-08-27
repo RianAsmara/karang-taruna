@@ -6,6 +6,7 @@ use App\Enums\OrganizationRole;
 use App\Enums\TransactionStatus;
 use App\Enums\TransactionType;
 use App\Models\AuditLog;
+use App\Models\Event;
 use App\Models\FinancialAccount;
 use App\Models\FinancialCategory;
 use App\Models\FinancialTransaction;
@@ -29,7 +30,7 @@ class FinancialTransactionTest extends TestCase
     public function test_treasurer_can_create_a_draft_transaction()
     {
         $organization = Organization::factory()->create();
-        $treasurer = $this->memberWithRole($organization, OrganizationRole::Treasurer);
+        $treasurer = $this->memberWithRole($organization, OrganizationRole::Bendahara);
         $account = FinancialAccount::factory()->create(['organization_id' => $organization->id]);
         $category = FinancialCategory::factory()->create([
             'organization_id' => $organization->id,
@@ -56,7 +57,7 @@ class FinancialTransactionTest extends TestCase
     public function test_a_plain_member_cannot_create_a_transaction()
     {
         $organization = Organization::factory()->create();
-        $member = $this->memberWithRole($organization, OrganizationRole::Member);
+        $member = $this->memberWithRole($organization, OrganizationRole::Anggota);
         $account = FinancialAccount::factory()->create(['organization_id' => $organization->id]);
 
         $this->actingAs($member)
@@ -72,7 +73,7 @@ class FinancialTransactionTest extends TestCase
     public function test_a_category_of_the_wrong_transaction_type_is_rejected()
     {
         $organization = Organization::factory()->create();
-        $treasurer = $this->memberWithRole($organization, OrganizationRole::Treasurer);
+        $treasurer = $this->memberWithRole($organization, OrganizationRole::Bendahara);
         $account = FinancialAccount::factory()->create(['organization_id' => $organization->id]);
         $expenseCategory = FinancialCategory::factory()->create([
             'organization_id' => $organization->id,
@@ -93,7 +94,7 @@ class FinancialTransactionTest extends TestCase
     public function test_submitting_a_draft_goes_to_pending_when_approval_is_required()
     {
         $organization = Organization::factory()->create(['require_transaction_approval' => true]);
-        $treasurer = $this->memberWithRole($organization, OrganizationRole::Treasurer);
+        $treasurer = $this->memberWithRole($organization, OrganizationRole::Bendahara);
         $transaction = FinancialTransaction::factory()->draft()->create([
             'organization_id' => $organization->id,
             'created_by' => $treasurer->id,
@@ -109,7 +110,7 @@ class FinancialTransactionTest extends TestCase
     public function test_submitting_a_draft_auto_approves_when_approval_is_not_required()
     {
         $organization = Organization::factory()->create(['require_transaction_approval' => false]);
-        $treasurer = $this->memberWithRole($organization, OrganizationRole::Treasurer);
+        $treasurer = $this->memberWithRole($organization, OrganizationRole::Bendahara);
         $transaction = FinancialTransaction::factory()->draft()->create([
             'organization_id' => $organization->id,
             'created_by' => $treasurer->id,
@@ -125,8 +126,8 @@ class FinancialTransactionTest extends TestCase
     public function test_owner_can_approve_a_pending_transaction_but_not_their_own()
     {
         $organization = Organization::factory()->create(['require_transaction_approval' => true]);
-        $owner = $this->memberWithRole($organization, OrganizationRole::Owner);
-        $treasurer = $this->memberWithRole($organization, OrganizationRole::Treasurer);
+        $owner = $this->memberWithRole($organization, OrganizationRole::Ketua);
+        $treasurer = $this->memberWithRole($organization, OrganizationRole::Bendahara);
 
         $othersTransaction = FinancialTransaction::factory()->pending()->create([
             'organization_id' => $organization->id,
@@ -154,8 +155,8 @@ class FinancialTransactionTest extends TestCase
     public function test_treasurer_cannot_approve_transactions()
     {
         $organization = Organization::factory()->create(['require_transaction_approval' => true]);
-        $treasurer = $this->memberWithRole($organization, OrganizationRole::Treasurer);
-        $otherTreasurer = $this->memberWithRole($organization, OrganizationRole::Treasurer);
+        $treasurer = $this->memberWithRole($organization, OrganizationRole::Bendahara);
+        $otherTreasurer = $this->memberWithRole($organization, OrganizationRole::Bendahara);
 
         $transaction = FinancialTransaction::factory()->pending()->create([
             'organization_id' => $organization->id,
@@ -170,8 +171,8 @@ class FinancialTransactionTest extends TestCase
     public function test_owner_can_reject_a_pending_transaction()
     {
         $organization = Organization::factory()->create(['require_transaction_approval' => true]);
-        $owner = $this->memberWithRole($organization, OrganizationRole::Owner);
-        $treasurer = $this->memberWithRole($organization, OrganizationRole::Treasurer);
+        $owner = $this->memberWithRole($organization, OrganizationRole::Ketua);
+        $treasurer = $this->memberWithRole($organization, OrganizationRole::Bendahara);
 
         $transaction = FinancialTransaction::factory()->pending()->create([
             'organization_id' => $organization->id,
@@ -186,7 +187,7 @@ class FinancialTransactionTest extends TestCase
     public function test_an_approved_transaction_cannot_be_edited_or_deleted()
     {
         $organization = Organization::factory()->create();
-        $treasurer = $this->memberWithRole($organization, OrganizationRole::Treasurer);
+        $treasurer = $this->memberWithRole($organization, OrganizationRole::Bendahara);
         $account = FinancialAccount::factory()->create(['organization_id' => $organization->id]);
         $transaction = FinancialTransaction::factory()->create([
             'organization_id' => $organization->id,
@@ -211,8 +212,8 @@ class FinancialTransactionTest extends TestCase
     public function test_a_plain_member_only_sees_approved_transactions()
     {
         $organization = Organization::factory()->create();
-        $member = $this->memberWithRole($organization, OrganizationRole::Member);
-        $treasurer = $this->memberWithRole($organization, OrganizationRole::Treasurer);
+        $member = $this->memberWithRole($organization, OrganizationRole::Anggota);
+        $treasurer = $this->memberWithRole($organization, OrganizationRole::Bendahara);
 
         $approved = FinancialTransaction::factory()->create([
             'organization_id' => $organization->id,
@@ -233,7 +234,7 @@ class FinancialTransactionTest extends TestCase
         $outsider = User::factory()->create();
         $outsider->memberships()->create([
             'organization_id' => Organization::factory()->create()->id,
-            'role' => OrganizationRole::Owner,
+            'role' => OrganizationRole::Ketua,
         ]);
 
         $this->actingAs($outsider)
@@ -244,8 +245,8 @@ class FinancialTransactionTest extends TestCase
     public function test_creating_and_approving_a_transaction_writes_an_audit_trail()
     {
         $organization = Organization::factory()->create(['require_transaction_approval' => true]);
-        $owner = $this->memberWithRole($organization, OrganizationRole::Owner);
-        $treasurer = $this->memberWithRole($organization, OrganizationRole::Treasurer);
+        $owner = $this->memberWithRole($organization, OrganizationRole::Ketua);
+        $treasurer = $this->memberWithRole($organization, OrganizationRole::Bendahara);
         $account = FinancialAccount::factory()->create(['organization_id' => $organization->id]);
         $category = FinancialCategory::factory()->create([
             'organization_id' => $organization->id,
@@ -288,7 +289,7 @@ class FinancialTransactionTest extends TestCase
     public function test_account_balance_reflects_only_approved_transactions()
     {
         $organization = Organization::factory()->create();
-        $treasurer = $this->memberWithRole($organization, OrganizationRole::Treasurer);
+        $treasurer = $this->memberWithRole($organization, OrganizationRole::Bendahara);
         $account = FinancialAccount::factory()->create(['organization_id' => $organization->id]);
 
         FinancialTransaction::factory()->create([
@@ -319,7 +320,7 @@ class FinancialTransactionTest extends TestCase
     public function test_a_transfer_moves_balance_between_accounts()
     {
         $organization = Organization::factory()->create();
-        $treasurer = $this->memberWithRole($organization, OrganizationRole::Treasurer);
+        $treasurer = $this->memberWithRole($organization, OrganizationRole::Bendahara);
         $source = FinancialAccount::factory()->create(['organization_id' => $organization->id, 'name' => 'Kas Pemuda']);
         $destination = FinancialAccount::factory()->create(['organization_id' => $organization->id, 'name' => 'Kas Event']);
 
@@ -345,5 +346,71 @@ class FinancialTransactionTest extends TestCase
 
         $this->assertSame(700_000, $source->fresh()->balance());
         $this->assertSame(300_000, $destination->fresh()->balance());
+    }
+
+    public function test_search_only_returns_transactions_whose_description_matches()
+    {
+        $organization = Organization::factory()->create();
+        $treasurer = $this->memberWithRole($organization, OrganizationRole::Bendahara);
+        FinancialTransaction::factory()->create([
+            'organization_id' => $organization->id,
+            'description' => 'Konsumsi rapat bulanan',
+            'created_by' => $treasurer->id,
+        ]);
+        FinancialTransaction::factory()->create([
+            'organization_id' => $organization->id,
+            'description' => 'Sewa sound system',
+            'created_by' => $treasurer->id,
+        ]);
+
+        $this->actingAs($treasurer)
+            ->get('/finance/transactions?search=Konsumsi')
+            ->assertInertia(fn ($page) => $page
+                ->has('transactions', 1)
+                ->where('transactions.0.description', 'Konsumsi rapat bulanan')
+                ->where('filters.search', 'Konsumsi')
+            );
+    }
+
+    public function test_search_composes_with_the_existing_event_id_filter()
+    {
+        $organization = Organization::factory()->create();
+        $treasurer = $this->memberWithRole($organization, OrganizationRole::Bendahara);
+        $event = Event::factory()->create(['organization_id' => $organization->id]);
+
+        $matching = FinancialTransaction::factory()->create([
+            'organization_id' => $organization->id,
+            'event_id' => $event->id,
+            'description' => 'Konsumsi acara',
+            'created_by' => $treasurer->id,
+        ]);
+        FinancialTransaction::factory()->create([
+            'organization_id' => $organization->id,
+            'event_id' => null,
+            'description' => 'Konsumsi lainnya',
+            'created_by' => $treasurer->id,
+        ]);
+
+        $this->actingAs($treasurer)
+            ->get("/finance/transactions?search=Konsumsi&event_id={$event->id}")
+            ->assertInertia(fn ($page) => $page
+                ->has('transactions', 1)
+                ->where('transactions.0.id', $matching->id)
+            );
+    }
+
+    public function test_search_with_no_matches_returns_an_empty_list()
+    {
+        $organization = Organization::factory()->create();
+        $treasurer = $this->memberWithRole($organization, OrganizationRole::Bendahara);
+        FinancialTransaction::factory()->create([
+            'organization_id' => $organization->id,
+            'description' => 'Konsumsi rapat',
+            'created_by' => $treasurer->id,
+        ]);
+
+        $this->actingAs($treasurer)
+            ->get('/finance/transactions?search=TidakAda')
+            ->assertInertia(fn ($page) => $page->has('transactions', 0));
     }
 }

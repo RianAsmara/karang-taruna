@@ -26,9 +26,9 @@ class MyTasksTest extends TestCase
     public function test_it_returns_only_tasks_assigned_to_the_current_user_across_every_event()
     {
         $organization = Organization::factory()->create();
-        $member = $this->memberWithRole($organization, OrganizationRole::Member);
+        $member = $this->memberWithRole($organization, OrganizationRole::Anggota);
         $membership = $organization->memberships()->where('user_id', $member->id)->firstOrFail();
-        $otherMember = $this->memberWithRole($organization, OrganizationRole::Member);
+        $otherMember = $this->memberWithRole($organization, OrganizationRole::Anggota);
         $otherMembership = $organization->memberships()->where('user_id', $otherMember->id)->firstOrFail();
 
         $eventOne = Event::factory()->create(['organization_id' => $organization->id]);
@@ -54,7 +54,7 @@ class MyTasksTest extends TestCase
     public function test_a_member_with_no_assigned_tasks_gets_an_empty_list()
     {
         $organization = Organization::factory()->create();
-        $member = $this->memberWithRole($organization, OrganizationRole::Member);
+        $member = $this->memberWithRole($organization, OrganizationRole::Anggota);
 
         Sanctum::actingAs($member);
 

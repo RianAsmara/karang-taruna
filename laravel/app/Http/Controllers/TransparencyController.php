@@ -22,7 +22,7 @@ class TransparencyController extends Controller
 
         return Inertia::render('transparency/index', [
             ...$organization->transparencySummary(),
-            'canManageTransparency' => Auth::user()->isOrganizerOf($organization),
+            'canManageTransparency' => Auth::user()->isChairOf($organization),
             'publicTransparencyEnabled' => $organization->public_transparency_enabled,
             'publicUrl' => route('organizations.transparency', $organization->slug),
         ]);

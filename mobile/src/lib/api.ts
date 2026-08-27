@@ -26,6 +26,17 @@ export function setAuthToken(token: string | null) {
   authToken = token;
 }
 
+/**
+ * Registered once by `SessionExpiredModal` near the app root — lets this
+ * module (outside the React tree, used from plain `queryFn`s) trigger the
+ * reusable "session expired" popup without importing screens/navigation.
+ */
+let onUnauthorized: (() => void) | null = null;
+
+export function setUnauthorizedHandler(handler: (() => void) | null) {
+  onUnauthorized = handler;
+}
+
 export class ApiError extends Error {
   status: number;
   errors: Record<string, string[]> | null;
@@ -35,6 +46,17 @@ export class ApiError extends Error {
     this.status = status;
     this.errors = errors;
   }
+}
+
+/** A 401 always means the token is missing/invalid/expired — except on
+ * `/auth/logout` itself, whose caller already treats a failed logout as
+ * "already signed out" and shouldn't also see the expired-session popup. */
+function throwApiError(path: string, status: number, payload: { message?: string; errors?: Record<string, string[]> } | null): never {
+  if (status === 401 && path !== '/auth/logout') {
+    onUnauthorized?.();
+  }
+
+  throw new ApiError(status, payload?.message ?? 'Terjadi kesalahan. Coba lagi.', payload?.errors ?? null);
 }
 
 interface RequestOptions {
@@ -60,12 +82,43 @@ export async function apiFetch<T>(path: string, options: RequestOptions = {}): P
   const payload = await response.json().catch(() => null);
 
   if (!response.ok) {
-    throw new ApiError(
-      response.status,
-      payload?.message ?? 'Terjadi kesalahan. Coba lagi.',
-      payload?.errors ?? null,
-    );
+    throwApiError(path, response.status, payload);
   }
 
   return payload as T;
+}
+
+/**
+ * Multipart upload — omits Content-Type so fetch sets the multipart
+ * boundary itself; setting it manually on RN's FormData breaks the
+ * boundary and the server sees an empty body.
+ */
+export async function apiUpload<T>(path: string, form: FormData): Promise<T> {
+  const response = await fetch(`${API_BASE_URL}${path}`, {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
+    },
+    body: form,
+  });
+
+  const payload = await response.json().catch(() => null);
+
+  if (!response.ok) {
+    throwApiError(path, response.status, payload);
+  }
+
+  return payload as T;
+}
+
+/** Auth header can't be attached to a plain `<a>`/Linking URL, so downloads go through fetch + a raw request URL for callers (expo-file-system, expo-sharing) that need the bytes and the Authorization header together. */
+export function authorizedDownloadUrl(path: string): { url: string; headers: Record<string, string> } {
+  return {
+    url: `${API_BASE_URL}${path}`,
+    headers: {
+      Accept: 'application/octet-stream',
+      ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
+    },
+  };
 }

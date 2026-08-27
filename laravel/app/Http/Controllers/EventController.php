@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Actions\Event\CreateEventAction;
+use App\Actions\Event\UpdateEventAction;
 use App\Enums\EventLifecycleStage;
 use App\Enums\EventStatus;
 use App\Enums\EventTaskPriority;
@@ -13,17 +14,21 @@ use App\Http\Requests\Event\UpdateEventRequest;
 use App\Models\Event;
 use App\Models\Organization;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class EventController extends Controller
 {
-    public function index(Organization $organization): Response
+    public function index(Request $request, Organization $organization): Response
     {
         $this->authorize('viewAny', [Event::class, $organization]);
 
+        $search = trim((string) $request->query('search', ''));
+
         $events = $organization->events()
+            ->when($search !== '', fn ($query) => $query->where('title', 'like', '%'.$search.'%'))
             ->orderByDesc('start_at')
             ->get()
             ->map(fn (Event $event) => [
@@ -37,6 +42,7 @@ class EventController extends Controller
         return Inertia::render('events/index', [
             'events' => $events,
             'canCreate' => Auth::user()->can('create', [Event::class, $organization]),
+            'filters' => ['search' => $search !== '' ? $search : null],
         ]);
     }
 
@@ -144,9 +150,9 @@ class EventController extends Controller
         ]);
     }
 
-    public function update(UpdateEventRequest $request, Event $event): RedirectResponse
+    public function update(UpdateEventRequest $request, Event $event, UpdateEventAction $updateEvent): RedirectResponse
     {
-        $event->update($request->validated());
+        $updateEvent->handle($event, Auth::user(), $request->validated());
 
         return to_route('events.show', $event);
     }

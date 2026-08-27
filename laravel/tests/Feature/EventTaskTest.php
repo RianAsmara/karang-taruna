@@ -26,7 +26,7 @@ class EventTaskTest extends TestCase
     public function test_owner_can_create_a_task_on_an_event()
     {
         $organization = Organization::factory()->create();
-        $owner = $this->memberWithRole($organization, OrganizationRole::Owner);
+        $owner = $this->memberWithRole($organization, OrganizationRole::Ketua);
         $event = Event::factory()->create(['organization_id' => $organization->id]);
 
         $this->actingAs($owner)
@@ -42,7 +42,7 @@ class EventTaskTest extends TestCase
     public function test_a_plain_member_cannot_create_a_task()
     {
         $organization = Organization::factory()->create();
-        $member = $this->memberWithRole($organization, OrganizationRole::Member);
+        $member = $this->memberWithRole($organization, OrganizationRole::Anggota);
         $event = Event::factory()->create(['organization_id' => $organization->id]);
 
         $this->actingAs($member)
@@ -56,7 +56,7 @@ class EventTaskTest extends TestCase
     public function test_assignee_can_update_their_own_task_status_but_not_reassign_it()
     {
         $organization = Organization::factory()->create();
-        $assignee = $this->memberWithRole($organization, OrganizationRole::Member);
+        $assignee = $this->memberWithRole($organization, OrganizationRole::Anggota);
         $assigneeMembership = $organization->memberships()->firstWhere('user_id', $assignee->id);
 
         $event = Event::factory()->create(['organization_id' => $organization->id]);
@@ -83,9 +83,9 @@ class EventTaskTest extends TestCase
     public function test_a_non_assignee_member_cannot_update_task_status()
     {
         $organization = Organization::factory()->create();
-        $assignee = $this->memberWithRole($organization, OrganizationRole::Member);
+        $assignee = $this->memberWithRole($organization, OrganizationRole::Anggota);
         $assigneeMembership = $organization->memberships()->firstWhere('user_id', $assignee->id);
-        $otherMember = $this->memberWithRole($organization, OrganizationRole::Member);
+        $otherMember = $this->memberWithRole($organization, OrganizationRole::Anggota);
 
         $event = Event::factory()->create(['organization_id' => $organization->id]);
         $task = EventTask::factory()->create([

@@ -6,7 +6,6 @@ import { Button } from '@/components/Button';
 import { EmptyState } from '@/components/EmptyState';
 import { ErrorState } from '@/components/ErrorState';
 import { EventItem, type EventItemState } from '@/components/EventItem';
-import { InfoSheet } from '@/components/InfoSheet';
 import { ScreenHeader } from '@/components/ScreenHeader';
 import { SectionHeader } from '@/components/SectionHeader';
 import { Segmented } from '@/components/Segmented';
@@ -38,8 +37,6 @@ export function KegiatanScreen() {
   const { theme } = useTheme();
   const styles = makeStyles(theme);
   const [segment, setSegment] = useState<(typeof SEGMENTS)[number]>('Akan datang');
-  const [newEventOpen, setNewEventOpen] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(false);
 
   const events = useEvents();
 
@@ -64,7 +61,12 @@ export function KegiatanScreen() {
         title="Kegiatan"
         size="lg"
         right={
-          <Pressable onPress={() => setSearchOpen(true)} hitSlop={theme.hitSlop} android_ripple={null} accessibilityRole="button">
+          <Pressable
+            onPress={() => router.push({ pathname: '/pencarian', params: { scope: 'kegiatan', filter: segment } })}
+            hitSlop={theme.hitSlop}
+            android_ripple={null}
+            accessibilityRole="button"
+          >
             <Text style={styles.searchAction}>⌕ Cari</Text>
           </Pressable>
         }
@@ -87,7 +89,7 @@ export function KegiatanScreen() {
               title="Belum ada kegiatan"
               body="Kegiatan yang dibuat pengurus akan muncul di sini."
               actionLabel="Buat kegiatan"
-              onAction={() => setNewEventOpen(true)}
+              onAction={() => router.push('/kegiatan/buat')}
             />
           ) : (
             groups.map(([group, items], groupIndex) => (
@@ -116,23 +118,10 @@ export function KegiatanScreen() {
           )}
 
           <View style={styles.addAction}>
-            <Button variant="secondary" label="+ Buat kegiatan baru" onPress={() => setNewEventOpen(true)} block />
+            <Button variant="secondary" label="+ Buat kegiatan baru" onPress={() => router.push('/kegiatan/buat')} block />
           </View>
         </ScrollView>
       )}
-
-      <InfoSheet
-        visible={newEventOpen}
-        title="Buat kegiatan baru"
-        body="Formulir kegiatan baru sedang disiapkan."
-        onClose={() => setNewEventOpen(false)}
-      />
-      <InfoSheet
-        visible={searchOpen}
-        title="Cari kegiatan"
-        body="Pencarian kegiatan sedang disiapkan."
-        onClose={() => setSearchOpen(false)}
-      />
     </View>
   );
 }

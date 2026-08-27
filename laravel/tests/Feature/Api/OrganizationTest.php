@@ -21,7 +21,7 @@ class OrganizationTest extends TestCase
     {
         $organization = Organization::factory()->create();
         $user = User::factory()->create();
-        $organization->memberships()->create(['user_id' => $user->id, 'role' => OrganizationRole::Treasurer]);
+        $organization->memberships()->create(['user_id' => $user->id, 'role' => OrganizationRole::Bendahara]);
 
         Sanctum::actingAs($user);
 
@@ -29,14 +29,14 @@ class OrganizationTest extends TestCase
             ->assertOk()
             ->assertJsonPath('data.id', $organization->id)
             ->assertJsonPath('data.slug', $organization->slug)
-            ->assertJsonPath('membership.role', 'TREASURER');
+            ->assertJsonPath('membership.role', 'BENDAHARA');
     }
 
     public function test_participated_events_count_only_counts_registered_attendance_at_completed_events()
     {
         $organization = Organization::factory()->create();
         $user = User::factory()->create();
-        $membership = $organization->memberships()->create(['user_id' => $user->id, 'role' => OrganizationRole::Member]);
+        $membership = $organization->memberships()->create(['user_id' => $user->id, 'role' => OrganizationRole::Anggota]);
 
         $completedEvent = Event::factory()->for($organization)->create(['status' => EventStatus::Completed]);
         $plannedEvent = Event::factory()->for($organization)->create(['status' => EventStatus::Planned]);
@@ -61,5 +61,42 @@ class OrganizationTest extends TestCase
         $this->getJson('/api/v1/organizations/current')
             ->assertStatus(422)
             ->assertJsonStructure(['message']);
+    }
+
+    public function test_creating_an_organization_makes_the_creator_its_chair()
+    {
+        $user = User::factory()->create();
+        Sanctum::actingAs($user);
+
+        $this->postJson('/api/v1/organizations', ['name' => 'Karang Taruna Melati'])
+            ->assertCreated()
+            ->assertJsonPath('data.name', 'Karang Taruna Melati');
+
+        $organization = Organization::where('name', 'Karang Taruna Melati')->firstOrFail();
+        $membership = $organization->memberships()->firstWhere('user_id', $user->id);
+
+        $this->assertNotNull($membership);
+        $this->assertSame(OrganizationRole::Ketua, $membership->role);
+    }
+
+    public function test_creating_an_organization_requires_a_name()
+    {
+        $user = User::factory()->create();
+        Sanctum::actingAs($user);
+
+        $this->postJson('/api/v1/organizations', [])
+            ->assertStatus(422)
+            ->assertJsonValidationErrors('name');
+    }
+
+    public function test_a_user_reaches_this_endpoint_without_needing_an_existing_organization()
+    {
+        // Deliberately not creating any membership first — this is the
+        // route a brand-new user hits, so it must sit outside 'current-org'.
+        $user = User::factory()->create();
+        Sanctum::actingAs($user);
+
+        $this->postJson('/api/v1/organizations', ['name' => 'Pemuda Kampung Baru'])
+            ->assertCreated();
     }
 }

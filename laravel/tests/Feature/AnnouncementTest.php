@@ -21,12 +21,12 @@ class AnnouncementTest extends TestCase
         return $user;
     }
 
-    public function test_admin_can_publish_an_announcement()
+    public function test_secretary_can_publish_an_announcement()
     {
         $organization = Organization::factory()->create();
-        $admin = $this->memberWithRole($organization, OrganizationRole::Admin);
+        $secretary = $this->memberWithRole($organization, OrganizationRole::Sekretaris);
 
-        $this->actingAs($admin)
+        $this->actingAs($secretary)
             ->post('/announcements', [
                 'title' => 'Iuran bulan Agustus',
                 'body' => 'Mohon segera membayar iuran bulan Agustus.',
@@ -43,7 +43,7 @@ class AnnouncementTest extends TestCase
     public function test_a_plain_member_cannot_publish_an_announcement()
     {
         $organization = Organization::factory()->create();
-        $member = $this->memberWithRole($organization, OrganizationRole::Member);
+        $member = $this->memberWithRole($organization, OrganizationRole::Anggota);
 
         $this->actingAs($member)
             ->post('/announcements', [
@@ -56,7 +56,7 @@ class AnnouncementTest extends TestCase
     public function test_any_member_can_read_a_published_announcement()
     {
         $organization = Organization::factory()->create();
-        $member = $this->memberWithRole($organization, OrganizationRole::Member);
+        $member = $this->memberWithRole($organization, OrganizationRole::Anggota);
         $announcement = Announcement::factory()->create(['organization_id' => $organization->id]);
 
         $this->actingAs($member)
@@ -70,7 +70,7 @@ class AnnouncementTest extends TestCase
         $outsider = User::factory()->create();
         $outsider->memberships()->create([
             'organization_id' => Organization::factory()->create()->id,
-            'role' => OrganizationRole::Owner,
+            'role' => OrganizationRole::Ketua,
         ]);
 
         $this->actingAs($outsider)

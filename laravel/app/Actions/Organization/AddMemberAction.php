@@ -35,6 +35,24 @@ class AddMemberAction
                 ]);
             }
 
+            // A member who left within the last 30 days still has a
+            // soft-deleted row here (the "Keluar" retention window —
+            // see the organization_memberships migration). Restore it
+            // rather than insert a new one: the table's
+            // unique(organization_id, user_id) constraint doesn't know
+            // about soft deletes, so a plain create() would collide.
+            $trashed = $organization->memberships()
+                ->onlyTrashed()
+                ->where('user_id', $user->id)
+                ->first();
+
+            if ($trashed !== null) {
+                $trashed->restore();
+                $trashed->update(['role' => $role]);
+
+                return $trashed;
+            }
+
             return $organization->memberships()->create([
                 'user_id' => $user->id,
                 'role' => $role,

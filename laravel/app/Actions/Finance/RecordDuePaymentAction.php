@@ -2,6 +2,7 @@
 
 namespace App\Actions\Finance;
 
+use App\Enums\MemberPaymentMethod;
 use App\Enums\TransactionStatus;
 use App\Enums\TransactionType;
 use App\Models\FinancialAccount;
@@ -33,6 +34,8 @@ class RecordDuePaymentAction
         Carbon $paidAt,
         FinancialAccount $account,
         FinancialCategory $category,
+        MemberPaymentMethod $method = MemberPaymentMethod::Tunai,
+        ?string $note = null,
     ): MemberPayment {
         if ($amount > $due->amountOutstanding()) {
             throw ValidationException::withMessages([
@@ -40,7 +43,7 @@ class RecordDuePaymentAction
             ]);
         }
 
-        return DB::transaction(function () use ($due, $recordedBy, $amount, $paidAt, $account, $category) {
+        return DB::transaction(function () use ($due, $recordedBy, $amount, $paidAt, $account, $category, $method, $note) {
             $transaction = $due->organization->financialTransactions()->create([
                 'financial_account_id' => $account->id,
                 'category_id' => $category->id,
@@ -58,6 +61,9 @@ class RecordDuePaymentAction
                 'financial_transaction_id' => $transaction->id,
                 'amount' => $amount,
                 'paid_at' => $paidAt,
+                'method' => $method,
+                'note' => $note,
+                'recorded_by' => $recordedBy->id,
             ]);
         });
     }

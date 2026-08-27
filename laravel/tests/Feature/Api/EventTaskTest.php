@@ -26,7 +26,7 @@ class EventTaskTest extends TestCase
     public function test_a_member_can_list_an_events_tasks()
     {
         $organization = Organization::factory()->create();
-        $member = $this->memberWithRole($organization, OrganizationRole::Member);
+        $member = $this->memberWithRole($organization, OrganizationRole::Anggota);
         $event = Event::factory()->create(['organization_id' => $organization->id]);
         EventTask::factory()->count(3)->create(['event_id' => $event->id]);
 
@@ -40,8 +40,8 @@ class EventTaskTest extends TestCase
     public function test_the_event_manager_can_create_a_task_but_a_plain_member_cannot()
     {
         $organization = Organization::factory()->create();
-        $owner = $this->memberWithRole($organization, OrganizationRole::Owner);
-        $member = $this->memberWithRole($organization, OrganizationRole::Member);
+        $owner = $this->memberWithRole($organization, OrganizationRole::Ketua);
+        $member = $this->memberWithRole($organization, OrganizationRole::Anggota);
         $event = Event::factory()->create(['organization_id' => $organization->id]);
 
         Sanctum::actingAs($member);
@@ -62,8 +62,8 @@ class EventTaskTest extends TestCase
     public function test_the_assignee_can_update_their_own_task_status_but_another_member_cannot()
     {
         $organization = Organization::factory()->create();
-        $assignee = $this->memberWithRole($organization, OrganizationRole::Member);
-        $other = $this->memberWithRole($organization, OrganizationRole::Member);
+        $assignee = $this->memberWithRole($organization, OrganizationRole::Anggota);
+        $other = $this->memberWithRole($organization, OrganizationRole::Anggota);
         $event = Event::factory()->create(['organization_id' => $organization->id]);
         $assigneeMembership = $assignee->memberships()->first();
         $task = EventTask::factory()->create([

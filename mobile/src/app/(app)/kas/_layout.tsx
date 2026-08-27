@@ -6,6 +6,9 @@ export default function KasStackLayout() {
       <Stack.Screen name="index" />
       <Stack.Screen name="transparansi" />
       <Stack.Screen name="report/[id]" />
+      <Stack.Screen name="iuran" />
+      <Stack.Screen name="susun-laporan" />
+      <Stack.Screen name="periksa-laporan/[id]" />
     </Stack>
   );
 }

@@ -30,7 +30,7 @@ class ReportShareTest extends TestCase
     {
         $organization = Organization::factory()->create();
         $member = User::factory()->create();
-        $organization->memberships()->create(['user_id' => $member->id, 'role' => OrganizationRole::Member]);
+        $organization->memberships()->create(['user_id' => $member->id, 'role' => OrganizationRole::Anggota]);
 
         $report = FinancialReport::factory()->published()->create(['organization_id' => $organization->id]);
 

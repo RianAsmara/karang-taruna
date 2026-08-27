@@ -63,12 +63,38 @@ needs resolving before Phase 6 mobile work can build a real Attendance
 screen (not part of the 11 already-designed screens, so no immediate
 blocker — but worth fixing the roadmap text vs. reality mismatch).
 
-## 5. Phase 7 features — not started (expected, tracked here for visibility)
+## 5. Phase 7 features — RESOLVED for API (2026-08-26); web pages and Activity points still open
 
-Voting, Inventory, Sponsors, Document generation, Activity points — no
-models, migrations, or controllers exist for any of these. Matches
-`docs/roadmap.md`'s own phase plan; not a surprise, just listed so it's
-in one place with everything else.
+Voting, Inventory, Sponsors, Documents now have full migrations/models/
+enums/policies/Form Requests/Actions/API controllers/Resources/routes,
+found necessary while scoping the mobile Anggota/Peran & Izin/Iuran/
+Inventaris/Dokumen/Sponsor/Voting screens against the API. 237 tests
+total (up from 199), Pint/PHPStan clean, verified against real Postgres
+via `migrate:fresh --seed`. Full detail in `docs/domain-model.md`'s
+Inventory/Documents/Sponsors/Voting sections.
+
+Also resolved as a prerequisite: the **role model migration**
+(`OrganizationRole` from six values to the mobile design's four —
+`KETUA`/`BENDAHARA`/`SEKRETARIS`/`ANGGOTA` — see ADR-0017), and wiring
+the API to business logic that already existed for the web (member
+role-change/removal, dues-payment recording, organization creation).
+
+**Still open**:
+- No Inertia web pages for any of the four new domains — a deliberate
+  scope call (user chose "API-only for now" when asked) to prioritize
+  the mobile build. Matches `web-backlog.md` §5, updated accordingly.
+- **Activity points** — no models/migrations at all yet, unlike the
+  other four.
+- **Vote creation** — no endpoint by design; `mobile-ux.md` § Open
+  product decisions leaves "who may create a vote, and with what
+  options" as a still-open human decision, not something to invent.
+  Votes exist today only via factories/tinker.
+- `EventPolicy::create` narrowed from OWNER/ADMIN to KETUA-only as a
+  mechanical side effect of the role migration removing ADMIN —
+  mobile-screens.md § 29 describes event creation as available to
+  "pengurus" (any management role) more broadly, so this may need
+  widening to `isSecretaryOf()`-or-broader when Buat Kegiatan (mobile
+  step 4) is actually built.
 
 ## 6. API gaps found while scoping mobile E2E wiring — RESOLVED (2026-08-25)
 

@@ -31,6 +31,18 @@ function describe(n: ApiNotification): { title: string; goTo: () => void } {
         title: `Laporan "${n.data.title}" telah dipublikasikan.`,
         goTo: () => router.push(`/kas/report/${n.data.report_id}`),
       };
+    case 'ReportSubmittedForReview':
+      return {
+        title: `Laporan "${n.data.title}" siap diperiksa.`,
+        goTo: () => router.push(`/kas/periksa-laporan/${n.data.report_id}`),
+      };
+    case 'FinancialReportReviewed':
+      return {
+        title: n.data.approved
+          ? `Laporan "${n.data.title}" disetujui ketua.`
+          : `Laporan "${n.data.title}" dikembalikan: ${n.data.revision_reason ?? ''}`,
+        goTo: () => router.push('/kas/susun-laporan'),
+      };
     case 'MemberDueReminder':
       return {
         title: `Iuran Anda sebesar ${formatRupiah(Number(n.data.amount_outstanding))} belum dibayar.`,

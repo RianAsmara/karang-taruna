@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Actions\Event\CreateEventAction;
+use App\Actions\Event\UpdateEventAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Event\StoreEventRequest;
 use App\Http\Requests\Event\UpdateEventRequest;
@@ -41,14 +42,16 @@ class EventController extends Controller
             'tasks.assignee.user:id,name',
             'committees.membership.user:id,name',
             'participants.membership.user:id,name',
+            'sponsor:id,name',
+            'budgetTransaction:id,amount',
         ]);
 
         return new EventResource($event);
     }
 
-    public function update(UpdateEventRequest $request, Event $event): JsonResource
+    public function update(UpdateEventRequest $request, Event $event, UpdateEventAction $updateEvent): JsonResource
     {
-        $event->update($request->validated());
+        $event = $updateEvent->handle($event, Auth::user(), $request->validated());
 
         return new EventResource($event);
     }

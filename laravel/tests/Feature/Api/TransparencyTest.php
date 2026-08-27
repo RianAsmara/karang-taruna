@@ -20,7 +20,7 @@ class TransparencyTest extends TestCase
     {
         $organization = Organization::factory()->create();
         $user = User::factory()->create();
-        $organization->memberships()->create(['user_id' => $user->id, 'role' => OrganizationRole::Member]);
+        $organization->memberships()->create(['user_id' => $user->id, 'role' => OrganizationRole::Anggota]);
 
         $account = FinancialAccount::factory()->create(['organization_id' => $organization->id]);
         FinancialTransaction::factory()->create([
@@ -51,7 +51,7 @@ class TransparencyTest extends TestCase
     {
         $organization = Organization::factory()->create();
         $user = User::factory()->create();
-        $organization->memberships()->create(['user_id' => $user->id, 'role' => OrganizationRole::Owner]);
+        $organization->memberships()->create(['user_id' => $user->id, 'role' => OrganizationRole::Ketua]);
 
         $account = FinancialAccount::factory()->create(['organization_id' => $organization->id]);
         FinancialTransaction::factory()->create([

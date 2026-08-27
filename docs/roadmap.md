@@ -327,7 +327,26 @@ business rules.
 
 ## Phase 7 — Additional features
 
-Voting, inventory, sponsors, document generation, activity points.
+**Status: API-only, partial (2026-08-26).** Started while scoping the
+mobile design's screens 12–33 against the existing API — see
+`backend-backlog.md` §5 and `docs/domain-model.md`'s per-domain
+sections for full detail.
+
+- Voting, inventory, sponsors, and document generation all have
+  migrations/models/policies/Actions/API controllers/Resources/routes
+  and Pest coverage now. **Activity points has nothing yet.**
+- A prerequisite discovered mid-scoping: `OrganizationRole` didn't match
+  the mobile design's role table (six roles vs. the mobile docs' five,
+  with different capability assignments) — migrated per ADR-0017 before
+  any of the above could be built correctly.
+- **No Inertia web pages** for voting/inventory/sponsors/documents yet —
+  deliberately deferred (user's explicit choice) to prioritize the
+  mobile screens these were unblocking. Matches Phase 1–6's own
+  web-then-API-then-mobile order in spirit but not in this instance:
+  mobile was already ahead of web for these four domains when the gap
+  was found.
+- Vote creation has no endpoint on purpose — left as an open product
+  decision in `mobile-ux.md`, not invented here.
 
 ## Phase 8 — Production hardening
 

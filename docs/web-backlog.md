@@ -35,11 +35,14 @@ date-range, category, or multi-field filtering UI.
 See `backend-backlog.md` §4. No attendance pages exist because there's
 no backend to back them.
 
-## 5. Phase 7 feature pages — not started
+## 5. Phase 7 feature pages — not started (backend now ready, 2026-08-26)
 
-Voting, Inventory, Sponsors, Document management — no pages under
-`resources/js/pages/` for any of these, matching the backend gap in
-`backend-backlog.md` §5.
+Voting, Inventory, Sponsors, Document management — still no pages under
+`resources/js/pages/` for any of these. The backend gap in
+`backend-backlog.md` §5 this used to match is now resolved (full API +
+business logic exists for all four); building these pages is no longer
+blocked by missing Laravel-side work, just not started — a deliberate
+sequencing choice to prioritize the mobile build first.
 
 ## 6. No PDF export UI — RESOLVED (2026-08-25)
 

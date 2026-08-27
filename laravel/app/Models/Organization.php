@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Organization extends Model
 {
@@ -105,6 +106,54 @@ class Organization extends Model
     }
 
     /**
+     * @return HasMany<InventoryItem, $this>
+     */
+    public function inventoryItems(): HasMany
+    {
+        return $this->hasMany(InventoryItem::class);
+    }
+
+    /**
+     * @return HasMany<Document, $this>
+     */
+    public function documents(): HasMany
+    {
+        return $this->hasMany(Document::class);
+    }
+
+    /**
+     * @return HasMany<Upload, $this>
+     */
+    public function uploads(): HasMany
+    {
+        return $this->hasMany(Upload::class);
+    }
+
+    /**
+     * @return HasMany<Sponsor, $this>
+     */
+    public function sponsors(): HasMany
+    {
+        return $this->hasMany(Sponsor::class);
+    }
+
+    /**
+     * @return HasMany<SponsorContribution, $this>
+     */
+    public function sponsorContributions(): HasMany
+    {
+        return $this->hasMany(SponsorContribution::class);
+    }
+
+    /**
+     * @return HasMany<Vote, $this>
+     */
+    public function votes(): HasMany
+    {
+        return $this->hasMany(Vote::class);
+    }
+
+    /**
      * The "Transparansi" figures — always derived from APPROVED
      * transactions, never a stored/cached value. Shared by the web
      * dashboard and its API/mobile counterpart so both read the exact
@@ -161,5 +210,13 @@ class Organization extends Model
             'recentTransactions' => $recentTransactions,
             'publishedReports' => $publishedReports,
         ];
+    }
+
+    /**
+     * @return HasOne<OrganizationTheme, $this>
+     */
+    public function theme(): HasOne
+    {
+        return $this->hasOne(OrganizationTheme::class);
     }
 }

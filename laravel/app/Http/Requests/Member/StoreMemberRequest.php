@@ -16,13 +16,17 @@ class StoreMemberRequest extends FormRequest
     }
 
     /**
+     * KETUA is excluded — the chair is unique and set only by
+     * CreateOrganizationAction or a dedicated transfer, never a direct
+     * invite. See UpdateMemberRoleRequest for the same rule on changes.
+     *
      * @return array<string, mixed>
      */
     public function rules(): array
     {
         return [
             'email' => ['required', 'email'],
-            'role' => ['required', Rule::enum(OrganizationRole::class)],
+            'role' => ['required', Rule::enum(OrganizationRole::class)->except(OrganizationRole::Ketua)],
         ];
     }
 }

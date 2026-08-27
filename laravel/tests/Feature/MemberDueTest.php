@@ -28,9 +28,9 @@ class MemberDueTest extends TestCase
     public function test_treasurer_can_generate_monthly_dues_for_every_member()
     {
         $organization = Organization::factory()->create();
-        $treasurer = $this->memberWithRole($organization, OrganizationRole::Treasurer);
-        $this->memberWithRole($organization, OrganizationRole::Member);
-        $this->memberWithRole($organization, OrganizationRole::Resident);
+        $treasurer = $this->memberWithRole($organization, OrganizationRole::Bendahara);
+        $this->memberWithRole($organization, OrganizationRole::Anggota);
+        $this->memberWithRole($organization, OrganizationRole::Anggota);
 
         $this->actingAs($treasurer)
             ->post('/finance/dues/generate-monthly', [
@@ -45,8 +45,8 @@ class MemberDueTest extends TestCase
     public function test_generating_monthly_dues_twice_does_not_duplicate()
     {
         $organization = Organization::factory()->create();
-        $treasurer = $this->memberWithRole($organization, OrganizationRole::Treasurer);
-        $this->memberWithRole($organization, OrganizationRole::Member);
+        $treasurer = $this->memberWithRole($organization, OrganizationRole::Bendahara);
+        $this->memberWithRole($organization, OrganizationRole::Anggota);
 
         $payload = ['period' => now()->startOfMonth()->toDateString(), 'amount_due' => 25_000];
 
@@ -59,8 +59,8 @@ class MemberDueTest extends TestCase
     public function test_recording_a_payment_creates_a_linked_ledger_transaction()
     {
         $organization = Organization::factory()->create();
-        $treasurer = $this->memberWithRole($organization, OrganizationRole::Treasurer);
-        $member = $this->memberWithRole($organization, OrganizationRole::Member);
+        $treasurer = $this->memberWithRole($organization, OrganizationRole::Bendahara);
+        $member = $this->memberWithRole($organization, OrganizationRole::Anggota);
         $membership = $organization->memberships()->firstWhere('user_id', $member->id);
 
         $due = MemberDue::factory()->create([
@@ -98,8 +98,8 @@ class MemberDueTest extends TestCase
     public function test_a_partial_payment_leaves_the_due_outstanding()
     {
         $organization = Organization::factory()->create();
-        $treasurer = $this->memberWithRole($organization, OrganizationRole::Treasurer);
-        $member = $this->memberWithRole($organization, OrganizationRole::Member);
+        $treasurer = $this->memberWithRole($organization, OrganizationRole::Bendahara);
+        $member = $this->memberWithRole($organization, OrganizationRole::Anggota);
         $membership = $organization->memberships()->firstWhere('user_id', $member->id);
 
         $due = MemberDue::factory()->create([
@@ -129,8 +129,8 @@ class MemberDueTest extends TestCase
     public function test_overpayment_is_rejected()
     {
         $organization = Organization::factory()->create();
-        $treasurer = $this->memberWithRole($organization, OrganizationRole::Treasurer);
-        $member = $this->memberWithRole($organization, OrganizationRole::Member);
+        $treasurer = $this->memberWithRole($organization, OrganizationRole::Bendahara);
+        $member = $this->memberWithRole($organization, OrganizationRole::Anggota);
         $membership = $organization->memberships()->firstWhere('user_id', $member->id);
 
         $due = MemberDue::factory()->create([
@@ -157,7 +157,7 @@ class MemberDueTest extends TestCase
     public function test_a_plain_member_cannot_generate_dues_or_record_payments()
     {
         $organization = Organization::factory()->create();
-        $member = $this->memberWithRole($organization, OrganizationRole::Member);
+        $member = $this->memberWithRole($organization, OrganizationRole::Anggota);
         $membership = $organization->memberships()->firstWhere('user_id', $member->id);
 
         $due = MemberDue::factory()->create([
@@ -187,8 +187,8 @@ class MemberDueTest extends TestCase
     public function test_a_member_can_only_see_their_own_dues()
     {
         $organization = Organization::factory()->create();
-        $memberA = $this->memberWithRole($organization, OrganizationRole::Member);
-        $memberB = $this->memberWithRole($organization, OrganizationRole::Member);
+        $memberA = $this->memberWithRole($organization, OrganizationRole::Anggota);
+        $memberB = $this->memberWithRole($organization, OrganizationRole::Anggota);
         $membershipA = $organization->memberships()->firstWhere('user_id', $memberA->id);
         $membershipB = $organization->memberships()->firstWhere('user_id', $memberB->id);
 

@@ -9,14 +9,22 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
+ * Soft-deleted, not hard-deleted, when a member leaves — see the
+ * migration's docblock. `roleIn()`/`membershipIn()` on User never see a
+ * departed member (the default global scope excludes trashed rows), so
+ * every existing Policy check keeps working unmodified; only
+ * MemberController's index deliberately reaches past that scope with
+ * `withTrashed()` to show the 30-day "Keluar" tag.
+ *
  * @property OrganizationRole $role
  */
 class OrganizationMembership extends Model
 {
     /** @use HasFactory<OrganizationMembershipFactory> */
-    use HasFactory, HasUlids;
+    use HasFactory, HasUlids, SoftDeletes;
 
     protected $fillable = [
         'organization_id',

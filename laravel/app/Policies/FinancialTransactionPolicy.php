@@ -62,10 +62,10 @@ class FinancialTransactionPolicy
     }
 
     /**
-     * OWNER/ADMIN only — deliberately excludes TREASURER, who prepares
+     * KETUA only — deliberately excludes BENDAHARA, who prepares
      * transactions but should not be the sole approver of their own
      * entries. A preparer also may not approve/reject their own
-     * transaction even if they hold OWNER/ADMIN some other way.
+     * transaction even if they hold KETUA some other way.
      */
     public function review(User $user, FinancialTransaction $financialTransaction): bool
     {
@@ -77,7 +77,7 @@ class FinancialTransactionPolicy
             return false;
         }
 
-        return $user->isOrganizerOf($financialTransaction->organization);
+        return $user->isChairOf($financialTransaction->organization);
     }
 
     /**

@@ -25,7 +25,7 @@ class AnnouncementTest extends TestCase
     public function test_a_member_can_list_and_view_announcements()
     {
         $organization = Organization::factory()->create();
-        $member = $this->memberWithRole($organization, OrganizationRole::Member);
+        $member = $this->memberWithRole($organization, OrganizationRole::Anggota);
         $announcement = Announcement::factory()->create(['organization_id' => $organization->id]);
 
         Sanctum::actingAs($member);
@@ -44,7 +44,7 @@ class AnnouncementTest extends TestCase
     {
         $announcement = Announcement::factory()->create();
         $otherOrganization = Organization::factory()->create();
-        $outsider = $this->memberWithRole($otherOrganization, OrganizationRole::Owner);
+        $outsider = $this->memberWithRole($otherOrganization, OrganizationRole::Ketua);
 
         Sanctum::actingAs($outsider);
 

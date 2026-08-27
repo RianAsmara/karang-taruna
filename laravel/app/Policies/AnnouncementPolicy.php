@@ -18,18 +18,22 @@ class AnnouncementPolicy
         return $user->roleIn($announcement->organization) !== null;
     }
 
+    /**
+     * KETUA/SEKRETARIS — mobile-ux.md § Roles and authorization assigns
+     * announcements to the secretary, not organization management broadly.
+     */
     public function create(User $user, Organization $organization): bool
     {
-        return $user->isOrganizerOf($organization);
+        return $user->isSecretaryOf($organization);
     }
 
     public function update(User $user, Announcement $announcement): bool
     {
-        return $user->isOrganizerOf($announcement->organization);
+        return $user->isSecretaryOf($announcement->organization);
     }
 
     public function delete(User $user, Announcement $announcement): bool
     {
-        return $user->isOrganizerOf($announcement->organization);
+        return $user->isSecretaryOf($announcement->organization);
     }
 }

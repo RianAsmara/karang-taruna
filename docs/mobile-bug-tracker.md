@@ -13,9 +13,10 @@ Modal/web-frame breakout).
 
 ## Open
 
-| ID    | Date        | Screen                 | Description                               | Severity | Steps to reproduce           | Notes |
-| ----- | ----------- | ---------------------- | ----------------------------------------- | -------- | ---------------------------- | ----- |
-| B-003 | | | | | | |
+| ID    | Date | Screen     | Description                                                               | Severity | Steps to reproduce | Notes |
+| ----- | ---- | ---------- | ------------------------------------------------------------------------- | -------- | ------------------ | ----- |
+| B-003 |      | Homescreen | ERROR [TypeError: Cannot read property 'recentTransactions' of undefined] | high     |
+|       |      |            |
 
 **Severity guide**: `blocker` (can't use the screen at all) · `major`
 (wrong data, broken interaction, crash) · `minor` (visual/spacing
@@ -23,7 +24,7 @@ mismatch, doesn't affect function) · `cosmetic` (typo, alignment nit).
 
 ## Resolved
 
-| ID    | Date        | Screen                  | Description                               | Fixed in                                                                                                                                     | Notes |
-| ----- | ----------- | ------------------------ | ----------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- | ----- |
-| B-001 | 25 Aug 2026 | all screens after login | Custom header overlapped the phone notch/status bar — none of the custom headers accounted for `insets.top` (same class of bug the tab bar already handled correctly for `insets.bottom`). | `ScreenHeader.tsx` (covers Kegiatan/Kas/Event Detail/Transparansi/Report Detail/Profil/BelumTersedia), plus `HomeScreen.tsx`, `NotifikasiScreen.tsx`, `LoginScreen.tsx` — each now adds `useSafeAreaInsets().top` to its header's height/padding. | |
-| B-002 | 25 Aug 2026 | Login (OTP step) | OTP boxes required manually tapping each box before typing the next digit instead of auto-advancing. | `LoginScreen.tsx` — added `otpRefs` + auto-`.focus()` on the next box after each digit, backspace-to-previous-box, and `autoFocus` on the first box. Verified: typing all 6 digits with zero clicks between boxes now advances through every box and completes login. | |
+| ID    | Date        | Screen                  | Description                                                                                                                                                                                | Fixed in                                                                                                                                                                                                                                                              | Notes |
+| ----- | ----------- | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----- |
+| B-001 | 25 Aug 2026 | all screens after login | Custom header overlapped the phone notch/status bar — none of the custom headers accounted for `insets.top` (same class of bug the tab bar already handled correctly for `insets.bottom`). | `ScreenHeader.tsx` (covers Kegiatan/Kas/Event Detail/Transparansi/Report Detail/Profil/BelumTersedia), plus `HomeScreen.tsx`, `NotifikasiScreen.tsx`, `LoginScreen.tsx` — each now adds `useSafeAreaInsets().top` to its header's height/padding.                     |       |
+| B-002 | 25 Aug 2026 | Login (OTP step)        | OTP boxes required manually tapping each box before typing the next digit instead of auto-advancing.                                                                                       | `LoginScreen.tsx` — added `otpRefs` + auto-`.focus()` on the next box after each digit, backspace-to-previous-box, and `autoFocus` on the first box. Verified: typing all 6 digits with zero clicks between boxes now advances through every box and completes login. |       |

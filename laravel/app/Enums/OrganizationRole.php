@@ -4,22 +4,18 @@ namespace App\Enums;
 
 enum OrganizationRole: string
 {
-    case Owner = 'OWNER';
-    case Admin = 'ADMIN';
-    case Treasurer = 'TREASURER';
-    case Committee = 'COMMITTEE';
-    case Member = 'MEMBER';
-    case Resident = 'RESIDENT';
+    case Ketua = 'KETUA';
+    case Bendahara = 'BENDAHARA';
+    case Sekretaris = 'SEKRETARIS';
+    case Anggota = 'ANGGOTA';
 
     public function label(): string
     {
         return match ($this) {
-            self::Owner => 'Pemilik',
-            self::Admin => 'Admin',
-            self::Treasurer => 'Bendahara',
-            self::Committee => 'Panitia',
-            self::Member => 'Anggota',
-            self::Resident => 'Warga',
+            self::Ketua => 'Ketua',
+            self::Bendahara => 'Bendahara',
+            self::Sekretaris => 'Sekretaris',
+            self::Anggota => 'Anggota',
         };
     }
 }

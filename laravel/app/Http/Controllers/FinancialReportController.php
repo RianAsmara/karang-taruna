@@ -2,13 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\Finance\ApproveFinancialReportAction;
 use App\Actions\Finance\GenerateFinancialReportAction;
 use App\Actions\Finance\PublishFinancialReportAction;
+use App\Actions\Finance\RequestReportRevisionAction;
 use App\Actions\Finance\RevisePublishedReportAction;
+use App\Actions\Finance\SubmitReportForReviewAction;
 use App\Enums\FinancialReportStatus;
 use App\Enums\FinancialReportType;
 use App\Enums\FinancialReportVisibility;
+use App\Http\Requests\FinancialReport\RequestReportRevisionRequest;
 use App\Http\Requests\FinancialReport\StoreFinancialReportRequest;
+use App\Http\Requests\FinancialReport\SubmitReportForReviewRequest;
 use App\Models\FinancialReport;
 use App\Models\Organization;
 use Illuminate\Http\RedirectResponse;
@@ -83,6 +88,29 @@ class FinancialReportController extends Controller
         $report->delete();
 
         return to_route('finance.reports.index');
+    }
+
+    public function submit(SubmitReportForReviewRequest $request, FinancialReport $report, SubmitReportForReviewAction $submitReport): RedirectResponse
+    {
+        $submitReport->handle($report, Auth::user(), $request->string('note')->value() ?: null);
+
+        return to_route('reports.show', $report);
+    }
+
+    public function approve(FinancialReport $report, ApproveFinancialReportAction $approveReport): RedirectResponse
+    {
+        $this->authorize('approve', $report);
+
+        $approveReport->handle($report, Auth::user());
+
+        return to_route('reports.show', $report);
+    }
+
+    public function requestRevision(RequestReportRevisionRequest $request, FinancialReport $report, RequestReportRevisionAction $requestRevision): RedirectResponse
+    {
+        $requestRevision->handle($report, Auth::user(), $request->string('reason')->value());
+
+        return to_route('reports.show', $report);
     }
 
     public function publish(FinancialReport $report, PublishFinancialReportAction $publishReport): RedirectResponse

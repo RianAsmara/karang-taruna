@@ -9,18 +9,26 @@ use App\Http\Requests\Member\UpdateMemberRoleRequest;
 use App\Models\Organization;
 use App\Models\OrganizationMembership;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class MemberController extends Controller
 {
-    public function index(Organization $organization): Response
+    public function index(Request $request, Organization $organization): Response
     {
         $this->authorize('viewAny', [OrganizationMembership::class, $organization]);
 
+        $search = trim((string) $request->query('search', ''));
+
         $members = $organization->memberships()
             ->with('user:id,name,email')
+            ->when($search !== '', fn ($query) => $query->whereHas(
+                'user',
+                fn ($userQuery) => $userQuery->where('name', 'like', '%'.$search.'%')
+                    ->orWhere('email', 'like', '%'.$search.'%'),
+            ))
             ->orderBy('created_at')
             ->get()
             ->map(fn (OrganizationMembership $membership) => [
@@ -30,7 +38,7 @@ class MemberController extends Controller
                 'role' => $membership->role->value,
                 'roleLabel' => $membership->role->label(),
                 'joinedAt' => $membership->created_at->toIso8601String(),
-                'isOwner' => $membership->role === OrganizationRole::Owner,
+                'isChair' => $membership->role === OrganizationRole::Ketua,
             ]);
 
         return Inertia::render('members/index', [
@@ -40,6 +48,7 @@ class MemberController extends Controller
                 OrganizationRole::cases(),
             ),
             'canManageMembers' => Auth::user()->can('manageMembers', $organization),
+            'filters' => ['search' => $search !== '' ? $search : null],
         ]);
     }
 

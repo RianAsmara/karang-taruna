@@ -11,6 +11,13 @@ export function formatSigned(v: number, kind: 'in' | 'out'): string {
   return (kind === 'in' ? '+' : '\u2212') + formatRupiah(v);
 }
 
+/** 245760 -> "240 KB"; 3145728 -> "3 MB" */
+export function formatFileSize(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
 const DATE_SHORT = new Intl.DateTimeFormat('id-ID', { day: 'numeric', month: 'short' });
 const MONTH_LONG = new Intl.DateTimeFormat('id-ID', { month: 'long' });
 

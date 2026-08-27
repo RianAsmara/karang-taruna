@@ -8,10 +8,17 @@ export type TagTone = 'solid' | 'tint' | 'outline' | 'accent';
 type Props = {
   tone: TagTone;
   label: string;
+  /**
+   * Outline tag filled with `surfaceAlt` instead of transparent — the
+   * "closed/inactive" treatment (mobile-design-system.md § Additions in
+   * this phase): closed voting, returned inventory, archived documents,
+   * cancelled events, exempt dues. Only meaningful with tone="outline".
+   */
+  mutedFill?: boolean;
 };
 
 /** Always carries a visible text label — status is never color-only (grayscale test, section 09). */
-export function Tag({ tone, label }: Props) {
+export function Tag({ tone, label, mutedFill }: Props) {
   const { theme } = useTheme();
   const styles = makeStyles(theme);
 
@@ -30,7 +37,14 @@ export function Tag({ tone, label }: Props) {
   }[tone];
 
   return (
-    <View style={[styles.base, tone === 'outline' && styles.outlinePadding, toneStyle]}>
+    <View
+      style={[
+        styles.base,
+        tone === 'outline' && styles.outlinePadding,
+        toneStyle,
+        tone === 'outline' && mutedFill && styles.outlineMuted,
+      ]}
+    >
       <Text style={[styles.label, labelStyle]} numberOfLines={1}>
         {label}
       </Text>
@@ -58,6 +72,7 @@ function makeStyles(theme: Theme) {
     tint: { backgroundColor: theme.color.accent200 },
     tintLabel: { color: theme.color.accent800 },
     outline: { backgroundColor: 'transparent', borderWidth: 1, borderColor: theme.color.divider },
+    outlineMuted: { backgroundColor: theme.color.surfaceAlt },
     outlineLabel: { color: theme.color.text },
     accent: { backgroundColor: theme.color.accent },
     accentLabel: { color: theme.color.onAccent },

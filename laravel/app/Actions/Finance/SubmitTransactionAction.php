@@ -30,7 +30,7 @@ class SubmitTransactionAction
 
         if ($requiresApproval) {
             $organizers = $transaction->organization->memberships()
-                ->whereIn('role', [OrganizationRole::Owner, OrganizationRole::Admin])
+                ->where('role', OrganizationRole::Ketua)
                 ->where('user_id', '!=', $transaction->created_by)
                 ->with('user')
                 ->get()

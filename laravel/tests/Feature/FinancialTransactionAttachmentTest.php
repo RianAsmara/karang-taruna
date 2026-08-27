@@ -29,7 +29,7 @@ class FinancialTransactionAttachmentTest extends TestCase
         Storage::fake(config('filesystems.default'));
 
         $organization = Organization::factory()->create();
-        $treasurer = $this->memberWithRole($organization, OrganizationRole::Treasurer);
+        $treasurer = $this->memberWithRole($organization, OrganizationRole::Bendahara);
         $transaction = FinancialTransaction::factory()->create([
             'organization_id' => $organization->id,
             'created_by' => $treasurer->id,
@@ -54,8 +54,8 @@ class FinancialTransactionAttachmentTest extends TestCase
     public function test_a_plain_member_cannot_upload_evidence()
     {
         $organization = Organization::factory()->create();
-        $member = $this->memberWithRole($organization, OrganizationRole::Member);
-        $treasurer = $this->memberWithRole($organization, OrganizationRole::Treasurer);
+        $member = $this->memberWithRole($organization, OrganizationRole::Anggota);
+        $treasurer = $this->memberWithRole($organization, OrganizationRole::Bendahara);
         $transaction = FinancialTransaction::factory()->create([
             'organization_id' => $organization->id,
             'created_by' => $treasurer->id,
@@ -73,7 +73,7 @@ class FinancialTransactionAttachmentTest extends TestCase
         Storage::fake(config('filesystems.default'));
 
         $organization = Organization::factory()->create();
-        $treasurer = $this->memberWithRole($organization, OrganizationRole::Treasurer);
+        $treasurer = $this->memberWithRole($organization, OrganizationRole::Bendahara);
         $transaction = FinancialTransaction::factory()->create([
             'organization_id' => $organization->id,
             'created_by' => $treasurer->id,
@@ -91,7 +91,7 @@ class FinancialTransactionAttachmentTest extends TestCase
     public function test_an_oversized_file_is_rejected()
     {
         $organization = Organization::factory()->create();
-        $treasurer = $this->memberWithRole($organization, OrganizationRole::Treasurer);
+        $treasurer = $this->memberWithRole($organization, OrganizationRole::Bendahara);
         $transaction = FinancialTransaction::factory()->create([
             'organization_id' => $organization->id,
             'created_by' => $treasurer->id,
@@ -109,7 +109,7 @@ class FinancialTransactionAttachmentTest extends TestCase
         Storage::fake('public');
 
         $organization = Organization::factory()->create();
-        $treasurer = $this->memberWithRole($organization, OrganizationRole::Treasurer);
+        $treasurer = $this->memberWithRole($organization, OrganizationRole::Bendahara);
         $transaction = FinancialTransaction::factory()->create([
             'organization_id' => $organization->id,
             'created_by' => $treasurer->id,
@@ -132,8 +132,8 @@ class FinancialTransactionAttachmentTest extends TestCase
     public function test_a_plain_member_cannot_delete_an_attachment()
     {
         $organization = Organization::factory()->create();
-        $member = $this->memberWithRole($organization, OrganizationRole::Member);
-        $treasurer = $this->memberWithRole($organization, OrganizationRole::Treasurer);
+        $member = $this->memberWithRole($organization, OrganizationRole::Anggota);
+        $treasurer = $this->memberWithRole($organization, OrganizationRole::Bendahara);
         $transaction = FinancialTransaction::factory()->create([
             'organization_id' => $organization->id,
             'created_by' => $treasurer->id,
@@ -151,7 +151,7 @@ class FinancialTransactionAttachmentTest extends TestCase
     public function test_an_attachment_from_another_transaction_returns_not_found()
     {
         $organization = Organization::factory()->create();
-        $treasurer = $this->memberWithRole($organization, OrganizationRole::Treasurer);
+        $treasurer = $this->memberWithRole($organization, OrganizationRole::Bendahara);
         $transaction = FinancialTransaction::factory()->create([
             'organization_id' => $organization->id,
             'created_by' => $treasurer->id,
@@ -175,8 +175,8 @@ class FinancialTransactionAttachmentTest extends TestCase
         Storage::fake('public');
 
         $organization = Organization::factory()->create();
-        $member = $this->memberWithRole($organization, OrganizationRole::Member);
-        $treasurer = $this->memberWithRole($organization, OrganizationRole::Treasurer);
+        $member = $this->memberWithRole($organization, OrganizationRole::Anggota);
+        $treasurer = $this->memberWithRole($organization, OrganizationRole::Bendahara);
         $transaction = FinancialTransaction::factory()->create([
             'organization_id' => $organization->id,
             'created_by' => $treasurer->id,

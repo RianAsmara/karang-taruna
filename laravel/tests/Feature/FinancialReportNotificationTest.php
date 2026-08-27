@@ -28,8 +28,8 @@ class FinancialReportNotificationTest extends TestCase
         Notification::fake();
 
         $organization = Organization::factory()->create();
-        $owner = $this->memberWithRole($organization, OrganizationRole::Owner);
-        $member = $this->memberWithRole($organization, OrganizationRole::Member);
+        $owner = $this->memberWithRole($organization, OrganizationRole::Ketua);
+        $member = $this->memberWithRole($organization, OrganizationRole::Anggota);
         $report = FinancialReport::factory()->create([
             'organization_id' => $organization->id,
             'created_by' => $owner->id,

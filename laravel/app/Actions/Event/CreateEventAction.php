@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\DB;
 
 class CreateEventAction
 {
+    public function __construct(private readonly SyncEventBudgetAction $syncBudget) {}
+
     /**
      * Create an event and automatically add its creator to the committee,
      * so the organizer roster always includes whoever set the event up.
@@ -26,12 +28,21 @@ class CreateEventAction
             $membership = $creator->membershipIn($organization);
 
             if ($membership !== null) {
-                $event->committees()->create([
-                    'membership_id' => $membership->id,
-                ]);
+                $event->committees()->firstOrCreate(['membership_id' => $membership->id]);
             }
 
-            return $event;
+            foreach ($data['committees'] ?? [] as $committee) {
+                $event->committees()->firstOrCreate(
+                    ['membership_id' => $committee['membership_id']],
+                    ['role_title' => $committee['role_title'] ?? null],
+                );
+            }
+
+            if (! empty($data['budget_amount'])) {
+                $this->syncBudget->handle($event, (int) $data['budget_amount'], $creator);
+            }
+
+            return $event->refresh();
         });
     }
 }

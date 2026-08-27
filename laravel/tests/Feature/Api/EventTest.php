@@ -27,7 +27,7 @@ class EventTest extends TestCase
     public function test_a_member_can_list_events_in_their_organization()
     {
         $organization = Organization::factory()->create();
-        $member = $this->memberWithRole($organization, OrganizationRole::Member);
+        $member = $this->memberWithRole($organization, OrganizationRole::Anggota);
         Event::factory()->count(2)->create(['organization_id' => $organization->id]);
 
         Sanctum::actingAs($member);
@@ -38,7 +38,7 @@ class EventTest extends TestCase
     public function test_only_an_organizer_can_create_an_event()
     {
         $organization = Organization::factory()->create();
-        $member = $this->memberWithRole($organization, OrganizationRole::Member);
+        $member = $this->memberWithRole($organization, OrganizationRole::Anggota);
 
         Sanctum::actingAs($member);
 
@@ -51,7 +51,7 @@ class EventTest extends TestCase
     public function test_an_owner_can_create_and_then_view_an_event()
     {
         $organization = Organization::factory()->create();
-        $owner = $this->memberWithRole($organization, OrganizationRole::Owner);
+        $owner = $this->memberWithRole($organization, OrganizationRole::Ketua);
 
         Sanctum::actingAs($owner);
 
@@ -70,10 +70,10 @@ class EventTest extends TestCase
     public function test_the_pic_may_update_their_own_event_but_a_plain_member_may_not()
     {
         $organization = Organization::factory()->create();
-        $owner = $this->memberWithRole($organization, OrganizationRole::Owner);
+        $owner = $this->memberWithRole($organization, OrganizationRole::Ketua);
         $event = Event::factory()->create(['organization_id' => $organization->id]);
 
-        $outsiderMember = $this->memberWithRole($organization, OrganizationRole::Member);
+        $outsiderMember = $this->memberWithRole($organization, OrganizationRole::Anggota);
         Sanctum::actingAs($outsiderMember);
 
         $this->patchJson("/api/v1/events/{$event->id}", [
@@ -99,7 +99,7 @@ class EventTest extends TestCase
         $event = Event::factory()->create(['organization_id' => $organization->id]);
 
         $otherOrganization = Organization::factory()->create();
-        $outsider = $this->memberWithRole($otherOrganization, OrganizationRole::Owner);
+        $outsider = $this->memberWithRole($otherOrganization, OrganizationRole::Ketua);
 
         Sanctum::actingAs($outsider);
 
@@ -109,7 +109,7 @@ class EventTest extends TestCase
     public function test_the_event_list_carries_cheap_committee_and_participant_counts()
     {
         $organization = Organization::factory()->create();
-        $member = $this->memberWithRole($organization, OrganizationRole::Member);
+        $member = $this->memberWithRole($organization, OrganizationRole::Anggota);
         $event = Event::factory()->create(['organization_id' => $organization->id]);
         EventCommittee::factory()->count(2)->create(['event_id' => $event->id]);
         EventParticipant::factory()->count(3)->create(['event_id' => $event->id]);
@@ -125,7 +125,7 @@ class EventTest extends TestCase
     public function test_event_detail_carries_the_full_committee_roster()
     {
         $organization = Organization::factory()->create();
-        $member = $this->memberWithRole($organization, OrganizationRole::Member);
+        $member = $this->memberWithRole($organization, OrganizationRole::Anggota);
         $event = Event::factory()->create(['organization_id' => $organization->id]);
         EventCommittee::factory()->create(['event_id' => $event->id, 'role_title' => 'Ketua Panitia']);
 

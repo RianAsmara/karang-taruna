@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\EventCategory;
 use App\Enums\EventLifecycleStage;
 use App\Enums\EventStatus;
 use Database\Factories\EventFactory;
@@ -17,6 +18,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $end_at
  * @property EventStatus $status
  * @property EventLifecycleStage $lifecycle_stage
+ * @property EventCategory|null $category
  */
 class Event extends Model
 {
@@ -27,10 +29,13 @@ class Event extends Model
         'organization_id',
         'title',
         'description',
+        'category',
         'location',
         'start_at',
         'end_at',
         'pic_membership_id',
+        'sponsor_id',
+        'budget_financial_transaction_id',
         'status',
         'lifecycle_stage',
         'created_by',
@@ -43,6 +48,7 @@ class Event extends Model
             'end_at' => 'datetime',
             'status' => EventStatus::class,
             'lifecycle_stage' => EventLifecycleStage::class,
+            'category' => EventCategory::class,
         ];
     }
 
@@ -103,12 +109,32 @@ class Event extends Model
     }
 
     /**
+     * @return BelongsTo<Sponsor, $this>
+     */
+    public function sponsor(): BelongsTo
+    {
+        return $this->belongsTo(Sponsor::class);
+    }
+
+    /**
+     * The single DRAFT expense transaction created from the creation
+     * wizard's "anggaran" field — kept up to date rather than duplicated
+     * when the planned amount changes (see UpdateEventAction).
+     *
+     * @return BelongsTo<FinancialTransaction, $this>
+     */
+    public function budgetTransaction(): BelongsTo
+    {
+        return $this->belongsTo(FinancialTransaction::class, 'budget_financial_transaction_id');
+    }
+
+    /**
      * Organization OWNER/ADMIN, or this event's PIC, may manage it —
      * the event itself and everything under it (committee, tasks).
      */
     public function isManagedBy(User $user): bool
     {
-        if ($user->isOrganizerOf($this->organization)) {
+        if ($user->isChairOf($this->organization)) {
             return true;
         }
 

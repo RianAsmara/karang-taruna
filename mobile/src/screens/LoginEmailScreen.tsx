@@ -27,6 +27,7 @@ export function LoginEmailScreen() {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
@@ -81,15 +82,24 @@ export function LoginEmailScreen() {
 
           <View style={styles.field}>
             <Text style={styles.label}>Kata sandi</Text>
-            <View style={styles.box}>
+            <View style={[styles.box, styles.passwordBox]}>
               <TextInput
-                style={styles.boxInput}
+                style={[styles.boxInput, styles.passwordInput]}
                 value={password}
                 onChangeText={setPassword}
-                secureTextEntry
+                secureTextEntry={!showPassword}
                 placeholder="••••••••"
                 placeholderTextColor={theme.color.textFaint}
               />
+              <Pressable
+                onPress={() => setShowPassword((v) => !v)}
+                hitSlop={theme.hitSlop}
+                android_ripple={null}
+                accessibilityRole="button"
+                accessibilityLabel={showPassword ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi'}
+              >
+                <Text style={styles.toggle}>{showPassword ? 'Sembunyikan' : 'Tampilkan'}</Text>
+              </Pressable>
             </View>
           </View>
 
@@ -124,6 +134,9 @@ function makeStyles(theme: Theme) {
     label: { fontFamily: 'Archivo_600SemiBold', fontSize: 11, letterSpacing: 0.7, color: theme.color.textMuted },
     box: { borderWidth: 1, borderColor: theme.color.divider, backgroundColor: theme.color.surface, minHeight: 48, justifyContent: 'center' },
     boxInput: { paddingHorizontal: theme.space.md, fontFamily: 'Archivo_800ExtraBold', fontSize: 15, color: theme.color.text },
+    passwordBox: { flexDirection: 'row', alignItems: 'center' },
+    passwordInput: { flex: 1 },
+    toggle: { fontFamily: 'Archivo_800ExtraBold', fontSize: 12, color: theme.color.accent, paddingHorizontal: theme.space.md },
     error: { fontFamily: 'Archivo_400Regular', fontSize: 12.5, color: theme.color.accent700 },
     primaryAction: { marginTop: theme.space.xl },
   });

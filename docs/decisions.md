@@ -429,3 +429,134 @@ straight past a "111... 141 passed" test run otherwise.
 any future `php artisan install:*`-published migration touching a
 `tokenable`/`commentable`/similar morph column needs the same check
 against this app's ULID convention before it's trusted.
+
+## ADR-0017: `OrganizationRole` migrated from six roles to the mobile design's five-role model
+
+**Context**: The mobile design docs (`mobile-ux.md` § Roles and
+authorization, `mobile-design-system.md` § Roles — explicitly called
+"the single authoritative permission table in the documentation set")
+specify five roles: Ketua, Bendahara, Sekretaris, Panitia, Anggota.
+`OrganizationRole` (ADR-0006, ADR-0012) had six: `OWNER`, `ADMIN`,
+`TREASURER`, `COMMITTEE`, `MEMBER`, `RESIDENT`. Discovered while
+scoping the Phase 7 mobile build order (Anggota/Peran & Izin screens) —
+before that, nothing had compared the two role lists directly.
+
+**Decision**: `OrganizationRole` is now `KETUA`, `BENDAHARA`,
+`SEKRETARIS`, `ANGGOTA` (four stored values). Mapping from the old set:
+`OWNER→KETUA`, `TREASURER→BENDAHARA`, `MEMBER→ANGGOTA`; `ADMIN`,
+`COMMITTEE`, and `RESIDENT` all fold to `ANGGOTA` since none has a
+distinct mobile-design equivalent. `Panitia` is **not** a fifth stored
+value — mobile-design-system.md is explicit that it's "per event,
+temporary," so it's derived entirely from the existing `EventCommittee`
+model, never from `OrganizationMembership.role`.
+
+`isOrganizerOf()` (ADR-0012) is renamed `isChairOf()` and narrowed to
+`KETUA` alone (previously `OWNER`/`ADMIN`). `isTreasurerOf()` keeps its
+name, now `KETUA`/`BENDAHARA`. New `isSecretaryOf()` is
+`KETUA`/`SEKRETARIS`. The chair inherits every other role's abilities —
+this is what makes mobile-screens.md's "if the chair is also the
+treasurer" edge case (screen 31) work without a member holding two role
+values at once: `isTreasurerOf()` already returns true for a `KETUA`.
+`AnnouncementPolicy` moved from `isChairOf()` to `isSecretaryOf()` to
+match mobile-ux.md's table, which assigns announcements to the
+secretary — a real behavior change, not just a rename.
+`KETUA` is excluded from both `StoreMemberRequest` and
+`UpdateMemberRoleRequest`'s assignable-role validation: the chair is
+unique and transfers via a dedicated action (not built yet — see
+`mobile-screens.md` § 14 Peran & Izin), never a direct invite or the
+general role-update endpoint.
+
+A companion migration remaps existing `organization_memberships.role`
+data by literal string (not by referencing the old enum cases, which no
+longer exist). `MemberResource`'s `isOwner` field is renamed `isChair`;
+the mobile `ApiMember` TS type and the web `resources/js` member-management
+page were updated to match.
+
+**Status**: Applied. `EventPolicy::create` narrowed from
+`OWNER`/`ADMIN` to `KETUA`-only as a mechanical consequence of removing
+`ADMIN` — mobile-screens.md § 29 describes event creation as available
+to "pengurus" (any management role) more broadly, so this may need
+widening to `isSecretaryOf()`-or-broader when Buat Kegiatan is actually
+built; not done here to keep this change behavior-preserving modulo the
+role count reduction.
+
+## ADR-0018: Platform superadmin is a separate, read-only, cross-organization surface — not a bypass on the existing per-org controllers
+
+**Context**: User asked whether the app supports RBAC and requested a
+new superadmin role able to "control everything." Clarified via
+AskUserQuestion to a narrower scope: platform-level (not tied to any
+one organization), view-only across all organizations, for support/
+moderation. `OrganizationRole` (ADR-0017) is deliberately org-scoped —
+`KETUA`/`BENDAHARA`/`SEKRETARIS`/`ANGGOTA` only make sense in the
+context of a specific organization's `OrganizationMembership`, and every
+existing controller resolves its `Organization` from the *viewer's own*
+membership via the `current-org` middleware (master prompt §9). A
+superadmin, by definition, has no membership anywhere, so that
+resolution mechanism can never apply to them — extending it would mean
+either inventing a fake membership (corrupting membership data as a
+side effect) or special-casing `current-org` itself (weakening the
+tenant-isolation invariant for every route, not just superadmin ones).
+
+**Decision**: `is_superadmin` is a boolean column on `users` (default
+`false`, cast in `User`, deliberately **not** in `$fillable` — the only
+way to set it is `User::forceFill()`, used solely by two Artisan
+commands, `superadmin:grant {email}` and `superadmin:revoke {email}`,
+each requiring interactive confirmation). There is no HTTP endpoint
+that can grant or revoke it — granting platform-wide cross-tenant
+access is judged high-stakes enough to require shell access to the
+server, not just an authenticated HTTP session.
+
+A new `EnsureSuperadmin` middleware (aliased `superadmin`) gates a new
+route group under `/api/v1/superadmin/*`, placed inside `auth:sanctum`
+but explicitly **outside** `current-org` — it resolves `Organization`
+from the URL directly rather than from any membership. A new
+`Api\V1\Superadmin\OrganizationController` (separate namespace, not a
+method added to the existing `Api\V1\OrganizationController`) is
+read-only: `index` lists every organization, `show` returns full detail
+for one — including `DRAFT`/`PRIVATE` financial reports a normal
+organization member could never see, since "view everything, for
+support/moderation" was the explicit scope. Every `show` call writes an
+`AuditLog` row (`superadmin.viewed_organization`) — this bypasses the
+tenant-isolation invariant on purpose, so every use of it must be
+traceable to who looked at what, when. No write endpoints exist under
+`/superadmin/*` at all; a superadmin attempting any existing per-org
+write route still 422s exactly like any other member-less user would,
+since no `current-org` context exists for them.
+
+This first pass covers Organizations, Members, and Financial Reports
+(plus the transparency summary). Documents, Sponsors, Votes, and
+Inventory are not yet exposed to superadmin view — the same pattern
+(a new method on the same controller, or a sibling controller) extends
+to them later if a real support/moderation need arises.
+
+A web (Inertia) panel was added the same day at
+`/superadmin/organizations` (list) and `/superadmin/organizations/{id}`
+(detail), gated by the same `superadmin` middleware alias — the user
+asked "should mobile/web support RBAC as well," and the answer for this
+specific role was: web yes (an ops/support tool), mobile no (out of
+scope for the 11 member-facing design screens; CLAUDE.md is explicit
+that nothing beyond those exists without asking first). A new
+`ViewOrganizationOverviewAction` was extracted and is now called by
+*both* the web and API controllers, so the fetch-and-audit-log
+invariant can't drift between the two entry points — this was a
+refactor of the API controller, not just new code for the web side. The
+web detail page deliberately does **not** link report titles to the
+canonical `/reports/{id}` page: that page enforces the normal
+`FinancialReportPolicy::view` (per-member) check, which a superadmin
+(no membership anywhere) fails for exactly the DRAFT/PRIVATE reports
+this panel exists to surface — extending that policy was treated as out
+of scope for what was decided here (a separate read-only surface, not a
+blanket policy bypass). The sidebar shows a "Superadmin" link only when
+`auth.user.is_superadmin` is true (shared via `HandleInertiaRequests`,
+already unhidden on the `User` model as of this feature).
+
+**Status**: Applied. `tests/Feature/Api/SuperadminTest.php` (7 tests),
+`tests/Feature/SuperadminWebTest.php` (6 tests), and `tests/Feature/
+SuperadminCommandTest.php` (4 tests) cover: non-superadmin/
+unauthenticated rejection (both surfaces), full-detail visibility
+regardless of membership or report visibility, the audit log write,
+writes still being blocked, `is_superadmin` immunity to mass
+assignment, the shared-prop flag driving the sidebar link, and both
+Artisan commands' confirmation flows. Verified live in a browser
+(login → sidebar link → list → detail, including a DRAFT/PRIVATE report
+rendering correctly) in addition to the automated suite.

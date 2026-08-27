@@ -50,4 +50,19 @@ class MemberDuePolicy
     {
         return $user->isTreasurerOf($memberDue->organization);
     }
+
+    /**
+     * "Beri tahu bendahara" (screen 17) — only the member the due
+     * belongs to, and only while it isn't already paid.
+     */
+    public function notify(User $user, MemberDue $memberDue): bool
+    {
+        if ($memberDue->isPaid()) {
+            return false;
+        }
+
+        $membership = $user->membershipIn($memberDue->organization);
+
+        return $membership !== null && $memberDue->membership_id === $membership->id;
+    }
 }

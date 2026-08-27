@@ -29,8 +29,8 @@ class FinancialTransactionNotificationTest extends TestCase
         Notification::fake();
 
         $organization = Organization::factory()->create(['require_transaction_approval' => true]);
-        $owner = $this->memberWithRole($organization, OrganizationRole::Owner);
-        $treasurer = $this->memberWithRole($organization, OrganizationRole::Treasurer);
+        $owner = $this->memberWithRole($organization, OrganizationRole::Ketua);
+        $treasurer = $this->memberWithRole($organization, OrganizationRole::Bendahara);
         $transaction = FinancialTransaction::factory()->draft()->create([
             'organization_id' => $organization->id,
             'created_by' => $treasurer->id,
@@ -47,8 +47,8 @@ class FinancialTransactionNotificationTest extends TestCase
         Notification::fake();
 
         $organization = Organization::factory()->create(['require_transaction_approval' => false]);
-        $owner = $this->memberWithRole($organization, OrganizationRole::Owner);
-        $treasurer = $this->memberWithRole($organization, OrganizationRole::Treasurer);
+        $owner = $this->memberWithRole($organization, OrganizationRole::Ketua);
+        $treasurer = $this->memberWithRole($organization, OrganizationRole::Bendahara);
         $transaction = FinancialTransaction::factory()->draft()->create([
             'organization_id' => $organization->id,
             'created_by' => $treasurer->id,
@@ -64,8 +64,8 @@ class FinancialTransactionNotificationTest extends TestCase
         Notification::fake();
 
         $organization = Organization::factory()->create(['require_transaction_approval' => true]);
-        $owner = $this->memberWithRole($organization, OrganizationRole::Owner);
-        $treasurer = $this->memberWithRole($organization, OrganizationRole::Treasurer);
+        $owner = $this->memberWithRole($organization, OrganizationRole::Ketua);
+        $treasurer = $this->memberWithRole($organization, OrganizationRole::Bendahara);
         $transaction = FinancialTransaction::factory()->pending()->create([
             'organization_id' => $organization->id,
             'created_by' => $treasurer->id,
@@ -81,8 +81,8 @@ class FinancialTransactionNotificationTest extends TestCase
         Notification::fake();
 
         $organization = Organization::factory()->create(['require_transaction_approval' => true]);
-        $owner = $this->memberWithRole($organization, OrganizationRole::Owner);
-        $treasurer = $this->memberWithRole($organization, OrganizationRole::Treasurer);
+        $owner = $this->memberWithRole($organization, OrganizationRole::Ketua);
+        $treasurer = $this->memberWithRole($organization, OrganizationRole::Bendahara);
         $transaction = FinancialTransaction::factory()->pending()->create([
             'organization_id' => $organization->id,
             'created_by' => $treasurer->id,

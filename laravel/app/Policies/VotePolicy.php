@@ -14,6 +14,17 @@ class VotePolicy
     }
 
     /**
+     * "Who may create a vote" was an explicitly open product decision
+     * (mobile-ux.md § Open decisions) — resolved to pengurus, matching
+     * every other "who creates organizational content" gate already in
+     * this app (Events, Sponsors, Inventory).
+     */
+    public function create(User $user, Organization $organization): bool
+    {
+        return $user->isPengurusOf($organization);
+    }
+
+    /**
      * Every member sees the question, even when ineligible to vote — the
      * eligibility gate is on `respond`, not `view` (screen 27: an
      * ineligible viewer still sees the question plus a PermissionNote).

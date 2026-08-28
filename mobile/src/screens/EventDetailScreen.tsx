@@ -6,7 +6,6 @@ import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { AvatarGroup } from '@/components/Avatar';
 import { Button } from '@/components/Button';
 import { ErrorState } from '@/components/ErrorState';
-import { InfoSheet } from '@/components/InfoSheet';
 import { Progress } from '@/components/Progress';
 import { ScreenHeader } from '@/components/ScreenHeader';
 import { SectionHeader } from '@/components/SectionHeader';
@@ -17,7 +16,7 @@ import { TaskItem } from '@/components/TaskItem';
 import { useToast } from '@/components/Toast';
 import { TransactionItem } from '@/components/TransactionItem';
 import { ApiError } from '@/lib/api';
-import { useCurrentOrganization, useEvent, useTransactions, useUpdateTaskStatus } from '@/lib/queries';
+import { useCheckInAttendance, useCurrentOrganization, useEvent, useTransactions, useUpdateTaskStatus } from '@/lib/queries';
 import { formatDateShort, formatRupiah, formatTimeRange, initialsOf } from '@/theme/format';
 import { useTheme } from '@/theme/ThemeProvider';
 import type { Theme } from '@/theme/theme';
@@ -42,12 +41,12 @@ export function EventDetailScreen() {
   const styles = makeStyles(theme);
   const { showToast } = useToast();
   const [tab, setTab] = useState<(typeof TAB_ITEMS)[number]>('Ringkasan');
-  const [attendanceOpen, setAttendanceOpen] = useState(false);
   const organization = useCurrentOrganization();
 
   const event = useEvent(id);
   const transactions = useTransactions(id);
   const updateTaskStatus = useUpdateTaskStatus(id);
+  const checkIn = useCheckInAttendance(id);
 
   const myMembershipId = organization.data?.membership.id;
   const myTaskCount = useMemo(
@@ -92,6 +91,18 @@ export function EventDetailScreen() {
         },
       },
     );
+  };
+
+  const confirmAttendance = () => {
+    checkIn.mutate(undefined, {
+      onSuccess: () => {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        showToast('Kehadiran Anda tercatat.');
+      },
+      onError: (err) => {
+        showToast(err instanceof ApiError ? err.message : 'Gagal mencatat kehadiran.');
+      },
+    });
   };
 
   const eventTransactions = transactions.data?.data ?? [];
@@ -157,7 +168,11 @@ export function EventDetailScreen() {
               </View>
               <View style={styles.meDivider} />
               <View style={styles.meCell}>
-                <Tag tone="outline" label="BELUM HADIR" />
+                {e.attendance.myStatus === 'HADIR' ? (
+                  <Tag tone="solid" label="✓ HADIR" />
+                ) : (
+                  <Tag tone="outline" label="BELUM HADIR" />
+                )}
                 <Text style={styles.meLabel}>kehadiran dikonfirmasi</Text>
               </View>
             </View>
@@ -228,16 +243,21 @@ export function EventDetailScreen() {
         ) : null}
       </ScrollView>
 
-      <View style={styles.actionBar}>
-        <Button variant="primary" label="Konfirmasi kehadiran saya" onPress={() => setAttendanceOpen(true)} block />
-      </View>
-
-      <InfoSheet
-        visible={attendanceOpen}
-        title="Konfirmasi kehadiran"
-        body="Fitur presensi kegiatan sedang disiapkan."
-        onClose={() => setAttendanceOpen(false)}
-      />
+      {e.attendance.myStatus !== 'HADIR' && (
+        <View style={styles.actionBar}>
+          {e.attendance.canCheckIn ? (
+            <Button
+              variant="primary"
+              label="Konfirmasi kehadiran saya"
+              onPress={confirmAttendance}
+              disabled={checkIn.isPending}
+              block
+            />
+          ) : (
+            <Text style={styles.attendanceClosedNote}>Presensi belum bisa dilakukan untuk kegiatan ini saat ini.</Text>
+          )}
+        </View>
+      )}
     </View>
   );
 }
@@ -277,5 +297,6 @@ function makeStyles(theme: Theme) {
     budgetTransactions: { marginTop: theme.space.sm },
     budgetAction: { alignItems: 'flex-start', marginTop: theme.space.sm },
     actionBar: { borderTopWidth: 2, borderTopColor: theme.color.rule, padding: theme.space.md, paddingHorizontal: theme.layout.screenPadding },
+    attendanceClosedNote: { fontFamily: 'Archivo_400Regular', fontSize: 13, color: theme.color.textMuted, textAlign: 'center' },
   });
 }

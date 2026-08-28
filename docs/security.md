@@ -90,8 +90,25 @@ domain's scale, revisited only if a real need for more emerges.
 
 - CSRF protection for all web (Inertia) form submissions — Laravel
   default, not disabled.
-- Rate limiting on auth endpoints and any public-facing endpoint (public
-  transparency pages, report share links) via Laravel's rate limiter.
+- Rate limiting:
+  - Login (web and API) — 5 attempts/minute, keyed by email+IP,
+    cleared on success (`Auth\LoginRequest`/`Api\Auth\LoginRequest`).
+  - Registration (web and API) — 5/minute per IP, hit on every
+    attempt regardless of outcome (unlike login, there's no existing
+    account to key a failure against) — `routes/auth.php`'s
+    `throttle:5,1`, `Api\Auth\RegisterRequest::ensureIsNotRateLimited`.
+  - Every other `/api/v1/*` route — 60/minute per authenticated user
+    (or IP, unauthenticated) — the `api` named limiter
+    (`AppServiceProvider`). Laravel 11+ dropped the old
+    `RouteServiceProvider` convention that wired this in by default;
+    it had to be added explicitly.
+  - Public, unauthenticated web pages (transparency, report
+    show/share/QR/PDF) — 60/minute per IP, the `public-pages` limiter.
+  - All of the above are unlimited while `php artisan test` is
+    running (`AppServiceProvider` checks `runningUnitTests()`) — the
+    blanket ceilings are a production concern, not something worth
+    coupling to test timing; the auth-specific limiters use their own
+    dedicated keys and stay fully tested regardless (see `AuthTest`).
 - Server-side validation via Form Requests is authoritative; any
   client-side validation is UX-only and never trusted.
 - Output escaping via React/Blade defaults — no raw HTML injection from

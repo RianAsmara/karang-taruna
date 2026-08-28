@@ -31,12 +31,31 @@ export interface CurrentOrganization {
     roleLabel: string;
 }
 
+export interface OrganizationThemeColors {
+    accent: string;
+    accent200: string;
+    accent700: string;
+    accent800: string;
+    onAccent: string;
+    onInk: string;
+}
+
+export interface OrganizationTheme {
+    version: number;
+    updatedAt: string;
+    name: string;
+    primary: string;
+    logo: { mark: string; icon: string; mono: string };
+    color: { light: OrganizationThemeColors; dark: OrganizationThemeColors };
+}
+
 export interface SharedData {
     name: string;
     quote: { message: string; author: string };
     auth: Auth;
     currentOrganization: CurrentOrganization | null;
     unreadNotificationsCount: number;
+    organizationTheme: OrganizationTheme | null;
     [key: string]: unknown;
 }
 

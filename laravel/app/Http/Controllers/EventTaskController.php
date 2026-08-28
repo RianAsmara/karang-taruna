@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\Event\UpdateEventTaskStatusAction;
+use App\Enums\EventTaskStatus;
 use App\Http\Requests\EventTask\StoreEventTaskRequest;
 use App\Http\Requests\EventTask\UpdateEventTaskRequest;
 use App\Http\Requests\EventTask\UpdateEventTaskStatusRequest;
@@ -29,9 +31,9 @@ class EventTaskController extends Controller
         return back();
     }
 
-    public function updateStatus(UpdateEventTaskStatusRequest $request, Event $event, EventTask $task): RedirectResponse
+    public function updateStatus(UpdateEventTaskStatusRequest $request, Event $event, EventTask $task, UpdateEventTaskStatusAction $updateStatus): RedirectResponse
     {
-        $task->update(['status' => $request->string('status')->value()]);
+        $updateStatus->handle($task, EventTaskStatus::from($request->string('status')->value()));
 
         return back();
     }

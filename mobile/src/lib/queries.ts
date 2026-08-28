@@ -109,6 +109,12 @@ export interface ApiParticipant {
   statusLabel: string;
 }
 
+export interface ApiEventAttendance {
+  myStatus: string | null;
+  count: number;
+  canCheckIn: boolean;
+}
+
 export interface ApiEventDetail extends ApiEvent {
   description: string | null;
   pic?: { id: string; name: string } | null;
@@ -117,6 +123,7 @@ export interface ApiEventDetail extends ApiEvent {
   tasks: ApiTask[];
   committees: ApiCommittee[];
   participants: ApiParticipant[];
+  attendance: ApiEventAttendance;
 }
 
 export interface ApiEventCommitteeInput {
@@ -146,6 +153,50 @@ export function useCurrentOrganization() {
   return useQuery({
     queryKey: ['organization', 'current'],
     queryFn: () => apiFetch<ApiCurrentOrganizationResponse>('/organizations/current'),
+    // A 422 here means "no membership yet" (see AppTabsLayout) — a
+    // permanent client-side state, not a transient failure worth the
+    // default retry-with-backoff delay before the "no org" redirect
+    // can fire.
+    retry: false,
+  });
+}
+
+export interface ApiOrganizationOption {
+  id: string;
+  name: string;
+  role: string;
+  roleLabel: string;
+}
+
+export function useMyOrganizations() {
+  return useQuery({
+    queryKey: ['organizations', 'mine'],
+    queryFn: () => apiFetch<{ organizations: ApiOrganizationOption[] }>('/organizations/mine'),
+  });
+}
+
+export function useSwitchOrganization() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (organizationId: string) =>
+      apiFetch<{ organization: ApiOrganizationOption }>('/organizations/switch', {
+        method: 'POST',
+        body: { organization_id: organizationId },
+      }),
+    onSuccess: () => {
+      // Every org-scoped query is now stale — the simplest correct
+      // invalidation is "everything", not an ever-growing hand-picked
+      // list that silently misses one the next time a domain is added.
+      queryClient.invalidateQueries();
+    },
+  });
+}
+
+export function useCreateOrganization() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (name: string) => apiFetch<{ data: ApiOrganization }>('/organizations', { method: 'POST', body: { name } }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['organization', 'current'] }),
   });
 }
 
@@ -364,6 +415,14 @@ export function useEvent(id: string) {
   });
 }
 
+export function useCheckInAttendance(eventId: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: () => apiFetch<{ message: string }>(`/events/${eventId}/attendance`, { method: 'POST' }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['event', eventId] }),
+  });
+}
+
 interface EventWizardBody {
   title: string;
   description?: string;
@@ -418,6 +477,7 @@ export interface ApiMember {
   isChair: boolean;
   /** Present only within the 30-day "Keluar" retention window — absent for a live membership. */
   leftAt: string | null;
+  activityPoints: number;
 }
 
 export interface ApiMemberResponsibility {

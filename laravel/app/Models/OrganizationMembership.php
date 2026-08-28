@@ -20,6 +20,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * `withTrashed()` to show the 30-day "Keluar" tag.
  *
  * @property OrganizationRole $role
+ * @property-read int|null $activity_points only present via withSum('activityLogs as activity_points', 'points')
  */
 class OrganizationMembership extends Model
 {
@@ -61,5 +62,18 @@ class OrganizationMembership extends Model
     public function dues(): HasMany
     {
         return $this->hasMany(MemberDue::class, 'membership_id');
+    }
+
+    /**
+     * @return HasMany<ActivityLog, $this>
+     */
+    public function activityLogs(): HasMany
+    {
+        return $this->hasMany(ActivityLog::class, 'membership_id');
+    }
+
+    public function activityPoints(): int
+    {
+        return (int) $this->activityLogs()->sum('points');
     }
 }

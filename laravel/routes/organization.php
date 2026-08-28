@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AnnouncementController;
+use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\EventCommitteeController;
 use App\Http\Controllers\EventController;
@@ -42,6 +43,10 @@ Route::middleware(['auth', 'current-org'])->group(function () {
     Route::patch('events/{event}/tasks/{task}', [EventTaskController::class, 'update'])->name('events.tasks.update');
     Route::patch('events/{event}/tasks/{task}/status', [EventTaskController::class, 'updateStatus'])->name('events.tasks.update-status');
     Route::delete('events/{event}/tasks/{task}', [EventTaskController::class, 'destroy'])->name('events.tasks.destroy');
+
+    Route::post('events/{event}/attendance', [AttendanceController::class, 'store'])->name('events.attendance.store');
+    Route::get('events/{event}/attendance', [AttendanceController::class, 'index'])->name('events.attendance.index');
+    Route::get('events/{event}/attendance/qr', [AttendanceController::class, 'qr'])->name('events.attendance.qr');
 
     Route::post('events/{event}/participants', [EventParticipantController::class, 'store'])->name('events.participants.store');
     Route::delete('events/{event}/participants/{participant}', [EventParticipantController::class, 'destroy'])->name('events.participants.destroy');
@@ -97,6 +102,8 @@ Route::middleware(['auth', 'current-org'])->group(function () {
     Route::patch('organisasi/tema', [ThemeController::class, 'update'])->name('theme.update');
 
     Route::get('votes', [VoteController::class, 'index'])->name('votes.index');
+    Route::get('votes/create', [VoteController::class, 'create'])->name('votes.create');
+    Route::post('votes', [VoteController::class, 'store'])->name('votes.store');
     Route::get('votes/{vote}', [VoteController::class, 'show'])->name('votes.show');
     Route::post('votes/{vote}/responses', [VoteController::class, 'storeResponse'])->name('votes.responses.store');
 

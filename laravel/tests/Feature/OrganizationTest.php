@@ -40,6 +40,26 @@ class OrganizationTest extends TestCase
 
         $this->assertNotNull($membership);
         $this->assertSame(OrganizationRole::Ketua, $membership->role);
+        $this->assertSame($organization->id, $user->fresh()->active_organization_id);
+    }
+
+    public function test_a_user_with_an_existing_organization_can_create_another_and_it_becomes_active()
+    {
+        $user = User::factory()->create();
+        $firstOrganization = Organization::factory()->create();
+        $firstOrganization->memberships()->create(['user_id' => $user->id, 'role' => OrganizationRole::Ketua]);
+
+        $this->actingAs($user)->get('/organizations/create')->assertOk();
+
+        $this->actingAs($user)
+            ->post('/organizations', ['name' => 'Pemuda Kampung Baru'])
+            ->assertRedirect('/dashboard');
+
+        $newOrganization = Organization::firstWhere('name', 'Pemuda Kampung Baru');
+
+        $this->assertNotNull($newOrganization);
+        $this->assertSame($newOrganization->id, $user->fresh()->active_organization_id);
+        $this->assertSame($newOrganization->id, $user->fresh()->currentMembership()->organization_id);
     }
 
     public function test_organization_name_is_required()

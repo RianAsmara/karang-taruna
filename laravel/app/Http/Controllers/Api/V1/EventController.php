@@ -44,6 +44,7 @@ class EventController extends Controller
             'participants.membership.user:id,name',
             'sponsor:id,name',
             'budgetTransaction:id,amount',
+            'attendanceSession',
         ]);
 
         return new EventResource($event);

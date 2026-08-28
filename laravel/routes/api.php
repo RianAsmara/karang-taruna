@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\V1\AnnouncementController;
+use App\Http\Controllers\Api\V1\AttendanceController;
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\DocumentController;
 use App\Http\Controllers\Api\V1\EventController;
@@ -28,6 +29,7 @@ use App\Http\Controllers\Api\V1\VoteController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->name('api.v1.')->group(function () {
+    Route::post('auth/register', [AuthController::class, 'register'])->name('auth.register');
     Route::post('auth/login', [AuthController::class, 'login'])->name('auth.login');
 
     // Mixed audience, mirroring the web's canonical /reports/{report}
@@ -45,6 +47,8 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
         // Outside 'current-org' on purpose — a user with no organization yet
         // must still be able to create their first one.
         Route::post('organizations', [OrganizationController::class, 'store'])->name('organizations.store');
+        Route::get('organizations/mine', [OrganizationController::class, 'mine'])->name('organizations.mine');
+        Route::post('organizations/switch', [OrganizationController::class, 'switch'])->name('organizations.switch');
 
         // User-level, not organization-scoped — outside 'current-org'.
         Route::patch('profile/phone-visibility', [ProfileController::class, 'updatePhoneVisibility'])->name('profile.phone-visibility.update');
@@ -77,6 +81,10 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
             Route::get('events/{event}/tasks', [EventTaskController::class, 'index'])->name('events.tasks.index');
             Route::post('events/{event}/tasks', [EventTaskController::class, 'store'])->name('events.tasks.store');
             Route::patch('events/{event}/tasks/{task}/status', [EventTaskController::class, 'updateStatus'])->name('events.tasks.update-status');
+
+            Route::post('events/{event}/attendance', [AttendanceController::class, 'store'])->name('events.attendance.store');
+            Route::get('events/{event}/attendance', [AttendanceController::class, 'index'])->name('events.attendance.index');
+            Route::get('events/{event}/attendance/qr', [AttendanceController::class, 'qr'])->name('events.attendance.qr');
 
             Route::get('my/tasks', [MyTasksController::class, 'index'])->name('my.tasks.index');
 
@@ -130,8 +138,12 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
             Route::get('sponsors/{sponsor}', [SponsorController::class, 'show'])->name('sponsors.show');
             Route::patch('sponsors/{sponsor}/status', [SponsorController::class, 'updateStatus'])->name('sponsors.update-status');
 
-            // No POST /votes — vote creation is deliberately unspecified
-            // (mobile-ux.md § Open product decisions). Read + submit only.
+            // No POST /votes — "who may create a vote" (mobile-ux.md §
+            // Open product decisions) is now resolved on web (pengurus,
+            // via VotePolicy::create), but mobile's own design stays
+            // read+submit-only for Voting by deliberate choice ("no
+            // creation flow in this phase"), so the API mirrors that —
+            // not a gap, a still-current design decision.
             Route::get('votes', [VoteController::class, 'index'])->name('votes.index');
             Route::get('votes/{vote}', [VoteController::class, 'show'])->name('votes.show');
             Route::post('votes/{vote}/responses', [VoteController::class, 'storeResponse'])->name('votes.responses.store');

@@ -3,19 +3,45 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Actions\Organization\CreateOrganizationAction;
+use App\Actions\Organization\SwitchOrganizationAction;
 use App\Enums\EventParticipantStatus;
 use App\Enums\EventStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Organization\StoreOrganizationRequest;
+use App\Http\Requests\Organization\SwitchOrganizationRequest;
 use App\Http\Resources\OrganizationResource;
 use App\Models\EventParticipant;
 use App\Models\Organization;
 use App\Models\OrganizationMembership;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class OrganizationController extends Controller
 {
+    /**
+     * Every organization the authenticated user belongs to — backs the
+     * mobile "Ganti organisasi" screen.
+     */
+    public function mine(Request $request, SwitchOrganizationAction $switchOrganization): JsonResponse
+    {
+        return response()->json(['organizations' => $switchOrganization->options($request->user())]);
+    }
+
+    public function switch(SwitchOrganizationRequest $request, SwitchOrganizationAction $switchOrganization): JsonResponse
+    {
+        $membership = $switchOrganization->handle($request->user(), $request->string('organization_id')->value());
+
+        return response()->json([
+            'organization' => [
+                'id' => $membership->organization->id,
+                'name' => $membership->organization->name,
+                'role' => $membership->role->value,
+                'roleLabel' => $membership->role->label(),
+            ],
+        ]);
+    }
+
     /**
      * Deliberately outside the 'current-org' middleware group (routes/api.php)
      * — a user with no organization yet must be able to reach this, same as

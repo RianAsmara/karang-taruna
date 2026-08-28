@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Enums\OrganizationRole;
+use App\Models\Event;
 use App\Models\Organization;
 use App\Models\OrganizationMembership;
 use App\Models\User;
@@ -208,6 +209,113 @@ class VoteTest extends TestCase
         $this->actingAs($member)
             ->get("/votes/{$vote->id}")
             ->assertInertia(fn ($page) => $page->has('results'));
+    }
+
+    public function test_a_pengurus_can_create_a_vote_with_options()
+    {
+        $organization = Organization::factory()->create();
+        $secretary = $this->memberWithRole($organization, OrganizationRole::Sekretaris);
+
+        $this->actingAs($secretary)->get('/votes/create')->assertOk();
+
+        $this->actingAs($secretary)
+            ->post('/votes', [
+                'question' => 'Apakah kita mengadakan turnamen voli?',
+                'anonymous' => false,
+                'editable' => true,
+                'max_selections' => 1,
+                'eligible_scope' => 'ALL',
+                'start_at' => now()->toDateTimeString(),
+                'end_at' => now()->addWeek()->toDateTimeString(),
+                'options' => ['Ya', 'Tidak'],
+            ])
+            ->assertRedirect();
+
+        $vote = Vote::firstWhere('question', 'Apakah kita mengadakan turnamen voli?');
+        $this->assertNotNull($vote);
+        $this->assertSame($organization->id, $vote->organization_id);
+        $this->assertCount(2, $vote->options);
+    }
+
+    public function test_a_plain_member_cannot_create_a_vote()
+    {
+        $organization = Organization::factory()->create();
+        $member = $this->memberWithRole($organization, OrganizationRole::Anggota);
+
+        $this->actingAs($member)->get('/votes/create')->assertForbidden();
+
+        $this->actingAs($member)
+            ->post('/votes', [
+                'question' => 'Apakah kita mengadakan turnamen voli?',
+                'anonymous' => false,
+                'editable' => true,
+                'max_selections' => 1,
+                'eligible_scope' => 'ALL',
+                'start_at' => now()->toDateTimeString(),
+                'end_at' => now()->addWeek()->toDateTimeString(),
+                'options' => ['Ya', 'Tidak'],
+            ])
+            ->assertForbidden();
+    }
+
+    public function test_creating_a_vote_with_fewer_than_two_options_is_rejected()
+    {
+        $organization = Organization::factory()->create();
+        $chair = $this->memberWithRole($organization, OrganizationRole::Ketua);
+
+        $this->actingAs($chair)
+            ->post('/votes', [
+                'question' => 'Apakah kita mengadakan turnamen voli?',
+                'anonymous' => false,
+                'editable' => true,
+                'max_selections' => 1,
+                'eligible_scope' => 'ALL',
+                'start_at' => now()->toDateTimeString(),
+                'end_at' => now()->addWeek()->toDateTimeString(),
+                'options' => ['Ya'],
+            ])
+            ->assertSessionHasErrors('options');
+    }
+
+    public function test_end_at_must_be_after_start_at()
+    {
+        $organization = Organization::factory()->create();
+        $chair = $this->memberWithRole($organization, OrganizationRole::Ketua);
+
+        $this->actingAs($chair)
+            ->post('/votes', [
+                'question' => 'Apakah kita mengadakan turnamen voli?',
+                'anonymous' => false,
+                'editable' => true,
+                'max_selections' => 1,
+                'eligible_scope' => 'ALL',
+                'start_at' => now()->toDateTimeString(),
+                'end_at' => now()->subDay()->toDateTimeString(),
+                'options' => ['Ya', 'Tidak'],
+            ])
+            ->assertSessionHasErrors('end_at');
+    }
+
+    public function test_a_vote_cannot_be_linked_to_another_organizations_event()
+    {
+        $organization = Organization::factory()->create();
+        $chair = $this->memberWithRole($organization, OrganizationRole::Ketua);
+        $otherOrganization = Organization::factory()->create();
+        $otherEvent = Event::factory()->create(['organization_id' => $otherOrganization->id]);
+
+        $this->actingAs($chair)
+            ->post('/votes', [
+                'question' => 'Apakah kita mengadakan turnamen voli?',
+                'anonymous' => false,
+                'editable' => true,
+                'max_selections' => 1,
+                'eligible_scope' => 'ALL',
+                'event_id' => $otherEvent->id,
+                'start_at' => now()->toDateTimeString(),
+                'end_at' => now()->addWeek()->toDateTimeString(),
+                'options' => ['Ya', 'Tidak'],
+            ])
+            ->assertSessionHasErrors('event_id');
     }
 
     public function test_a_member_from_another_organization_cannot_view_this_organizations_vote()

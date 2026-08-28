@@ -30,6 +30,11 @@ class MemberResource extends JsonResource
             // retention window (see MemberController::index) — a live
             // membership never has this set.
             'leftAt' => $this->deleted_at?->toIso8601String(),
+            // Prefers the eager-loaded withSum() aggregate from index()
+            // to avoid an N+1 query per member in a list; falls back to
+            // a live query for single-record fetches (show/store/etc.),
+            // which only ever cost one query anyway.
+            'activityPoints' => $this->activity_points !== null ? (int) $this->activity_points : $this->activityPoints(),
         ];
     }
 }

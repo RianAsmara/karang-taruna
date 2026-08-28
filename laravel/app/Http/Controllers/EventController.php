@@ -11,6 +11,7 @@ use App\Enums\TransactionStatus;
 use App\Enums\TransactionType;
 use App\Http\Requests\Event\StoreEventRequest;
 use App\Http\Requests\Event\UpdateEventRequest;
+use App\Models\Attendance;
 use App\Models\Event;
 use App\Models\Organization;
 use Illuminate\Http\RedirectResponse;
@@ -71,6 +72,7 @@ class EventController extends Controller
             'committees.membership.user:id,name',
             'tasks.assignee.user:id,name',
             'participants.membership.user:id,name',
+            'attendanceSession',
         ]);
 
         return Inertia::render('events/show', [
@@ -119,6 +121,8 @@ class EventController extends Controller
                 EventTaskPriority::cases(),
             ),
             'budget' => $this->budgetSummary($event),
+            'attendance' => $this->attendanceSummary($event),
+            'canManageAttendance' => Auth::user()->can('manage', [Attendance::class, $event]),
         ]);
     }
 
@@ -221,5 +225,24 @@ class EventController extends Controller
         }
 
         return $summary;
+    }
+
+    /**
+     * @return array{myStatus: string|null, count: int, canCheckIn: bool}
+     */
+    private function attendanceSummary(Event $event): array
+    {
+        $membership = Auth::user()->membershipIn($event->organization);
+        $session = $event->attendanceSession;
+
+        $mine = $session === null || $membership === null
+            ? null
+            : $session->attendances()->where('membership_id', $membership->id)->first();
+
+        return [
+            'myStatus' => $mine?->status->value,
+            'count' => $session === null ? 0 : $session->attendances()->count(),
+            'canCheckIn' => Auth::user()->can('checkIn', [Attendance::class, $event]),
+        ];
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Http\Resources\OrganizationThemeResource;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -39,6 +40,7 @@ class HandleInertiaRequests extends Middleware
         [$message, $author] = str(Inspiring::quotes()->random())->explode('-');
 
         $membership = $request->user()?->currentMembership();
+        $theme = $membership?->organization->theme;
 
         return array_merge(parent::share($request), [
             ...parent::share($request),
@@ -55,6 +57,7 @@ class HandleInertiaRequests extends Middleware
                 'roleLabel' => $membership->role->label(),
             ] : null,
             'unreadNotificationsCount' => $request->user()?->unreadNotifications()->count() ?? 0,
+            'organizationTheme' => $theme ? (new OrganizationThemeResource($theme))->resolve() : null,
         ]);
     }
 }

@@ -11,4 +11,12 @@ enum VoteEligibleScope: string
 {
     case All = 'ALL';
     case Pengurus = 'PENGURUS';
+
+    public function label(): string
+    {
+        return match ($this) {
+            self::All => 'Semua anggota',
+            self::Pengurus => 'Pengurus saja',
+        };
+    }
 }

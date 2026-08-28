@@ -7,6 +7,7 @@ import { Button } from '@/components/Button';
 import { Dialog } from '@/components/Dialog';
 import { ErrorState } from '@/components/ErrorState';
 import { ListItem } from '@/components/ListItem';
+import { OrgSwitcherSheet } from '@/components/OrgSwitcherSheet';
 import { ScreenHeader } from '@/components/ScreenHeader';
 import { SectionHeader } from '@/components/SectionHeader';
 import { Skeleton } from '@/components/Skeleton';
@@ -27,6 +28,7 @@ export function ProfilScreen() {
   const styles = makeStyles(theme);
   const [leaveOpen, setLeaveOpen] = useState(false);
   const [signOutOpen, setSignOutOpen] = useState(false);
+  const [orgSwitcherOpen, setOrgSwitcherOpen] = useState(false);
 
   const user = useAuth((state) => state.user);
   const logout = useAuth((state) => state.logout);
@@ -130,6 +132,7 @@ export function ProfilScreen() {
 
         <SectionHeader title="Organisasi saya" />
         <View>
+          <ListItem title="Ganti organisasi" onPress={() => setOrgSwitcherOpen(true)} />
           <ListItem
             title="Anggota & peran"
             trailing={<Text style={styles.trailingCount}>{members.data?.data.length ?? '–'}</Text>}
@@ -177,6 +180,8 @@ export function ProfilScreen() {
           logout().then(() => router.replace('/'));
         }}
       />
+
+      <OrgSwitcherSheet visible={orgSwitcherOpen} currentOrganizationId={org.id} onClose={() => setOrgSwitcherOpen(false)} />
     </View>
   );
 }

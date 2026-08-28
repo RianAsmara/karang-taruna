@@ -129,7 +129,10 @@ export function AnggotaDetailScreen() {
         <View style={styles.identity}>
           <Avatar size={56} initials={initialsOf(m.name)} />
           <Text style={styles.name}>{m.name}</Text>
-          <Text style={styles.meta}>Anggota sejak {formatMonthYear(new Date(m.joinedAt))}</Text>
+          <Text style={styles.meta}>
+            Anggota sejak {formatMonthYear(new Date(m.joinedAt))}
+            {m.activityPoints > 0 ? ` · ${m.activityPoints} poin aktivitas` : ''}
+          </Text>
           <View style={styles.tagRow}>
             <Tag tone={ROLE_TONE[m.roleLabel] ?? 'outline'} label={m.roleLabel.toUpperCase()} />
             {m.leftAt ? <Tag tone="outline" label="KELUAR" mutedFill /> : null}

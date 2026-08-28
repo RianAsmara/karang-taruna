@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Actions\Event\UpdateEventTaskStatusAction;
+use App\Enums\EventTaskStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\EventTask\StoreEventTaskRequest;
 use App\Http\Requests\EventTask\UpdateEventTaskStatusRequest;
@@ -36,9 +38,9 @@ class EventTaskController extends Controller
             ->setStatusCode(201);
     }
 
-    public function updateStatus(UpdateEventTaskStatusRequest $request, Event $event, EventTask $task): JsonResource
+    public function updateStatus(UpdateEventTaskStatusRequest $request, Event $event, EventTask $task, UpdateEventTaskStatusAction $updateStatus): JsonResource
     {
-        $task->update(['status' => $request->string('status')->value()]);
+        $updateStatus->handle($task, EventTaskStatus::from($request->string('status')->value()));
 
         return new EventTaskResource($task->refresh()->load('assignee.user:id,name'));
     }

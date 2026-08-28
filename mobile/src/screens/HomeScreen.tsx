@@ -1,6 +1,6 @@
 import { router } from "expo-router";
 import { useMemo, useState } from "react";
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Image, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { Avatar } from "@/components/Avatar";
@@ -8,7 +8,7 @@ import { BalanceDisplay } from "@/components/BalanceDisplay";
 import { Card } from "@/components/Card";
 import { ErrorState } from "@/components/ErrorState";
 import { EventItem } from "@/components/EventItem";
-import { InfoSheet } from "@/components/InfoSheet";
+import { OrgSwitcherSheet } from "@/components/OrgSwitcherSheet";
 import { SectionHeader } from "@/components/SectionHeader";
 import { Skeleton } from "@/components/Skeleton";
 import { TaskItem } from "@/components/TaskItem";
@@ -41,7 +41,7 @@ function currentMonthPeriod(): string {
 }
 
 export function HomeScreen() {
-  const { theme } = useTheme();
+  const { theme, logo } = useTheme();
   const insets = useSafeAreaInsets();
   const styles = makeStyles(theme);
   const [orgSwitcherOpen, setOrgSwitcherOpen] = useState(false);
@@ -87,7 +87,11 @@ export function HomeScreen() {
       ]}
     >
       <View style={styles.headerLeft}>
-        <View style={styles.mark} />
+        {logo ? (
+          <Image source={{ uri: logo.mark }} style={styles.mark} resizeMode="contain" accessibilityLabel="Logo organisasi" />
+        ) : (
+          <View style={styles.mark} />
+        )}
         {organization.data ? (
           <Pressable
             onPress={() => setOrgSwitcherOpen(true)}
@@ -288,10 +292,9 @@ export function HomeScreen() {
         </Card>
       </ScrollView>
 
-      <InfoSheet
+      <OrgSwitcherSheet
         visible={orgSwitcherOpen}
-        title="Ganti organisasi"
-        body="Ganti organisasi akan tersedia setelah Anda bergabung di lebih dari satu organisasi."
+        currentOrganizationId={organization.data?.data.id}
         onClose={() => setOrgSwitcherOpen(false)}
       />
     </View>

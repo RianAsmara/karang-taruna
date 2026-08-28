@@ -43,6 +43,7 @@ class MemberController extends Controller
                     ->orWhere('deleted_at', '>=', Carbon::now()->subDays(self::LEFT_RETENTION_DAYS));
             })
             ->with(['user:id,name,email,phone,show_phone_to_members', 'organization'])
+            ->withSum('activityLogs as activity_points', 'points')
             ->orderBy('created_at')
             ->get();
 

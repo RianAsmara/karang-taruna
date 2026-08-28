@@ -56,6 +56,12 @@ interface BudgetSummary {
     varianceExpense?: number;
 }
 
+interface AttendanceSummary {
+    myStatus: string | null;
+    count: number;
+    canCheckIn: boolean;
+}
+
 interface EventShowProps {
     event: {
         id: string;
@@ -79,6 +85,8 @@ interface EventShowProps {
     currentMembershipId: string | null;
     taskPriorities: Option[];
     budget: BudgetSummary;
+    attendance: AttendanceSummary;
+    canManageAttendance: boolean;
 }
 
 const TASK_STATUSES: Option[] = [
@@ -212,6 +220,8 @@ export default function EventShow({
     currentMembershipId,
     taskPriorities,
     budget,
+    attendance,
+    canManageAttendance,
 }: EventShowProps) {
     const breadcrumbs: BreadcrumbItem[] = [
         { title: 'Kegiatan', href: '/events' },
@@ -236,6 +246,8 @@ export default function EventShow({
         router.delete(route('events.participants.destroy', [event.id, participantId]), { preserveScroll: true });
 
     const deleteEvent = () => router.delete(route('events.destroy', event.id));
+
+    const checkIn = () => router.post(route('events.attendance.store', event.id), {}, { preserveScroll: true });
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -266,6 +278,36 @@ export default function EventShow({
                         )}
                     </div>
                 </div>
+
+                <section className="border-sidebar-border/70 dark:border-sidebar-border flex items-center justify-between rounded-lg border p-4">
+                    <div>
+                        <h2 className="font-semibold">Kehadiran</h2>
+                        <p className="text-muted-foreground text-sm">{attendance.count} orang tercatat hadir</p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        {canManageAttendance && (
+                            <>
+                                <Button variant="outline" size="sm" asChild>
+                                    <Link href={route('events.attendance.index', event.id)}>Lihat daftar hadir</Link>
+                                </Button>
+                                <Button variant="outline" size="sm" asChild>
+                                    <a href={route('events.attendance.qr', event.id)} target="_blank" rel="noopener noreferrer">
+                                        QR presensi
+                                    </a>
+                                </Button>
+                            </>
+                        )}
+                        {attendance.myStatus === 'HADIR' ? (
+                            <Badge>Hadir</Badge>
+                        ) : (
+                            attendance.canCheckIn && (
+                                <Button size="sm" onClick={checkIn}>
+                                    Konfirmasi kehadiran saya
+                                </Button>
+                            )
+                        )}
+                    </div>
+                </section>
 
                 <section className="space-y-3">
                     <div className="flex items-center justify-between">

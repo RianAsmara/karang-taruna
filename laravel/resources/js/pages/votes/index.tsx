@@ -1,4 +1,5 @@
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
 import { formatDateTime } from '@/lib/utils';
 import { type BreadcrumbItem } from '@/types';
@@ -15,7 +16,7 @@ interface VoteListItem {
     eligibleCount: number;
 }
 
-export default function VotesIndex({ votes }: { votes: VoteListItem[] }) {
+export default function VotesIndex({ votes, canCreate }: { votes: VoteListItem[]; canCreate: boolean }) {
     const open = votes.filter((vote) => vote.isOpen);
     const closed = votes.filter((vote) => !vote.isOpen);
 
@@ -23,7 +24,14 @@ export default function VotesIndex({ votes }: { votes: VoteListItem[] }) {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Voting" />
             <div className="flex h-full flex-1 flex-col gap-6 rounded-xl p-4">
-                <h1 className="text-xl font-semibold">Voting</h1>
+                <div className="flex items-center justify-between">
+                    <h1 className="text-xl font-semibold">Voting</h1>
+                    {canCreate && (
+                        <Button asChild>
+                            <Link href={route('votes.create')}>Buat voting</Link>
+                        </Button>
+                    )}
+                </div>
 
                 {votes.length === 0 ? (
                     <p className="text-muted-foreground text-sm">Belum ada voting.</p>

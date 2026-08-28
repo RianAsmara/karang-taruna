@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Carbon;
 
 /**
@@ -19,6 +20,7 @@ use Illuminate\Support\Carbon;
  * @property EventStatus $status
  * @property EventLifecycleStage $lifecycle_stage
  * @property EventCategory|null $category
+ * @property-read AttendanceSession|null $attendanceSession
  */
 class Event extends Model
 {
@@ -126,6 +128,14 @@ class Event extends Model
     public function budgetTransaction(): BelongsTo
     {
         return $this->belongsTo(FinancialTransaction::class, 'budget_financial_transaction_id');
+    }
+
+    /**
+     * @return HasOne<AttendanceSession, $this>
+     */
+    public function attendanceSession(): HasOne
+    {
+        return $this->hasOne(AttendanceSession::class);
     }
 
     /**

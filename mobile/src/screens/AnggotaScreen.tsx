@@ -88,6 +88,7 @@ export function AnggotaScreen() {
       initials={initialsOf(member.name)}
       name={member.id === myMembershipId ? `${member.name} (Anda)` : member.name}
       roles={[member.roleLabel]}
+      meta={member.activityPoints > 0 ? `${member.activityPoints} poin` : undefined}
       duesStatus={canSeeDues && !member.leftAt ? (duesStatusByMembership.get(member.id) ?? 'unpaid') : undefined}
       hasLeft={Boolean(member.leftAt)}
       onPress={() => router.push(`/anggota/${member.id}`)}

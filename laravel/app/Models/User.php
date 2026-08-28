@@ -66,8 +66,24 @@ class User extends Authenticatable
     /**
      * The user's organization, until multi-organization switching exists.
      */
+    /**
+     * The user's `active_organization_id` preference, when they still
+     * hold a membership there (switching orgs then leaving one never
+     * silently strands the pointer) — otherwise falls back to their
+     * first membership. Unchanged behavior for every single-org user,
+     * the common case; only SwitchOrganizationAction ever sets the
+     * preference, always after verifying real membership first.
+     */
     public function currentMembership(): ?OrganizationMembership
     {
+        if ($this->active_organization_id !== null) {
+            $active = $this->memberships()->with('organization')->where('organization_id', $this->active_organization_id)->first();
+
+            if ($active !== null) {
+                return $active;
+            }
+        }
+
         return $this->memberships()->with('organization')->first();
     }
 

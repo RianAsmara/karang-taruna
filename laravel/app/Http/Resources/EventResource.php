@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Attendance;
 use App\Models\Event;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -54,6 +55,30 @@ class EventResource extends JsonResource
             // want the full member lists above.
             'committeeCount' => $this->whenCounted('committees'),
             'participantCount' => $this->whenCounted('participants'),
+            'attendance' => $this->when(
+                $this->relationLoaded('attendanceSession'),
+                fn () => $this->attendanceSummary($request),
+            ),
+        ];
+    }
+
+    /**
+     * @return array{myStatus: string|null, count: int, canCheckIn: bool}
+     */
+    private function attendanceSummary(Request $request): array
+    {
+        $user = $request->user();
+        $membership = $user?->membershipIn($this->organization);
+        $session = $this->attendanceSession;
+
+        $mine = $session === null || $membership === null
+            ? null
+            : $session->attendances()->where('membership_id', $membership->id)->first();
+
+        return [
+            'myStatus' => $mine?->status->value,
+            'count' => $session === null ? 0 : $session->attendances()->count(),
+            'canCheckIn' => $user !== null && $user->can('checkIn', [Attendance::class, $this->resource]),
         ];
     }
 }

@@ -21,6 +21,7 @@ interface AuthState {
   user: AuthUser | null;
   bootstrap: () => Promise<void>;
   login: (email: string, password: string) => Promise<void>;
+  register: (name: string, email: string, password: string, passwordConfirmation: string) => Promise<void>;
   logout: () => Promise<void>;
 }
 
@@ -44,6 +45,17 @@ export const useAuth = create<AuthState>((set) => ({
     const response = await apiFetch<{ token: string; user: AuthUser }>('/auth/login', {
       method: 'POST',
       body: { email, password, device_name: 'mobile' },
+    });
+
+    await SecureStore.setItemAsync(STORAGE_KEY, JSON.stringify(response));
+    setAuthToken(response.token);
+    set({ status: 'signedIn', user: response.user });
+  },
+
+  register: async (name: string, email: string, password: string, passwordConfirmation: string) => {
+    const response = await apiFetch<{ token: string; user: AuthUser }>('/auth/register', {
+      method: 'POST',
+      body: { name, email, password, password_confirmation: passwordConfirmation, device_name: 'mobile' },
     });
 
     await SecureStore.setItemAsync(STORAGE_KEY, JSON.stringify(response));

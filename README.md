@@ -151,6 +151,7 @@ a stale login on the device before the network — log out and back in.
 - [`docs/transparency.md`](docs/transparency.md) — visibility model, publish/revision flow, sharing
 - [`docs/roadmap.md`](docs/roadmap.md) — phase plan and non-goals
 - [`docs/decisions.md`](docs/decisions.md) — ADR log
+- [`docs/deployment.md`](docs/deployment.md) — process model, infra, environment, backups, go-live checklist
 - [`docs/next-up.md`](docs/next-up.md) — live, prioritized "what's next" across backend/web/mobile
 
 ## Stack

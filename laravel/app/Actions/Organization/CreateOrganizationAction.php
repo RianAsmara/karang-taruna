@@ -11,7 +11,11 @@ use Illuminate\Support\Str;
 class CreateOrganizationAction
 {
     /**
-     * Create a new organization and make the given user its KETUA.
+     * Create a new organization and make the given user its KETUA. Also
+     * becomes their active organization — meaningful once a user can
+     * belong to more than one (SwitchOrganizationAction): landing back
+     * on an old org right after creating a new one would be a strange
+     * result for something the user just explicitly asked for.
      */
     public function handle(User $user, string $name): Organization
     {
@@ -25,6 +29,8 @@ class CreateOrganizationAction
                 'user_id' => $user->id,
                 'role' => OrganizationRole::Ketua,
             ]);
+
+            $user->forceFill(['active_organization_id' => $organization->id])->save();
 
             return $organization;
         });

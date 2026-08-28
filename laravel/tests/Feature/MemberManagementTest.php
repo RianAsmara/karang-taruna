@@ -2,7 +2,9 @@
 
 namespace Tests\Feature;
 
+use App\Enums\ActivityPointSource;
 use App\Enums\OrganizationRole;
+use App\Models\ActivityLog;
 use App\Models\Organization;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -167,5 +169,33 @@ class MemberManagementTest extends TestCase
         $this->actingAs($chair)
             ->get('/members?search=TidakAda')
             ->assertInertia(fn ($page) => $page->has('members', 0));
+    }
+
+    public function test_the_member_list_shows_activity_points()
+    {
+        $organization = Organization::factory()->create();
+        $chair = $this->memberWithRole($organization, OrganizationRole::Ketua);
+        $member = $this->memberWithRole($organization, OrganizationRole::Anggota);
+        $membership = $organization->memberships()->where('user_id', $member->id)->first();
+
+        ActivityLog::factory()->create([
+            'organization_id' => $organization->id,
+            'membership_id' => $membership->id,
+            'points' => 5,
+            'source' => ActivityPointSource::EventAttendance,
+        ]);
+        ActivityLog::factory()->create([
+            'organization_id' => $organization->id,
+            'membership_id' => $membership->id,
+            'points' => 10,
+            'source' => ActivityPointSource::TaskCompleted,
+        ]);
+
+        $this->actingAs($chair)
+            ->get('/members')
+            ->assertInertia(fn ($page) => $page
+                ->where('members.0.activityPoints', 0)
+                ->where('members.1.activityPoints', 15)
+            );
     }
 }

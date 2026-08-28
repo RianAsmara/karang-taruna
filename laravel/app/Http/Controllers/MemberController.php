@@ -24,6 +24,7 @@ class MemberController extends Controller
 
         $members = $organization->memberships()
             ->with('user:id,name,email')
+            ->withSum('activityLogs as activity_points', 'points')
             ->when($search !== '', fn ($query) => $query->whereHas(
                 'user',
                 fn ($userQuery) => $userQuery->where('name', 'like', '%'.$search.'%')
@@ -39,6 +40,7 @@ class MemberController extends Controller
                 'roleLabel' => $membership->role->label(),
                 'joinedAt' => $membership->created_at->toIso8601String(),
                 'isChair' => $membership->role === OrganizationRole::Ketua,
+                'activityPoints' => (int) ($membership->activity_points ?? 0),
             ]);
 
         return Inertia::render('members/index', [

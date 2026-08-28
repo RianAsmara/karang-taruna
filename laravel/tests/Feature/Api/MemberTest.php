@@ -2,8 +2,10 @@
 
 namespace Tests\Feature\Api;
 
+use App\Enums\ActivityPointSource;
 use App\Enums\EventStatus;
 use App\Enums\OrganizationRole;
+use App\Models\ActivityLog;
 use App\Models\AuditLog;
 use App\Models\Event;
 use App\Models\EventCommittee;
@@ -340,5 +342,30 @@ class MemberTest extends TestCase
         $this->getJson("/api/v1/members/{$membership->id}/activity")
             ->assertOk()
             ->assertJsonCount(5, 'data');
+    }
+
+    public function test_the_member_list_and_detail_include_activity_points()
+    {
+        $organization = Organization::factory()->create();
+        $chair = $this->memberWithRole($organization, OrganizationRole::Ketua);
+        $member = $this->memberWithRole($organization, OrganizationRole::Anggota);
+        $membership = $organization->memberships()->where('user_id', $member->id)->first();
+
+        ActivityLog::factory()->create([
+            'organization_id' => $organization->id,
+            'membership_id' => $membership->id,
+            'points' => 5,
+            'source' => ActivityPointSource::EventAttendance,
+        ]);
+
+        Sanctum::actingAs($chair);
+
+        $this->getJson('/api/v1/members')
+            ->assertOk()
+            ->assertJsonFragment(['id' => $membership->id, 'activityPoints' => 5]);
+
+        $this->getJson("/api/v1/members/{$membership->id}")
+            ->assertOk()
+            ->assertJsonPath('data.activityPoints', 5);
     }
 }

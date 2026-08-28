@@ -38,7 +38,7 @@ export function SplashScreen() {
           onAccentBackground
           tall
           label="Buat organisasi baru"
-          onPress={() => router.push({ pathname: '/belum-tersedia/[topic]', params: { topic: 'organisasi-baru' } })}
+          onPress={() => router.push('/register')}
           block
         />
         <Text style={styles.footnote}>Gratis untuk Karang Taruna dan pemuda kampung.</Text>

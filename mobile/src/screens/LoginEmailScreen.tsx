@@ -116,6 +116,10 @@ export function LoginEmailScreen() {
             disabled={!email || !password}
           />
         </View>
+
+        <Text style={styles.registerLink} onPress={() => router.push('/register')}>
+          Belum punya akun? Daftar
+        </Text>
       </ScrollView>
     </View>
   );
@@ -139,5 +143,12 @@ function makeStyles(theme: Theme) {
     toggle: { fontFamily: 'Archivo_800ExtraBold', fontSize: 12, color: theme.color.accent, paddingHorizontal: theme.space.md },
     error: { fontFamily: 'Archivo_400Regular', fontSize: 12.5, color: theme.color.accent700 },
     primaryAction: { marginTop: theme.space.xl },
+    registerLink: {
+      fontFamily: 'Archivo_600SemiBold',
+      fontSize: 13,
+      color: theme.color.accent,
+      textAlign: 'center',
+      marginTop: theme.space.lg,
+    },
   });
 }

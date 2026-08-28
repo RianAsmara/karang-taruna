@@ -2,14 +2,131 @@
 
 namespace Tests\Feature\Api;
 
+use App\Enums\OrganizationRole;
+use App\Models\Organization;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Notification;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class AuthTest extends TestCase
 {
     use RefreshDatabase;
+
+    public function test_registering_creates_an_account_and_issues_a_usable_token()
+    {
+        Notification::fake();
+
+        $response = $this->postJson('/api/v1/auth/register', [
+            'name' => 'Budi Santoso',
+            'email' => 'budi@rukunmuda.test',
+            'password' => 'password123',
+            'password_confirmation' => 'password123',
+            'device_name' => 'Android phone',
+        ]);
+
+        $response->assertCreated()->assertJsonStructure(['token', 'user' => ['id', 'name', 'email']]);
+
+        $this->assertDatabaseHas('users', ['email' => 'budi@rukunmuda.test', 'name' => 'Budi Santoso']);
+
+        $token = $response->json('token');
+
+        // Registered, but no organization yet — the mobile client is
+        // expected to route this to Buat Organisasi rather than treating
+        // it as a hard error.
+        $this->withHeader('Authorization', "Bearer {$token}")
+            ->getJson('/api/v1/organizations/current')
+            ->assertStatus(422);
+    }
+
+    public function test_registering_with_an_already_used_email_is_rejected()
+    {
+        User::factory()->create(['email' => 'taken@rukunmuda.test']);
+
+        $this->postJson('/api/v1/auth/register', [
+            'name' => 'Budi Santoso',
+            'email' => 'taken@rukunmuda.test',
+            'password' => 'password123',
+            'password_confirmation' => 'password123',
+            'device_name' => 'Android phone',
+        ])->assertUnprocessable()->assertJsonValidationErrors('email');
+    }
+
+    public function test_registering_with_mismatched_password_confirmation_is_rejected()
+    {
+        $this->postJson('/api/v1/auth/register', [
+            'name' => 'Budi Santoso',
+            'email' => 'budi@rukunmuda.test',
+            'password' => 'password123',
+            'password_confirmation' => 'not-the-same',
+            'device_name' => 'Android phone',
+        ])->assertUnprocessable()->assertJsonValidationErrors('password');
+    }
+
+    public function test_registration_is_throttled_after_five_attempts_from_the_same_ip()
+    {
+        for ($i = 0; $i < 5; $i++) {
+            $this->postJson('/api/v1/auth/register', [
+                'name' => 'Budi Santoso',
+                'email' => "budi{$i}@rukunmuda.test",
+                'password' => 'password123',
+                'password_confirmation' => 'password123',
+                'device_name' => 'Android phone',
+            ])->assertCreated();
+        }
+
+        // The 6th attempt is throttled even with entirely valid, unused
+        // details — registration throttles by IP alone, unlike login
+        // which only hits the limiter on a failed attempt.
+        $this->postJson('/api/v1/auth/register', [
+            'name' => 'Budi Santoso',
+            'email' => 'budi-sixth@rukunmuda.test',
+            'password' => 'password123',
+            'password_confirmation' => 'password123',
+            'device_name' => 'Android phone',
+        ])->assertUnprocessable()->assertJsonValidationErrors('email');
+
+        $this->assertDatabaseMissing('users', ['email' => 'budi-sixth@rukunmuda.test']);
+    }
+
+    public function test_a_user_can_list_and_switch_between_their_organizations()
+    {
+        $user = User::factory()->create();
+        $orgA = Organization::factory()->create(['name' => 'Karang Taruna Melati']);
+        $orgB = Organization::factory()->create(['name' => 'Pemuda Kampung Sejahtera']);
+        $orgA->memberships()->create(['user_id' => $user->id, 'role' => OrganizationRole::Ketua]);
+        $orgB->memberships()->create(['user_id' => $user->id, 'role' => OrganizationRole::Anggota]);
+
+        Sanctum::actingAs($user);
+
+        $this->getJson('/api/v1/organizations/mine')
+            ->assertOk()
+            ->assertJsonCount(2, 'organizations');
+
+        $this->postJson('/api/v1/organizations/switch', ['organization_id' => $orgB->id])
+            ->assertOk()
+            ->assertJsonPath('organization.name', 'Pemuda Kampung Sejahtera');
+
+        $this->getJson('/api/v1/organizations/current')
+            ->assertOk()
+            ->assertJsonPath('data.name', 'Pemuda Kampung Sejahtera');
+    }
+
+    public function test_a_user_cannot_switch_to_an_organization_they_do_not_belong_to()
+    {
+        $user = User::factory()->create();
+        $organization = Organization::factory()->create();
+        $organization->memberships()->create(['user_id' => $user->id, 'role' => OrganizationRole::Anggota]);
+
+        $otherOrganization = Organization::factory()->create();
+
+        Sanctum::actingAs($user);
+
+        $this->postJson('/api/v1/organizations/switch', ['organization_id' => $otherOrganization->id])
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors('organization_id');
+    }
 
     public function test_login_with_valid_credentials_issues_a_usable_token()
     {

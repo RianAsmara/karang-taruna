@@ -24,6 +24,7 @@ interface Member {
     roleLabel: string;
     joinedAt: string;
     isChair: boolean;
+    activityPoints: number;
 }
 
 interface MembersIndexProps {
@@ -110,6 +111,7 @@ export default function MembersIndex({ members, roles, canManageMembers, filters
                                 <th className="px-4 py-2 font-medium">Nama</th>
                                 <th className="px-4 py-2 font-medium">Email</th>
                                 <th className="px-4 py-2 font-medium">Peran</th>
+                                <th className="px-4 py-2 font-medium">Poin</th>
                                 {canManageMembers && <th className="px-4 py-2 font-medium">Aksi</th>}
                             </tr>
                         </thead>
@@ -138,6 +140,7 @@ export default function MembersIndex({ members, roles, canManageMembers, filters
                                             member.roleLabel
                                         )}
                                     </td>
+                                    <td className="px-4 py-2 tabular-nums">{member.activityPoints}</td>
                                     {canManageMembers && (
                                         <td className="px-4 py-2">
                                             {!member.isChair && (

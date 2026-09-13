@@ -17,6 +17,18 @@ built against.
   community org. The tenant boundary for everything else.
 - `require_transaction_approval` (bool) — gates the finance approval flow.
 
+**OrganizationInvite** (added 13 Sep 2026, ADR-0021)
+- A shareable join link: `organization_id`, unique 40-char `token`,
+  `created_by`, `expires_at` (7 days by default), nullable `max_uses`,
+  `uses`, nullable `revoked_at`.
+- `isActive()` is the single gate: not revoked, not expired, and under its use
+  limit. Expiry and revocation are what make "holding the link is
+  authorization" safe.
+- Always grants `ANGGOTA`, never more — otherwise a forwarded WhatsApp message
+  becomes privilege escalation.
+- Acceptance reuses `AddMemberAction::forUser()`, so the 30-day soft-delete
+  restore logic lives in one place rather than being duplicated.
+
 **MembershipExitRequest** (added 13 Sep 2026, ADR-0020)
 - A member's request to leave, awaiting the chair's decision — leaving is
   never unilateral. `organization_id`, `membership_id`, optional `reason`,

@@ -57,6 +57,13 @@ Organization
   POST   /api/v1/organizations/switch                 auth:sanctum (membership verified server-side)
   GET    /api/v1/organizations/current                auth:sanctum + current-org
 
+Invites (shareable join links — ADR-0021)
+  GET    /api/v1/organizations/invites                auth:sanctum + current-org (KETUA only; active links)
+  POST   /api/v1/organizations/invites                 "        (KETUA only; {max_uses?: int} — returns a ready-to-share url)
+  DELETE /api/v1/organizations/invites/{invite}        "        (KETUA only; revoke)
+  (Accepting is the WEB route GET /join/{token} — a newcomer has no org, and
+   the link must open in a browser for someone with no account or app.)
+
 Membership exit (leaving is a request the chair decides — ADR-0020)
   GET    /api/v1/membership/exit-requests             auth:sanctum + current-org (KETUA only; the pending queue)
   GET    /api/v1/membership/exit-requests/mine         "        (the caller's own latest request + canRequest)

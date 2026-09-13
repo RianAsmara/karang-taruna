@@ -16,6 +16,7 @@ use App\Http\Controllers\InventoryItemController;
 use App\Http\Controllers\InventoryLoanController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\MemberDueController;
+use App\Http\Controllers\OrganizationInviteController;
 use App\Http\Controllers\SponsorController;
 use App\Http\Controllers\ThemeController;
 use App\Http\Controllers\TransparencyController;
@@ -27,6 +28,10 @@ Route::middleware(['auth', 'current-org'])->group(function () {
     Route::post('members', [MemberController::class, 'store'])->name('members.store');
     Route::patch('members/{member}', [MemberController::class, 'updateRole'])->name('members.update-role');
     Route::delete('members/{member}', [MemberController::class, 'destroy'])->name('members.destroy');
+
+    // Shareable join links — ADR-0021.
+    Route::post('organizations/invites', [OrganizationInviteController::class, 'store'])->name('organizations.invites.store');
+    Route::delete('organizations/invites/{invite}', [OrganizationInviteController::class, 'destroy'])->name('organizations.invites.destroy');
 
     Route::get('events', [EventController::class, 'index'])->name('events.index');
     Route::get('events/create', [EventController::class, 'create'])->name('events.create');

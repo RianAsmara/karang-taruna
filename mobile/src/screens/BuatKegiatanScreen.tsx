@@ -272,7 +272,7 @@ export function BuatKegiatanScreen() {
         )}
       </View>
 
-      <BottomSheet visible={pickerOpen} title="Pilih panitia" onClose={() => setPickerOpen(false)}>
+      <BottomSheet visible={pickerOpen} title="Pilih panitia" onClose={() => setPickerOpen(false)} scrollable={false}>
         <ScrollView style={styles.pickerScroll}>
           {pickableMembers.map((m: ApiMember, i) => (
             <MemberItem

@@ -224,7 +224,7 @@ function UploadSheet({
         </View>
       </View>
 
-      <BottomSheet visible={eventPickerOpen} title="Pilih kegiatan" onClose={() => setEventPickerOpen(false)}>
+      <BottomSheet visible={eventPickerOpen} title="Pilih kegiatan" onClose={() => setEventPickerOpen(false)} scrollable={false}>
         <ScrollView style={styles.pickerScroll}>
           <ListItem
             title="Tidak ada"

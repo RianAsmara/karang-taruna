@@ -56,6 +56,14 @@ class HandleInertiaRequests extends Middleware
                 'role' => $membership->role->value,
                 'roleLabel' => $membership->role->label(),
             ] : null,
+            // Five separate places flash a message (attendance check-in, theme
+            // save, invite failure, the no-organization redirect); none of them
+            // reached the user before this, so a failed join or a successful
+            // check-in both looked like nothing happened at all.
+            'flash' => [
+                'success' => $request->session()->get('success'),
+                'error' => $request->session()->get('error'),
+            ],
             'unreadNotificationsCount' => $request->user()?->unreadNotifications()->count() ?? 0,
             'organizationTheme' => $theme ? (new OrganizationThemeResource($theme))->resolve() : null,
         ]);

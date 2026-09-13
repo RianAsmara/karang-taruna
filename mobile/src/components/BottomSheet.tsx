@@ -20,9 +20,16 @@ type Props = {
   title: string;
   onClose: () => void;
   children: ReactNode;
+  /**
+   * Wrap the body in a ScrollView so a tall sheet stays reachable once the
+   * keyboard covers half the screen. Pass `false` when the caller already
+   * renders its own ScrollView — nesting two vertical scrollers breaks the
+   * inner one's gestures on Android.
+   */
+  scrollable?: boolean;
 };
 
-export function BottomSheet({ visible, title, onClose, children }: Props) {
+export function BottomSheet({ visible, title, onClose, children, scrollable = true }: Props) {
   const { theme } = useTheme();
   const styles = makeStyles(theme);
   const [translateY] = useState(() => new Animated.Value(300));
@@ -62,13 +69,17 @@ export function BottomSheet({ visible, title, onClose, children }: Props) {
               <Text style={styles.close}>✕</Text>
             </Pressable>
           </View>
-          <ScrollView
-            keyboardShouldPersistTaps="handled"
-            keyboardDismissMode="on-drag"
-            contentContainerStyle={styles.content}
-          >
-            {children}
-          </ScrollView>
+          {scrollable ? (
+            <ScrollView
+              keyboardShouldPersistTaps="handled"
+              keyboardDismissMode="on-drag"
+              contentContainerStyle={styles.content}
+            >
+              {children}
+            </ScrollView>
+          ) : (
+            children
+          )}
         </Animated.View>
       </KeyboardAvoidingView>
     </Modal>

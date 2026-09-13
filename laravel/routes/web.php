@@ -6,6 +6,7 @@ use App\Http\Controllers\FinancialReportController;
 use App\Http\Controllers\MembershipExitRequestController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OrganizationController;
+use App\Http\Controllers\OrganizationInviteController;
 use App\Http\Controllers\OrganizationLandingController;
 use App\Http\Controllers\PublicTransparencyController;
 use App\Http\Controllers\ReportController;
@@ -42,6 +43,11 @@ Route::middleware(['auth'])->group(function () {
         return Inertia::render('organizations/create');
     })->can('create', Organization::class)->name('organizations.create');
     Route::post('organizations', [OrganizationController::class, 'store'])->name('organizations.store');
+
+    // Accepting an invite needs auth but NOT an existing organization — a
+    // newcomer has none, so this one stays outside the 'current-org' group
+    // that the invite management routes live in (routes/organization.php).
+    Route::get('join/{token}', [OrganizationInviteController::class, 'accept'])->name('organizations.invites.accept');
 
     // Leaving is a request the chair decides on — see the
     // membership_exit_requests migration for why.

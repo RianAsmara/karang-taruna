@@ -33,6 +33,165 @@ caching — the last deliberately not added, see its own entry for
 why). The next session should start by asking the user what they want
 next, not by assuming this file still has a queue.
 
+## 2026-09-13 (readiness review) — Verdict: pilot-ready, not public-launch-ready
+
+Asked directly whether the app is ready to deploy for real users.
+Verified against the filesystem, not the docs (per `release-readiness`).
+
+**Verified solid.** 475 Pest tests / 1777 assertions pass; PHPStan
+level 7 `[OK] No errors`. 33 models, 19 web page groups, 33 mobile
+screens all exist. Zero open rows in all three bug trackers. Rate
+limiting attached (`api`, `public-pages`, auth throttles). CI runs
+Pint/PHPStan/Pest plus a real-Postgres migration job.
+
+**Launch blockers (infrastructure, not code):**
+
+1. **No deployment target and no deploy path.** `infra/` is empty,
+   there is no Dockerfile, and CI has no deploy job. `docs/deployment.md`
+   describes the process model correctly but nothing implements it. The
+   app has never run anywhere but a laptop.
+2. **No backups exist.** `deployment.md` documents `pg_dump` and
+   `mc mirror` commands; nothing runs them and no restore has been
+   tested. Unacceptable for financial records.
+3. **No observability.** No Sentry, no OpenTelemetry, no Pulse/Telescope
+   in `composer.json`. A production failure would be invisible until a
+   member reports it.
+4. **No queue-worker or scheduler supervision.** Both silently no-op if
+   unwired; `dues:remind-unpaid` is the only scheduled command.
+
+**Pre-public-signup, not pre-pilot:**
+
+- **Email verification is not enforced.** `User` does not implement
+  `MustVerifyEmail` (the import is commented out) and no route uses the
+  `verified` middleware, though the starter kit's `verify-email` page
+  exists. Anyone can register with any address and immediately create an
+  organization. Fine for a known pilot group; not for open signup.
+- **No privacy policy or terms page.** The app stores members' names,
+  contact details and payment history — UU PDP 27/2022 territory.
+- **Mobile has no release build path.** No `eas.json`; `mobile/.env.local`
+  points at a hard-coded LAN IP. Nothing mobile from this session is
+  device-verified and a `npx expo run:android` native rebuild is pending
+  (datepicker module + `app.json` change).
+- **43 files uncommitted** since `34009a3 init commit`.
+
+**Deliberate, not defects:** mobile Kas read-only, mobile settings stub,
+the full 4-step Buat Organisasi flow, caching — each recorded in
+`docs/under-construction.md` or its own entry above.
+
+## 2026-09-13 (bug pass) — Three real bugs found and fixed, two of them silent
+
+A deliberate hunt rather than a report: all three trackers had empty Open
+tables, so these were found by auditing the session's own work.
+
+- **W-001 — every flashed message was discarded (web).** Five places
+  called `->with('error'|'success')` but `flash` was never shared by
+  `HandleInertiaRequests` and no page rendered it. A member could check
+  in to an event and see *no confirmation at all*; opening an expired
+  invite link bounced them to the dashboard with no explanation. Now
+  shared and rendered once in the authenticated layout, with icon +
+  wording carrying the meaning alongside colour.
+- **W-002 — registration ignored the intended URL (web).** The
+  commonest invite path — no account, tap link, bounced to login, tap
+  "Daftar", register — landed the newcomer on the dashboard having
+  **never joined**. The primary onboarding flow silently failed for
+  exactly the people it exists to onboard. Login already used
+  `intended()`; registration now does too.
+- **B-005 — nested ScrollViews (mobile), a same-session regression.**
+  The keyboard fix wrapped every `BottomSheet` body in a ScrollView, but
+  ten sheets already render their own; nesting two vertical scrollers
+  breaks the inner one on Android. `BottomSheet` gained a `scrollable`
+  prop and those ten opt out. Pinjam barang — where the keyboard bug was
+  originally reported — keeps the fix.
+
+Worth noting the pattern: two of the three were *silent* failures, where
+the app appeared to do nothing rather than showing an error. Those are
+invisible to a passing test suite and to a developer who knows what
+should have happened.
+
+475 backend tests (up from 471), Pint/PHPStan clean; tsc/ESLint/build
+clean on web; tsc/`expo lint` clean on mobile. Not device-verified.
+
+## 2026-09-13 (later still) — Member invites built; the last onboarding blocker is gone
+
+The invite architecture had been deferred twice and was blocking Undang
+Anggota, the full Buat Organisasi flow, and — per the readiness review —
+real-world onboarding, since `AddMemberAction` could only attach an
+*already-registered* user one at a time.
+
+Resolved as a **shareable, expiring, revocable join link** (ADR-0021):
+the chair generates one, shares it to the WhatsApp group where these
+communities already live, and opening it joins immediately as ANGGOTA.
+Rejected email invites (hard dependency on production deliverability;
+many members don't read email) and join-code-plus-approval (adds a
+per-member step exactly when onboarding twenty people at once).
+
+Safety comes from expiry (7 days), revocation, and optional use limits
+rather than from a second approval. An invite **never** grants more than
+ANGGOTA — a link that could confer BENDAHARA or KETUA would turn a
+forwarded WhatsApp message into privilege escalation. Acceptance locks
+the row so two people can't both consume a single-use link; re-opening a
+link as an existing member never re-grades their role or burns a use.
+
+Built across all three surfaces: web (generate/copy/revoke on the member
+list, plus the public `GET /join/{token}` accept route, deliberately
+outside `current-org` since a newcomer has no organization), API
+(chair-only create/list/revoke, returning a ready-to-share URL), and
+mobile (the "sedang disiapkan" stub on Anggota is now a real
+`InviteSheet` that generates and opens the OS share sheet). Accepting
+stays web-only by design — the invitee may have neither an account nor
+the app installed.
+
+`AddMemberAction::forUser()` was extracted so the subtle 30-day
+soft-delete restore logic is shared with the invite path instead of
+duplicated. One real bug caught by a test on the way: the API returned
+`uses: null` on creation because the model leaned on a DB default that
+isn't reflected in memory before serialization.
+
+16 new tests (12 web, 4 API), 471 backend tests total (up from 455).
+Pint/PHPStan clean; tsc/ESLint clean on web; tsc/`expo lint` clean on
+mobile. Not device-verified.
+
+## 2026-09-13 (later) — Project agents and skills added; a real hang bug found by building them
+
+Added `.claude/` (checked in, so every session and contributor gets the same
+specialists): six agents — `fullstack`, `qa`, `ux`, `pm`, `devops`,
+`devsecops` — each grounded in this repo's real commands, invariants and
+previously-hit traps rather than generic role prose. See `.claude/README.md`.
+
+**Two skills, both written TDD-style** per `superpowers:writing-skills` —
+baseline the scenario against a fresh agent, write against the observed
+failure, re-run to confirm the change:
+
+- `documenting-changes` — two baseline agents under wrap-up pressure wrote
+  *no* docs, rationalizing "a rushed doc is worse than no doc" and "the ADR is
+  the first thing that feels optional". Those exact excuses are countered by
+  name. With the skill, the same scenario produces the ADR before reporting.
+- `release-readiness` — the baseline produced four confidently false claims
+  (vote creation, activity points, Attendance, and four domains' web pages all
+  reported missing; all four had shipped in `47ba408`). Cause: trusting a
+  *dated* `next-up.md` entry as current state. The skill requires filesystem
+  verification for any existence claim, and the offending block in this file
+  now carries a warning plus superseded-markers.
+
+**Four further skills were tested and deliberately NOT written** — tenant
+isolation review, financial safety, mobile device debugging, and mobile scope
+discipline all *passed* their baselines unaided. `writing-skills` is explicit
+that guidance whose control doesn't fail should not be authored. Worth knowing
+why they passed: `CLAUDE.md` and `docs/` are strong enough that a careful agent
+derives the right behavior. Skills here earn their place only against
+discipline-under-pressure or stale-repo-state failures.
+
+**B-004 found and fixed** by the mobile-debugging baseline: `apiFetch` and
+`apiUpload` had no timeout, and RN `fetch()` has none by default — a host that
+was routable but not answering left the promise pending forever, so a query
+never reached `isError` and the `ErrorState` every screen already had could
+never render. This is the "skeleton forever, nothing in logcat" symptom that
+cost two debugging sessions. Now 15s for JSON, 120s for uploads, both surfaced
+as a normal `ApiError` with actionable Indonesian copy.
+
+455 backend tests, Pint/PHPStan clean; tsc/ESLint/Vitest clean on web;
+tsc/`expo lint` clean on mobile.
+
 ## 2026-09-13 — Five reported bugs closed: date pickers, keyboard handling, org-creation rule, leave-with-approval, stub audit
 
 From a device-testing session. Two were UI defects, two were business

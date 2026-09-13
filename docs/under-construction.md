@@ -18,7 +18,6 @@ every route renders real data. Everything below is mobile.
 | --- | --- | --- | --- |
 | Profil → "Pengaturan & notifikasi" | `ProfilScreen.tsx:151` → `belum-tersedia/pengaturan` | "Pengaturan akun dan notifikasi sedang disiapkan." | **Not scoped.** No spec exists. |
 | Kas → "Catat transaksi" | `KasScreen.tsx:168` (`InfoSheet`) | "Formulir pencatatan transaksi sedang disiapkan." | **Blocked on a product decision.** |
-| Anggota → "Undang anggota" | `AnggotaScreen.tsx:186` (`InfoSheet`) | "Formulir undangan anggota sedang disiapkan." | **Blocked on the invite architecture.** |
 | Anggota Detail → "Iuran" | `AnggotaDetailScreen.tsx:274` (`InfoSheet`) | "Halaman iuran lengkap sedang disiapkan." | **Partially redundant.** |
 
 ### Pengaturan & notifikasi
@@ -41,15 +40,18 @@ recording left to web where the treasurer has a keyboard and the
 receipt files. **Before building**: confirm that scoping still holds.
 If it does, this stub is correct behavior and should stay.
 
-### Undang anggota
+### Undang anggota — RESOLVED 13 Sep 2026
 
-Blocked on the same invite/auth architecture decision that also blocks
-the full 4-step Buat Organisasi flow (`mobile-screens.md` §33) — see
-`docs/next-up.md`. Open questions: invite by token link vs. email vs.
-join code; whether an invitee must already hold an account; expiry and
-revocation. `AddMemberAction` today adds an **existing** user by email,
-which is why web's member page works and mobile's invite doesn't.
-**Before building**: settle the architecture, then both surfaces follow.
+Built. The invite architecture was settled as a shareable, expiring,
+revocable join link (ADR-0021): the chair generates one, shares it to the
+WhatsApp group, and opening it joins immediately as `ANGGOTA`. Web has
+generate/copy/revoke on the member list; mobile's stub sheet is now a real
+`InviteSheet` that generates and opens the OS share sheet. Accepting is a
+web route by design — the invitee may have neither an account nor the app.
+
+**Still open**: the full 4-step Buat Organisasi flow
+(`mobile-screens.md` §33) needs schema this app does not have (type,
+location) — the invite step it also waited on is no longer a blocker.
 
 ### Iuran (Anggota Detail)
 

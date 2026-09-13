@@ -171,7 +171,7 @@ function BarangForm({ id, initial }: { id?: string; initial: ApiInventoryItem | 
         />
       </View>
 
-      <BottomSheet visible={pickerOpen} title="Pilih penanggung jawab" onClose={() => setPickerOpen(false)}>
+      <BottomSheet visible={pickerOpen} title="Pilih penanggung jawab" onClose={() => setPickerOpen(false)} scrollable={false}>
         <ScrollView style={styles.pickerScroll}>
           {(members.data?.data ?? [])
             .filter((m) => !m.leftAt)

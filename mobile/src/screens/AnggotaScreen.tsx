@@ -6,7 +6,7 @@ import { Button } from '@/components/Button';
 import { EmptyState } from '@/components/EmptyState';
 import { ErrorState } from '@/components/ErrorState';
 import { FilterChip } from '@/components/FilterChip';
-import { InfoSheet } from '@/components/InfoSheet';
+import { InviteSheet } from '@/components/InviteSheet';
 import { MemberItem } from '@/components/MemberItem';
 import { ScreenHeader } from '@/components/ScreenHeader';
 import { SectionHeader } from '@/components/SectionHeader';
@@ -183,12 +183,7 @@ export function AnggotaScreen() {
         </>
       )}
 
-      <InfoSheet
-        visible={inviteOpen}
-        title="Undang anggota"
-        body="Formulir undangan anggota sedang disiapkan."
-        onClose={() => setInviteOpen(false)}
-      />
+      <InviteSheet visible={inviteOpen} onClose={() => setInviteOpen(false)} />
     </View>
   );
 }

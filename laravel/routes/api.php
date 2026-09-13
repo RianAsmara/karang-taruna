@@ -19,6 +19,7 @@ use App\Http\Controllers\Api\V1\MembershipExitRequestController;
 use App\Http\Controllers\Api\V1\MyTasksController;
 use App\Http\Controllers\Api\V1\NotificationController;
 use App\Http\Controllers\Api\V1\OrganizationController;
+use App\Http\Controllers\Api\V1\OrganizationInviteController;
 use App\Http\Controllers\Api\V1\OrganizationThemeController;
 use App\Http\Controllers\Api\V1\ProfileController;
 use App\Http\Controllers\Api\V1\ReportController;
@@ -88,6 +89,12 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
             Route::get('events/{event}/attendance/qr', [AttendanceController::class, 'qr'])->name('events.attendance.qr');
 
             Route::get('my/tasks', [MyTasksController::class, 'index'])->name('my.tasks.index');
+
+            // Shareable join links — ADR-0021. Accepting happens by opening
+            // the link (a web route), so there is no accept endpoint here.
+            Route::get('organizations/invites', [OrganizationInviteController::class, 'index'])->name('organizations.invites.index');
+            Route::post('organizations/invites', [OrganizationInviteController::class, 'store'])->name('organizations.invites.store');
+            Route::delete('organizations/invites/{invite}', [OrganizationInviteController::class, 'destroy'])->name('organizations.invites.destroy');
 
             // Leaving is a request the chair decides on — see the
             // membership_exit_requests migration for why.

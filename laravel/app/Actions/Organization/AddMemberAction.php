@@ -35,6 +35,18 @@ class AddMemberAction
                 ]);
             }
 
+            return $this->forUser($organization, $user, $role);
+        });
+    }
+
+    /**
+     * Attach an already-resolved user. Shared with the invite-acceptance path
+     * (AcceptInviteAction) so the soft-delete handling below lives in exactly
+     * one place — it is subtle enough that a second copy would drift.
+     */
+    public function forUser(Organization $organization, User $user, OrganizationRole $role): OrganizationMembership
+    {
+        return DB::transaction(function () use ($organization, $user, $role) {
             // A member who left within the last 30 days still has a
             // soft-deleted row here (the "Keluar" retention window —
             // see the organization_memberships migration). Restore it

@@ -56,6 +56,8 @@ export interface SharedData {
     currentOrganization: CurrentOrganization | null;
     unreadNotificationsCount: number;
     organizationTheme: OrganizationTheme | null;
+    /** One-shot messages flashed by a controller; rendered by <FlashMessages />. */
+    flash: { success: string | null; error: string | null };
     [key: string]: unknown;
 }
 

@@ -47,6 +47,11 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return to_route('dashboard');
+        // Honour the intended URL the way login already does. The commonest
+        // invite path is a brand-new person: link -> login -> "Daftar" ->
+        // register. Hard-redirecting to the dashboard here dropped them on
+        // the wrong page having never joined the organization that invited
+        // them (ADR-0021).
+        return redirect()->intended(route('dashboard', absolute: false));
     }
 }

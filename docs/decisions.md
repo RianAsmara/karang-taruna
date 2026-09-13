@@ -625,3 +625,54 @@ decision first.
 **Not included**: auto-approval on a timeout. A member whose chair never
 responds stays stuck by design for now; revisit if it happens in
 practice.
+
+## ADR-0021: Members join by a shareable, expiring, revocable link — accepted immediately, never by email
+
+**Status**: accepted (13 Sep 2026)
+
+**Context**: member onboarding was the last thing blocking a real
+organization from using RukunMuda. `AddMemberAction` could only attach an
+**already-registered** user by email, so a chair had to ask each person to
+sign up first and then add them one at a time. "Undang Anggota" (mobile
+screen 15) and the full 4-step Buat Organisasi flow had both been deferred
+twice waiting on this decision.
+
+**Decision**: the chair generates a join link and shares it wherever the
+organization already talks — in practice a WhatsApp group. Opening the link
+while signed in joins immediately as `ANGGOTA`.
+
+Chosen over **email invitations**, which would add a hard dependency on
+production email deliverability (only Mailpit exists locally) and assume
+members read email — many of these users do not. Chosen over a **join code
+plus chair approval**, which is more typing and adds a per-member approval
+step that hurts most exactly when it matters most: onboarding twenty people
+at once.
+
+**Holding a valid link is the chair's authorization** — they chose who to
+send it to, exactly as a WhatsApp group invite works. So there is no second
+approval step. What makes that safe is that every link is **expiring**
+(7 days by default) and **revocable**, and optionally use-limited; those are
+what stop a forwarded link from being a permanent open door.
+
+**Consequences**:
+- An invite **always** grants `ANGGOTA` and never anything higher. A link
+  that could confer `BENDAHARA` or `KETUA` would turn a forwarded WhatsApp
+  message into privilege escalation. The chair promotes afterwards,
+  deliberately, from the member list.
+- Acceptance locks the invite row (`lockForUpdate`) inside the transaction, so
+  two people tapping the same single-use link at once cannot both get through.
+- An existing member re-opening a link is a no-op: it never re-grades their
+  role down to `ANGGOTA` and never burns a use.
+- Accepting sets the organization active, so the newcomer lands in the org
+  they just joined.
+- The accept route is a **web** route and deliberately sits outside the
+  `current-org` middleware — a newcomer belongs to no organization yet, and
+  the link must work in a browser for someone with no account and no app.
+  Mobile therefore creates and shares links but does not accept them.
+- Token is 40 random characters; it is the entire credential, so it is never
+  derived from anything about the organization.
+- Creating and revoking is `KETUA`-only, reusing the same gate as the member
+  list rather than inventing a parallel rule.
+
+**Not included**: per-invite role selection, single-use-by-default, and
+invite analytics. Add them only if real use shows a need.

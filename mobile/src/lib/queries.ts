@@ -210,6 +210,41 @@ export function useRequestExit() {
   });
 }
 
+export interface ApiInvite {
+  id: string;
+  url: string;
+  expiresAt: string;
+  maxUses: number | null;
+  uses: number;
+  isActive: boolean;
+  createdAt: string | null;
+}
+
+/** Chair-only; the server refuses anyone else (OrganizationInvitePolicy). */
+export function useInvites(enabled: boolean) {
+  return useQuery({
+    queryKey: ['organizations', 'invites'],
+    queryFn: () => apiFetch<Collection<ApiInvite>>('/organizations/invites'),
+    enabled,
+  });
+}
+
+export function useCreateInvite() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: () => apiFetch<{ data: ApiInvite }>('/organizations/invites', { method: 'POST', body: {} }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['organizations', 'invites'] }),
+  });
+}
+
+export function useRevokeInvite() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (inviteId: string) => apiFetch<void>(`/organizations/invites/${inviteId}`, { method: 'DELETE' }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['organizations', 'invites'] }),
+  });
+}
+
 export function useSwitchOrganization() {
   const queryClient = useQueryClient();
   return useMutation({

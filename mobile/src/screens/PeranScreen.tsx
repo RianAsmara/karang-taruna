@@ -184,7 +184,7 @@ export function PeranScreen() {
         )}
       </ScrollView>
 
-      <BottomSheet visible={assignRole !== null} title={`Tetapkan ${assignRole?.label ?? ''}`} onClose={() => setAssignRole(null)}>
+      <BottomSheet visible={assignRole !== null} title={`Tetapkan ${assignRole?.label ?? ''}`} onClose={() => setAssignRole(null)} scrollable={false}>
         <ScrollView style={styles.pickerScroll}>
           {(members.data?.data ?? [])
             .filter((m) => !m.leftAt)

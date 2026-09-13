@@ -41,7 +41,7 @@ export function OrgSwitcherSheet({ visible, currentOrganizationId, onClose }: { 
   };
 
   return (
-    <BottomSheet visible={visible} title="Ganti organisasi" onClose={onClose}>
+    <BottomSheet visible={visible} title="Ganti organisasi" onClose={onClose} scrollable={false}>
       {list.length <= 1 ? (
         <Text style={styles.empty}>Anda hanya tergabung di satu organisasi.</Text>
       ) : (

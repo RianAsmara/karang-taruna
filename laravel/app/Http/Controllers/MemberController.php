@@ -8,6 +8,7 @@ use App\Http\Requests\Member\StoreMemberRequest;
 use App\Http\Requests\Member\UpdateMemberRoleRequest;
 use App\Models\MembershipExitRequest;
 use App\Models\Organization;
+use App\Models\OrganizationInvite;
 use App\Models\OrganizationMembership;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -62,10 +63,28 @@ class MemberController extends Controller
                 ])
             : [];
 
+        // Active join links, for the chair to share or revoke (ADR-0021).
+        $invites = Auth::user()->can('viewAny', [OrganizationInvite::class, $organization])
+            ? $organization->invites()
+                ->whereNull('revoked_at')
+                ->latest()
+                ->get()
+                ->filter(fn (OrganizationInvite $invite) => $invite->isActive())
+                ->map(fn (OrganizationInvite $invite) => [
+                    'id' => $invite->id,
+                    'url' => route('organizations.invites.accept', $invite->token),
+                    'expiresAt' => $invite->expires_at->toIso8601String(),
+                    'uses' => $invite->uses,
+                    'maxUses' => $invite->max_uses,
+                ])
+                ->values()
+            : [];
+
         $myMembership = Auth::user()->membershipIn($organization);
 
         return Inertia::render('members/index', [
             'members' => $members,
+            'invites' => $invites,
             'exitRequests' => $exitRequests,
             'myExitRequestPending' => $myMembership !== null && MembershipExitRequest::query()
                 ->where('membership_id', $myMembership->id)

@@ -54,7 +54,7 @@ export function FilterSheet({ visible, onClose, title = 'Filter', sections, valu
   }
 
   return (
-    <BottomSheet visible={visible} title={title} onClose={onClose}>
+    <BottomSheet visible={visible} title={title} onClose={onClose} scrollable={false}>
       <ScrollView style={styles.scroll}>
         {sections.map((section) => {
           const selected = draft[section.key] ?? [];

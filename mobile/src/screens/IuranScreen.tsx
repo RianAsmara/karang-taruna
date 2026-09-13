@@ -305,7 +305,7 @@ function MemberPickerSheet({
   const styles = makeStyles(useTheme().theme);
 
   return (
-    <BottomSheet visible={visible} title="Pilih anggota" onClose={onClose}>
+    <BottomSheet visible={visible} title="Pilih anggota" onClose={onClose} scrollable={false}>
       <ScrollView style={styles.pickerScroll}>
         {members.map((m, i) => (
           <MemberItem

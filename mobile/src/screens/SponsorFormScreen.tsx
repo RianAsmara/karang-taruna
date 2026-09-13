@@ -116,7 +116,7 @@ export function SponsorFormScreen() {
         <Button variant="primary" label="Simpan" onPress={onSavePress} loading={create.isPending} disabled={!canSave} block />
       </View>
 
-      <BottomSheet visible={eventPickerOpen} title="Pilih kegiatan" onClose={() => setEventPickerOpen(false)}>
+      <BottomSheet visible={eventPickerOpen} title="Pilih kegiatan" onClose={() => setEventPickerOpen(false)} scrollable={false}>
         <ScrollView style={styles.pickerScroll}>
           <ListItem
             title="Tidak ada"

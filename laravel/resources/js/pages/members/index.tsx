@@ -27,6 +27,14 @@ interface Member {
     activityPoints: number;
 }
 
+interface Invite {
+    id: string;
+    url: string;
+    expiresAt: string;
+    uses: number;
+    maxUses: number | null;
+}
+
 interface ExitRequest {
     id: string;
     memberName: string | null;
@@ -39,6 +47,8 @@ interface MembersIndexProps {
     members: Member[];
     roles: RoleOption[];
     canManageMembers: boolean;
+    /** Active join links. Empty for everyone but the chair. */
+    invites: Invite[];
     /** Pending "keluar" requests awaiting this chair's decision. Empty for everyone else. */
     exitRequests: ExitRequest[];
     myExitRequestPending: boolean;
@@ -101,6 +111,7 @@ export default function MembersIndex({
     members,
     roles,
     canManageMembers,
+    invites,
     exitRequests,
     myExitRequestPending,
     canRequestExit,
@@ -112,6 +123,23 @@ export default function MembersIndex({
 
     const removeMember = (member: Member) => {
         router.delete(route('members.destroy', member.id), { preserveScroll: true });
+    };
+
+    const createInvite = () => {
+        router.post(route('organizations.invites.store'), {}, { preserveScroll: true });
+    };
+
+    const revokeInvite = (invite: Invite) => {
+        router.delete(route('organizations.invites.destroy', invite.id), { preserveScroll: true });
+    };
+
+    const copyInvite = async (invite: Invite) => {
+        try {
+            await navigator.clipboard.writeText(invite.url);
+        } catch {
+            // Clipboard is unavailable over plain HTTP and in some browsers —
+            // the link is shown in full below, so it stays copyable by hand.
+        }
     };
 
     const requestExit = () => {
@@ -129,6 +157,49 @@ export default function MembersIndex({
                 <h1 className="text-xl font-semibold">Anggota</h1>
 
                 {canManageMembers && <AddMemberForm roles={roles} />}
+
+                {canManageMembers && (
+                    <div className="border-sidebar-border/70 dark:border-sidebar-border rounded-xl border p-4">
+                        <div className="flex flex-wrap items-center justify-between gap-2">
+                            <div>
+                                <h2 className="font-medium">Undang anggota</h2>
+                                <p className="text-muted-foreground mt-1 text-sm">
+                                    Bagikan tautan ini di grup WhatsApp. Siapa pun yang membukanya akan bergabung sebagai anggota.
+                                </p>
+                            </div>
+                            <Button size="sm" onClick={createInvite}>
+                                Buat tautan undangan
+                            </Button>
+                        </div>
+
+                        {invites.length === 0 ? (
+                            <p className="text-muted-foreground mt-3 text-sm">Belum ada tautan undangan aktif.</p>
+                        ) : (
+                            <ul className="mt-3 flex flex-col gap-2">
+                                {invites.map((invite) => (
+                                    <li key={invite.id} className="flex flex-wrap items-center justify-between gap-2 rounded-lg border p-3 text-sm">
+                                        <div className="min-w-0">
+                                            <code className="break-all">{invite.url}</code>
+                                            <p className="text-muted-foreground mt-1">
+                                                Berlaku sampai {new Date(invite.expiresAt).toLocaleDateString('id-ID', { dateStyle: 'long' })} ·{' '}
+                                                {invite.uses}
+                                                {invite.maxUses === null ? ' kali dipakai' : ` dari ${invite.maxUses} kali dipakai`}
+                                            </p>
+                                        </div>
+                                        <div className="flex gap-2">
+                                            <Button size="sm" variant="outline" onClick={() => copyInvite(invite)}>
+                                                Salin
+                                            </Button>
+                                            <Button size="sm" variant="ghost" onClick={() => revokeInvite(invite)}>
+                                                Cabut
+                                            </Button>
+                                        </div>
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
+                    </div>
+                )}
 
                 {exitRequests.length > 0 && (
                     <div className="border-sidebar-border/70 dark:border-sidebar-border rounded-xl border p-4">

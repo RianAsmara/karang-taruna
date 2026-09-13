@@ -6,6 +6,7 @@ import { BottomSheet } from '@/components/BottomSheet';
 import { Button } from '@/components/Button';
 import { Dialog } from '@/components/Dialog';
 import { ErrorState } from '@/components/ErrorState';
+import { DateField } from '@/components/DateField';
 import { FormField } from '@/components/FormSection';
 import { ListItem } from '@/components/ListItem';
 import { MemberItem } from '@/components/MemberItem';
@@ -282,7 +283,7 @@ function BorrowSheet({
         </View>
         {quantity >= available ? <Text style={styles.stepperHint}>Hanya {available} tersedia.</Text> : null}
 
-        <FormField label="Tanggal kembali (YYYY-MM-DD)" value={dueDate} onChangeText={setDueDate} placeholder="2026-09-15" keyboardType="numeric" />
+        <DateField label="Tanggal kembali" value={dueDate} onChange={setDueDate} placeholder="Pilih tanggal kembali" minimumDate={new Date()} />
         <FormField label="Keperluan (opsional)" value={purpose} onChangeText={setPurpose} placeholder="Kerja bakti RT 03" />
 
         <Pressable onPress={() => setEventPickerOpen(true)} style={styles.eventPicker}>

@@ -209,6 +209,12 @@ audit_logs
   duplicate check-ins.
 - `financial_report_revisions`: `UNIQUE (financial_report_id,
   revision_number)`, monotonically increasing.
+- `membership_exit_requests`: a **partial** unique index on
+  `membership_id WHERE status = 'PENDING'` — at most one undecided
+  request per membership, so a double-tapped submit can't queue two
+  decisions for the chair, while a member who was rejected once can
+  still ask again later. A plain unique index would have forbidden the
+  second request outright, which is the wrong rule.
 - All tenant-owned tables: `organization_id` is `NOT NULL` with a foreign
   key to `organizations`, and every query path goes through a global
   Eloquent scope keyed off the resolved active organization (see

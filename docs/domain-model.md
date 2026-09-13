@@ -17,6 +17,22 @@ built against.
   community org. The tenant boundary for everything else.
 - `require_transaction_approval` (bool) — gates the finance approval flow.
 
+**MembershipExitRequest** (added 13 Sep 2026, ADR-0020)
+- A member's request to leave, awaiting the chair's decision — leaving is
+  never unilateral. `organization_id`, `membership_id`, optional `reason`,
+  `status` (`PENDING`/`APPROVED`/`REJECTED`), `decided_by`, `decided_at`,
+  optional `decision_note`.
+- The membership stays fully active while `PENDING`. Approval soft-deletes
+  it, reusing the same 30-day "Keluar" retention described under
+  `OrganizationMembership` below; rejection changes nothing and the member
+  may ask again.
+- A partial unique index (`WHERE status = 'PENDING'`) allows at most one
+  undecided request per membership — a double-tapped submit can't queue two
+  decisions, while a rejected member can still re-request.
+- `KETUA` cannot request: an organization is never left chairless, so the
+  chair hands the role over first (`TransferChairAction`) — the same rule
+  that already blocks removing a chair.
+
 **OrganizationMembership**
 - Joins `User` ↔ `Organization` with a `role`.
 - Roles: `KETUA`, `BENDAHARA`, `SEKRETARIS`, `ANGGOTA` — migrated from the

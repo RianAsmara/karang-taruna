@@ -6,6 +6,10 @@ mobile E2E readiness (2026-08-25). Distinct from `mobile-e2e-backlog.md`
 (the mobile app's own gaps) and `web-backlog.md` (the Inertia frontend's
 gaps) — this one is about what Laravel itself doesn't do yet.
 
+**As of 2026-08-28, every item below is resolved** — see `docs/next-up.md`
+for the full, current change log (this file is kept for historical
+detail/rationale per item, per `next-up.md`'s own framing).
+
 ## 1. Financial evidence / attachment upload — RESOLVED (2026-08-25)
 
 Master prompt §25 requires receipt/invoice/transfer-proof uploads on

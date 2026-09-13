@@ -12,7 +12,9 @@ import { ScreenHeader } from '@/components/ScreenHeader';
 import { SectionHeader } from '@/components/SectionHeader';
 import { Skeleton } from '@/components/Skeleton';
 import { Tag } from '@/components/Tag';
-import { useCurrentOrganization, useDues, useMembers, useMyTasks } from '@/lib/queries';
+import { useToast } from '@/components/Toast';
+import { ApiError } from '@/lib/api';
+import { useCurrentOrganization, useDues, useMembers, useMyExitRequest, useMyTasks, useRequestExit } from '@/lib/queries';
 import { useAuth } from '@/store/useAuth';
 import { formatMonthYear, formatRupiah, initialsOf } from '@/theme/format';
 import { useTheme } from '@/theme/ThemeProvider';
@@ -36,6 +38,15 @@ export function ProfilScreen() {
   const members = useMembers();
   const dues = useDues();
   const tasks = useMyTasks();
+  const myExitRequest = useMyExitRequest();
+  const requestExit = useRequestExit();
+  const { showToast } = useToast();
+
+  // Leaving is a request the chair decides on, not an immediate act — the
+  // membership stays active until then, so the row has to reflect which of
+  // the three states the viewer is in rather than always offering the button.
+  const exitPending = myExitRequest.data?.data?.status === 'PENDING';
+  const canRequestExit = myExitRequest.data?.canRequest ?? false;
 
   const myMembership = members.data?.data.find((m) => m.email === user?.email);
 
@@ -155,18 +166,28 @@ export function ProfilScreen() {
             trailing={<Text style={styles.trailingCount}>{scheme === 'dark' ? 'Gelap' : 'Terang'}</Text>}
             onPress={toggleScheme}
           />
-          <ListItem title="Keluar dari organisasi" titleTone="accent" onPress={() => setLeaveOpen(true)} />
+          {exitPending ? (
+            <ListItem title="Permintaan keluar menunggu persetujuan ketua" />
+          ) : canRequestExit ? (
+            <ListItem title="Keluar dari organisasi" titleTone="accent" onPress={() => setLeaveOpen(true)} />
+          ) : null}
           <ListItem title="Keluar akun" titleTone="accent" onPress={() => setSignOutOpen(true)} isLast />
         </View>
       </ScrollView>
 
       <Dialog
         visible={leaveOpen}
-        title="Keluar dari organisasi?"
-        body={`Anda tidak lagi melihat kas, kegiatan, dan tugas ${org.name}. Riwayat iuran Anda tetap tersimpan di catatan organisasi.`}
-        confirmLabel="Keluar"
+        title="Ajukan keluar dari organisasi?"
+        body={`Ketua ${org.name} perlu menyetujui dulu. Sampai disetujui, Anda tetap anggota dan masih melihat kas, kegiatan, dan tugas. Riwayat iuran Anda tetap tersimpan di catatan organisasi.`}
+        confirmLabel="Ajukan"
         onCancel={() => setLeaveOpen(false)}
-        onConfirm={() => setLeaveOpen(false)}
+        onConfirm={() => {
+          setLeaveOpen(false);
+          requestExit.mutate(null, {
+            onSuccess: () => showToast('Permintaan keluar dikirim ke ketua.'),
+            onError: (err) => showToast(err instanceof ApiError ? err.message : 'Gagal mengirim permintaan.'),
+          });
+        }}
       />
 
       <Dialog

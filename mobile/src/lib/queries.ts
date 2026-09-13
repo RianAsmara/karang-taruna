@@ -171,7 +171,42 @@ export interface ApiOrganizationOption {
 export function useMyOrganizations() {
   return useQuery({
     queryKey: ['organizations', 'mine'],
-    queryFn: () => apiFetch<{ organizations: ApiOrganizationOption[] }>('/organizations/mine'),
+    queryFn: () => apiFetch<{ organizations: ApiOrganizationOption[]; canCreate: boolean }>('/organizations/mine'),
+  });
+}
+
+export interface ApiExitRequest {
+  id: string;
+  status: 'PENDING' | 'APPROVED' | 'REJECTED';
+  statusLabel: string;
+  reason: string | null;
+  memberName: string | null;
+  memberRoleLabel: string;
+  decisionNote: string | null;
+  decidedAt: string | null;
+  createdAt: string | null;
+}
+
+/** The viewer's own latest request to leave, plus whether they may make one
+ *  (the chair may not — the role has to be handed over first). */
+export function useMyExitRequest() {
+  return useQuery({
+    queryKey: ['membership', 'exit-request', 'mine'],
+    queryFn: () => apiFetch<{ data: ApiExitRequest | null; canRequest: boolean }>('/membership/exit-requests/mine'),
+  });
+}
+
+export function useRequestExit() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (reason: string | null) =>
+      apiFetch<{ data: ApiExitRequest }>('/membership/exit-requests', {
+        method: 'POST',
+        body: { reason },
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['membership', 'exit-request'] });
+    },
   });
 }
 

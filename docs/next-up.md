@@ -15,6 +15,12 @@ No open bugs exist right now — `backend-bug-tracker.md`,
 **Open** table (placeholder row only). Everything below is backlog
 (missing feature), not a defect.
 
+**As of 2026-09-13**: see the dated entry below for the five items just
+closed. Still deferred: Undang Anggota (invite architecture), mobile
+chair-side exit approval (needs a design decision), and Phase 8's
+infrastructure remainder. `docs/under-construction.md` is now the live
+list of unfinished surfaces.
+
 **As of 2026-08-28: nothing is queued.** Every item that was open (web
 backlog, Attendance, mobile signup/org-switching/Buat Organisasi,
 Activity points, vote creation, Phase 8's actionable subset) closed
@@ -26,6 +32,51 @@ infrastructure-only remainder (OpenTelemetry, backup automation,
 caching — the last deliberately not added, see its own entry for
 why). The next session should start by asking the user what they want
 next, not by assuming this file still has a queue.
+
+## 2026-09-13 — Five reported bugs closed: date pickers, keyboard handling, org-creation rule, leave-with-approval, stub audit
+
+From a device-testing session. Two were UI defects, two were business
+rule changes needing product decisions, one was an audit.
+
+- **Date pickers (mobile)** — `BuatKegiatan` (tanggal, jam mulai, jam
+  selesai) and `InventarisDetail` (tanggal kembali) were free-text
+  `YYYY-MM-DD`/`HH:mm` fields with a numeric keyboard. New `DateField`
+  wraps `@react-native-community/datetimepicker` (the OS dialog, not a
+  custom calendar) and keeps the same wire format, so only the input
+  mechanism changed. Web was already using native `type="date"`/
+  `datetime-local` across 17 fields — no change needed there.
+  **Needs `npx expo run:android`** (native module).
+- **Keyboard covering the UI (mobile)** — there was *no* keyboard
+  handling anywhere in the app. `BottomSheet` (where it was first hit,
+  on Pinjam barang) now lifts with the keyboard and scrolls internally,
+  capped at 90% height; a new `KeyboardAwareScroll` replaced the plain
+  outer `ScrollView` on six form screens. `softwareKeyboardLayoutMode:
+  resize` made explicit in `app.json` since the iOS/Android split in
+  that component depends on it.
+- **Org creation restricted (ADR-0019)** — taken literally, "only Ketua
+  may create" dead-ends signup, since a new user holds no role. Split:
+  first org open to anyone, second is KETUA-only. Policy-enforced (both
+  surfaces route through the shared Form Request), page route gated,
+  `canCreate` returned by both org-list endpoints so neither client
+  re-derives it.
+- **Leave-with-approval (ADR-0020)** — the flow didn't exist at all; the
+  mobile dialog's `onConfirm` just closed itself. Built
+  `MembershipExitRequest` end-to-end: request/approve/reject, chair-only
+  decisions, partial unique index for one pending request per
+  membership, notifications both directions, approval soft-deleting the
+  membership into the existing 30-day "Keluar" window. Chair cannot
+  request without transferring the role first. **Mobile has no
+  chair-side approval UI** — outside the 11 specified screens, needs a
+  design decision.
+- **Under-construction audit** — new `docs/under-construction.md`: one
+  reachable stub route (Pengaturan) and three stub sheets, each with
+  what actually blocks it. Web has none. Pruned eight dead
+  `belumTersediaCopy` entries for screens that shipped long ago.
+
+455 backend tests (up from 439), Pint/PHPStan level 7 clean; tsc/ESLint/
+Vitest/`vite build` clean on web; tsc/`expo lint` clean on mobile.
+**Not device-verified** — the mobile changes need a native rebuild, and
+this device can't be driven over adb.
 
 ## 2026-08-26 — Backend Phase 7 built (API-only), unblocking the mobile build order
 
@@ -50,11 +101,23 @@ full rationale. Closed in one session:
   yet for any of these four — a deliberate scope call to prioritize the
   mobile build; adding web pages later is purely additive since the
   business logic already lives in Actions/Policies, not controllers.
+  *(Superseded: all four now have web pages under
+  `laravel/resources/js/pages/`.)*
   Voting has no creation endpoint — `mobile-ux.md` leaves "who may
-  create a vote" as an explicitly open product decision.
+  create a vote" as an explicitly open product decision. *(Superseded
+  2026-08-28: resolved to pengurus; `CreateVoteAction` and a
+  `votes/create` page exist.)*
 
-**Still not built**: Attendance (no models at all), Activity points, web
-pages for the four new domains, and the vote-creation flow.
+**Still not built** *(as of 2026-08-26 — all four have since shipped;
+see the 2026-08-28 entries below)*: Attendance (no models at all),
+Activity points, web pages for the four new domains, and the
+vote-creation flow.
+
+> **Reading this file**: entries are append-only and dated. A statement
+> here describes what was true on its own date, **not** current state —
+> this block is the worked example, since every item it lists was built
+> two days later. Check the filesystem before repeating any "not built"
+> claim from a dated entry. See `.claude/skills/release-readiness`.
 
 ## 2026-08-26 (later) — Mobile Step 1 built: Anggota, Anggota Detail, Peran & Izin
 

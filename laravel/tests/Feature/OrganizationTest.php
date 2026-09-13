@@ -43,6 +43,31 @@ class OrganizationTest extends TestCase
         $this->assertSame($organization->id, $user->fresh()->active_organization_id);
     }
 
+    public function test_a_member_who_is_not_chair_anywhere_cannot_create_another_organization()
+    {
+        $user = User::factory()->create();
+        $organization = Organization::factory()->create();
+        $organization->memberships()->create(['user_id' => $user->id, 'role' => OrganizationRole::Anggota]);
+
+        $this->actingAs($user)->get('/organizations/create')->assertForbidden();
+        $this->actingAs($user)->post('/organizations', ['name' => 'Karang Taruna Baru'])->assertForbidden();
+
+        $this->assertNull(Organization::firstWhere('name', 'Karang Taruna Baru'));
+    }
+
+    public function test_a_user_with_no_organization_may_still_create_their_first_one()
+    {
+        // The signup path depends on this: a freshly registered user holds
+        // no membership, so a blanket chair-only rule would leave them
+        // unable to ever create an organization.
+        $user = User::factory()->create();
+
+        $this->actingAs($user)->get('/organizations/create')->assertOk();
+        $this->actingAs($user)->post('/organizations', ['name' => 'Karang Taruna Pertama'])->assertRedirect('/dashboard');
+
+        $this->assertNotNull(Organization::firstWhere('name', 'Karang Taruna Pertama'));
+    }
+
     public function test_a_user_with_an_existing_organization_can_create_another_and_it_becomes_active()
     {
         $user = User::factory()->create();

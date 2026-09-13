@@ -3,11 +3,13 @@
 use App\Http\Controllers\AttendanceScanController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FinancialReportController;
+use App\Http\Controllers\MembershipExitRequestController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\OrganizationLandingController;
 use App\Http\Controllers\PublicTransparencyController;
 use App\Http\Controllers\ReportController;
+use App\Models\Organization;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -38,8 +40,13 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('organizations/create', function () {
         return Inertia::render('organizations/create');
-    })->name('organizations.create');
+    })->can('create', Organization::class)->name('organizations.create');
     Route::post('organizations', [OrganizationController::class, 'store'])->name('organizations.store');
+
+    // Leaving is a request the chair decides on — see the
+    // membership_exit_requests migration for why.
+    Route::post('membership/exit-requests', [MembershipExitRequestController::class, 'store'])->name('membership.exit-requests.store');
+    Route::post('membership/exit-requests/{exitRequest}/decide', [MembershipExitRequestController::class, 'decide'])->name('membership.exit-requests.decide');
     Route::get('organizations/mine', [OrganizationController::class, 'options'])->name('organizations.options');
     Route::post('organizations/switch', [OrganizationController::class, 'switch'])->name('organizations.switch');
 

@@ -25,7 +25,10 @@ class OrganizationController extends Controller
      */
     public function mine(Request $request, SwitchOrganizationAction $switchOrganization): JsonResponse
     {
-        return response()->json(['organizations' => $switchOrganization->options($request->user())]);
+        return response()->json([
+            'organizations' => $switchOrganization->options($request->user()),
+            'canCreate' => $request->user()->can('create', Organization::class),
+        ]);
     }
 
     public function switch(SwitchOrganizationRequest $request, SwitchOrganizationAction $switchOrganization): JsonResponse

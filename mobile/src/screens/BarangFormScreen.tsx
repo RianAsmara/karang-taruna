@@ -2,6 +2,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
+import { KeyboardAwareScroll } from '@/components/KeyboardAwareScroll';
 import { BottomSheet } from '@/components/BottomSheet';
 import { Button } from '@/components/Button';
 import { Dialog } from '@/components/Dialog';
@@ -121,7 +122,7 @@ function BarangForm({ id, initial }: { id?: string; initial: ApiInventoryItem | 
   return (
     <View style={styles.root}>
       <ScreenHeader title={isEditing ? 'Ubah barang' : 'Tambah barang'} onBack={() => router.back()} />
-      <ScrollView contentContainerStyle={styles.scroll}>
+      <KeyboardAwareScroll contentContainerStyle={styles.scroll}>
         <FormSection title="Barang">
           <FormField label="Nama" value={name} onChangeText={setName} placeholder="Tenda Pleton" autoFocus={!isEditing} />
           <View style={styles.field}>
@@ -157,7 +158,7 @@ function BarangForm({ id, initial }: { id?: string; initial: ApiInventoryItem | 
             <Button variant="ghost" label="Hapus barang" onPress={() => setDeleteConfirm(true)} />
           </View>
         ) : null}
-      </ScrollView>
+      </KeyboardAwareScroll>
 
       <View style={styles.actionBar}>
         <Button

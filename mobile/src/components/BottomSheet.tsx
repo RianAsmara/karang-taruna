@@ -2,8 +2,11 @@ import { useEffect, useState, type ReactNode } from 'react';
 import {
   AccessibilityInfo,
   Animated,
+  KeyboardAvoidingView,
   Modal,
+  Platform,
   Pressable,
+  ScrollView,
   StyleSheet,
   Text,
   View,
@@ -41,7 +44,16 @@ export function BottomSheet({ visible, title, onClose, children }: Props) {
 
   return (
     <Modal visible={visible} transparent animationType="none" onRequestClose={onClose}>
-      <View style={styles.root} accessibilityViewIsModal>
+      {/* A sheet anchored to the bottom is exactly what the keyboard covers,
+          so every sheet that holds an input (Pinjam barang, Catat transaksi)
+          needs to lift with it — otherwise the user can't see what they're
+          typing. The inner ScrollView keeps a tall sheet reachable once the
+          keyboard has eaten most of the screen. */}
+      <KeyboardAvoidingView
+        style={styles.root}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        accessibilityViewIsModal
+      >
         <Pressable style={styles.backdrop} onPress={onClose} accessibilityLabel="Tutup" />
         <Animated.View style={[styles.panel, theme.shadow.md, { transform: [{ translateY }] }]}>
           <View style={styles.header}>
@@ -50,9 +62,15 @@ export function BottomSheet({ visible, title, onClose, children }: Props) {
               <Text style={styles.close}>✕</Text>
             </Pressable>
           </View>
-          {children}
+          <ScrollView
+            keyboardShouldPersistTaps="handled"
+            keyboardDismissMode="on-drag"
+            contentContainerStyle={styles.content}
+          >
+            {children}
+          </ScrollView>
         </Animated.View>
-      </View>
+      </KeyboardAvoidingView>
     </Modal>
   );
 }
@@ -66,6 +84,8 @@ function makeStyles(theme: Theme) {
       borderTopWidth: 2,
       borderTopColor: theme.color.text,
       paddingBottom: theme.space.xxl,
+      // Never taller than the space left above the keyboard.
+      maxHeight: '90%',
     },
     header: {
       flexDirection: 'row',
@@ -74,6 +94,7 @@ function makeStyles(theme: Theme) {
       paddingHorizontal: theme.layout.screenPadding,
       paddingVertical: theme.space.lg,
     },
+    content: { flexGrow: 0 },
     title: { fontFamily: 'Archivo_800ExtraBold', fontSize: 17, color: theme.color.text },
     close: { fontFamily: 'Archivo_800ExtraBold', fontSize: 17, color: theme.color.text },
   });

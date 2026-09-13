@@ -1,8 +1,9 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { KeyboardAwareScroll } from '@/components/KeyboardAwareScroll';
 import { Button } from '@/components/Button';
 import { useToast } from '@/components/Toast';
 import { ApiError } from '@/lib/api';
@@ -53,7 +54,7 @@ export function RegisterScreen() {
 
   return (
     <View style={styles.root}>
-      <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
+      <KeyboardAwareScroll contentContainerStyle={styles.scroll}>
         <Pressable
           onPress={() => router.back()}
           hitSlop={theme.hitSlop}
@@ -148,7 +149,7 @@ export function RegisterScreen() {
             disabled={!name || !email || !password || !passwordConfirmation}
           />
         </View>
-      </ScrollView>
+      </KeyboardAwareScroll>
     </View>
   );
 }

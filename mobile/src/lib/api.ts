@@ -64,16 +64,56 @@ interface RequestOptions {
   body?: unknown;
 }
 
+/**
+ * RN's `fetch()` has no default timeout, so a host that is routable but not
+ * answering (dev machine bound to loopback, WiFi client isolation, a VPN
+ * reshuffling routes) leaves the promise pending forever. The query never
+ * settles, so it never reaches `isError`, so every screen sits on its loading
+ * skeleton with nothing in logcat — the exact symptom that has cost two
+ * debugging sessions. Fail fast instead and let the existing ErrorState render.
+ */
+const REQUEST_TIMEOUT_MS = 15000;
+
+function timeoutSignal(): { signal: AbortSignal; done: () => void } {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+
+  return { signal: controller.signal, done: () => clearTimeout(timer) };
+}
+
+/** An aborted fetch rejects with a bare DOMException; turn it into the same
+ *  ApiError shape every caller already handles, with copy a user can act on. */
+function asApiError(error: unknown): never {
+  if (error instanceof ApiError) throw error;
+
+  if (error instanceof Error && error.name === 'AbortError') {
+    throw new ApiError(0, 'Sambungan ke server terputus. Periksa koneksi Anda, lalu coba lagi.');
+  }
+
+  throw new ApiError(0, 'Tidak bisa terhubung ke server. Periksa koneksi Anda, lalu coba lagi.');
+}
+
 export async function apiFetch<T>(path: string, options: RequestOptions = {}): Promise<T> {
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    method: options.method ?? 'GET',
-    headers: {
-      Accept: 'application/json',
-      ...(options.body ? { 'Content-Type': 'application/json' } : {}),
-      ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
-    },
-    body: options.body ? JSON.stringify(options.body) : undefined,
-  });
+  const { signal, done } = timeoutSignal();
+
+  let response: Response;
+
+  try {
+    response = await fetch(`${API_BASE_URL}${path}`, {
+      method: options.method ?? 'GET',
+      headers: {
+        Accept: 'application/json',
+        ...(options.body ? { 'Content-Type': 'application/json' } : {}),
+        ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
+      },
+      body: options.body ? JSON.stringify(options.body) : undefined,
+      signal,
+    });
+  } catch (error) {
+    asApiError(error);
+  } finally {
+    done();
+  }
 
   if (response.status === 204) {
     return undefined as T;
@@ -94,14 +134,28 @@ export async function apiFetch<T>(path: string, options: RequestOptions = {}): P
  * boundary and the server sees an empty body.
  */
 export async function apiUpload<T>(path: string, form: FormData): Promise<T> {
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    method: 'POST',
-    headers: {
-      Accept: 'application/json',
-      ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
-    },
-    body: form,
-  });
+  // Same hang risk as apiFetch, but a real upload over a weak connection can
+  // legitimately take far longer than a JSON call — so a much longer ceiling.
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 120000);
+
+  let response: Response;
+
+  try {
+    response = await fetch(`${API_BASE_URL}${path}`, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
+      },
+      body: form,
+      signal: controller.signal,
+    });
+  } catch (error) {
+    asApiError(error);
+  } finally {
+    clearTimeout(timer);
+  }
 
   const payload = await response.json().catch(() => null);
 

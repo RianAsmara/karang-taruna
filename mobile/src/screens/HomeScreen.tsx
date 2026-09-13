@@ -135,7 +135,12 @@ export function HomeScreen() {
     );
   }
 
-  if (transparency.isError || events.isError) {
+  // `transparency.data` is not guaranteed by `!isPending && !isError`:
+  // `apiFetch` resolves `undefined` on a 204 and `null` on an unparseable
+  // body, so a *successful* query can still land here with nothing. Treating
+  // that as an error (rather than asserting it away with `!`) is what B-003
+  // needed — it crashed on `summary.recentTransactions` of undefined.
+  if (transparency.isError || events.isError || !transparency.data) {
     return (
       <View style={styles.root}>
         {header}
@@ -151,7 +156,7 @@ export function HomeScreen() {
     );
   }
 
-  const summary = transparency.data!;
+  const summary = transparency.data;
 
   return (
     <View style={styles.root}>
@@ -164,10 +169,10 @@ export function HomeScreen() {
 
         <BalanceDisplay
           label="KAS KITA SEKARANG"
-          amount={summary?.balance}
+          amount={summary.balance}
           meta={formatMonthYearNow()}
-          income={summary?.monthIncome}
-          expense={summary?.monthExpense}
+          income={summary.monthIncome}
+          expense={summary.monthExpense}
           onPress={() => router.push("/kas")}
         />
 
@@ -273,19 +278,19 @@ export function HomeScreen() {
           onAction={() => router.push("/kas")}
         />
         <Card>
-          {summary?.recentTransactions.length === 0 ? (
+          {summary.recentTransactions.length === 0 ? (
             <View style={styles.emptyRow}>
               <Text style={styles.emptyText}>Belum ada transaksi.</Text>
             </View>
           ) : (
-            summary?.recentTransactions.map((t, i) => (
+            summary.recentTransactions.map((t, i) => (
               <TransactionItem
                 key={i}
                 kind={t.transactionType === "INCOME" ? "in" : "out"}
                 title={t.description ?? "Transaksi"}
                 meta={formatDateShort(t.transactionDate)}
                 amount={t.amount}
-                isLast={i === summary?.recentTransactions.length - 1}
+                isLast={i === summary.recentTransactions.length - 1}
               />
             ))
           )}

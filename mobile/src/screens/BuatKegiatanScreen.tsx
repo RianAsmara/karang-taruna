@@ -2,9 +2,11 @@ import { router } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
+import { KeyboardAwareScroll } from '@/components/KeyboardAwareScroll';
 import { Avatar } from '@/components/Avatar';
 import { Button } from '@/components/Button';
 import { Dialog } from '@/components/Dialog';
+import { DateField } from '@/components/DateField';
 import { FormField, FormSection } from '@/components/FormSection';
 import { MemberItem } from '@/components/MemberItem';
 import { PermissionNote } from '@/components/PermissionNote';
@@ -197,7 +199,7 @@ export function BuatKegiatanScreen() {
       <ScreenHeader title="Buat kegiatan" onBack={() => (step === 0 ? router.back() : setStep((s) => s - 1))} />
       <StepIndicator steps={STEPS} current={step} />
 
-      <ScrollView contentContainerStyle={styles.scroll}>
+      <KeyboardAwareScroll contentContainerStyle={styles.scroll}>
         {step === 0 ? (
           <FormSection title="Kegiatan">
             <FormField label="Judul" value={title} onChangeText={setTitle} placeholder="Nama kegiatan" autoFocus />
@@ -211,9 +213,9 @@ export function BuatKegiatanScreen() {
 
         {step === 1 ? (
           <FormSection title="Waktu & tempat">
-            <FormField label="Tanggal (YYYY-MM-DD)" value={dateText} onChangeText={setDateText} placeholder="2026-09-01" keyboardType="numeric" />
-            <FormField label="Jam mulai (HH:mm)" value={startTimeText} onChangeText={setStartTimeText} placeholder="08:00" keyboardType="numeric" />
-            <FormField label="Jam selesai (opsional)" value={endTimeText} onChangeText={setEndTimeText} placeholder="11:00" keyboardType="numeric" />
+            <DateField label="Tanggal" value={dateText} onChange={setDateText} placeholder="Pilih tanggal" />
+            <DateField label="Jam mulai" value={startTimeText} onChange={setStartTimeText} mode="time" placeholder="Pilih jam mulai" />
+            <DateField label="Jam selesai (opsional)" value={endTimeText} onChange={setEndTimeText} mode="time" placeholder="Pilih jam selesai" />
             <FormField label="Lokasi (opsional)" value={location} onChangeText={setLocation} placeholder="Balai warga" />
           </FormSection>
         ) : null}
@@ -248,7 +250,7 @@ export function BuatKegiatanScreen() {
             </FormSection>
           </>
         ) : null}
-      </ScrollView>
+      </KeyboardAwareScroll>
 
       <View style={styles.actionBar}>
         {step < 2 ? (

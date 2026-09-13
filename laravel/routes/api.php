@@ -15,6 +15,7 @@ use App\Http\Controllers\Api\V1\InventoryItemController;
 use App\Http\Controllers\Api\V1\InventoryLoanController;
 use App\Http\Controllers\Api\V1\MemberController;
 use App\Http\Controllers\Api\V1\MemberDueController;
+use App\Http\Controllers\Api\V1\MembershipExitRequestController;
 use App\Http\Controllers\Api\V1\MyTasksController;
 use App\Http\Controllers\Api\V1\NotificationController;
 use App\Http\Controllers\Api\V1\OrganizationController;
@@ -87,6 +88,13 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
             Route::get('events/{event}/attendance/qr', [AttendanceController::class, 'qr'])->name('events.attendance.qr');
 
             Route::get('my/tasks', [MyTasksController::class, 'index'])->name('my.tasks.index');
+
+            // Leaving is a request the chair decides on — see the
+            // membership_exit_requests migration for why.
+            Route::get('membership/exit-requests', [MembershipExitRequestController::class, 'index'])->name('membership.exit-requests.index');
+            Route::get('membership/exit-requests/mine', [MembershipExitRequestController::class, 'mine'])->name('membership.exit-requests.mine');
+            Route::post('membership/exit-requests', [MembershipExitRequestController::class, 'store'])->name('membership.exit-requests.store');
+            Route::post('membership/exit-requests/{exitRequest}/decide', [MembershipExitRequestController::class, 'decide'])->name('membership.exit-requests.decide');
 
             Route::get('announcements', [AnnouncementController::class, 'index'])->name('announcements.index');
             Route::get('announcements/{announcement}', [AnnouncementController::class, 'show'])->name('announcements.show');

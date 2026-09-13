@@ -9,11 +9,21 @@ use App\Models\User;
 class OrganizationPolicy
 {
     /**
-     * Any authenticated user may create a new organization; they become its KETUA.
+     * A user with no organization may create their first one — signup
+     * depends on it (a freshly registered user holds no membership, so a
+     * blanket chair-only rule would strand them, and the mobile no-org
+     * gate in `(app)/_layout.tsx` would loop). Once they belong to an
+     * organization, creating *another* is KETUA-only: an ordinary member
+     * shouldn't be able to spin up organizations while inside one.
+     * They become KETUA of whatever they create.
      */
     public function create(User $user): bool
     {
-        return true;
+        if ($user->memberships()->doesntExist()) {
+            return true;
+        }
+
+        return $user->memberships()->where('role', OrganizationRole::Ketua)->exists();
     }
 
     /**

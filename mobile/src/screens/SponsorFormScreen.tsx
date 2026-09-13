@@ -2,6 +2,7 @@ import { router } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
+import { KeyboardAwareScroll } from '@/components/KeyboardAwareScroll';
 import { BottomSheet } from '@/components/BottomSheet';
 import { Button } from '@/components/Button';
 import { Dialog } from '@/components/Dialog';
@@ -83,7 +84,7 @@ export function SponsorFormScreen() {
   return (
     <View style={styles.root}>
       <ScreenHeader title="Tambah sponsor" onBack={() => router.back()} />
-      <ScrollView contentContainerStyle={styles.scroll}>
+      <KeyboardAwareScroll contentContainerStyle={styles.scroll}>
         <FormSection title="Sponsor">
           <FormField label="Nama" value={name} onChangeText={setName} placeholder="Toko Maju Jaya" autoFocus />
           <View style={styles.field}>
@@ -109,7 +110,7 @@ export function SponsorFormScreen() {
         <FormSection title="Catatan">
           <FormField label="Catatan (opsional)" value={notes} onChangeText={setNotes} placeholder="Catatan tambahan" multiline numberOfLines={3} />
         </FormSection>
-      </ScrollView>
+      </KeyboardAwareScroll>
 
       <View style={styles.actionBar}>
         <Button variant="primary" label="Simpan" onPress={onSavePress} loading={create.isPending} disabled={!canSave} block />

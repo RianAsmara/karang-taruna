@@ -18,6 +18,10 @@ export function OrgSwitcherSheet({ visible, currentOrganizationId, onClose }: { 
   const switchOrganization = useSwitchOrganization();
 
   const list = organizations.data?.organizations ?? [];
+  // Server-decided (OrganizationPolicy::create): an ordinary member of an
+  // organization may not create another one. Defaults to hidden until the
+  // query answers, so the link never flashes for someone who can't use it.
+  const canCreate = organizations.data?.canCreate ?? false;
 
   const pick = (organizationId: string) => {
     if (organizationId === currentOrganizationId) {
@@ -54,17 +58,19 @@ export function OrgSwitcherSheet({ visible, currentOrganizationId, onClose }: { 
           ))}
         </ScrollView>
       )}
-      <View style={styles.createRow}>
-        <Text
-          style={styles.createLink}
-          onPress={() => {
-            onClose();
-            router.push('/buat-organisasi');
-          }}
-        >
-          + Buat organisasi baru
-        </Text>
-      </View>
+      {canCreate ? (
+        <View style={styles.createRow}>
+          <Text
+            style={styles.createLink}
+            onPress={() => {
+              onClose();
+              router.push('/buat-organisasi');
+            }}
+          >
+            + Buat organisasi baru
+          </Text>
+        </View>
+      ) : null}
     </BottomSheet>
   );
 }

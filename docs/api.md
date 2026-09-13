@@ -51,8 +51,17 @@ Auth
   DELETE /api/v1/auth/sessions/{tokenId}                auth:sanctum (revoke one of the caller's own other devices)
 
 Organization
-  POST   /api/v1/organizations                        auth:sanctum (outside current-org — a new user has no org yet)
+  POST   /api/v1/organizations                        auth:sanctum (outside current-org — a new user has no org yet;
+                                                        first org open to anyone, a second is KETUA-only — ADR-0019)
+  GET    /api/v1/organizations/mine                   auth:sanctum (also returns canCreate — see ADR-0019)
+  POST   /api/v1/organizations/switch                 auth:sanctum (membership verified server-side)
   GET    /api/v1/organizations/current                auth:sanctum + current-org
+
+Membership exit (leaving is a request the chair decides — ADR-0020)
+  GET    /api/v1/membership/exit-requests             auth:sanctum + current-org (KETUA only; the pending queue)
+  GET    /api/v1/membership/exit-requests/mine         "        (the caller's own latest request + canRequest)
+  POST   /api/v1/membership/exit-requests              "        (KETUA refused — hand the chair over first)
+  POST   /api/v1/membership/exit-requests/{id}/decide  "        (KETUA only; {approve: bool, note?: string})
 
 Members
   GET    /api/v1/members                               "

@@ -560,3 +560,68 @@ assignment, the shared-prop flag driving the sidebar link, and both
 Artisan commands' confirmation flows. Verified live in a browser
 (login → sidebar link → list → detail, including a DRAFT/PRIVATE report
 rendering correctly) in addition to the automated suite.
+
+## ADR-0019: Creating a second organization is KETUA-only; creating your first is open to anyone
+
+**Status**: accepted (13 Sep 2026)
+
+**Context**: `OrganizationPolicy::create` returned `true` unconditionally,
+so any member could create organizations while already inside one. The
+requested rule was "only Ketua can create a new organization", which
+taken literally breaks signup: a freshly registered user holds no
+membership, therefore no role, and could never create a first
+organization — dead-ending mobile's Splash → Daftar → Buat Organisasi
+path and looping the no-org gate in `(app)/_layout.tsx`.
+
+**Decision**: split the two cases. A user with **no** memberships may
+create their first organization (signup keeps working). A user who
+already belongs to at least one may create another only if they are
+KETUA somewhere. They become KETUA of whatever they create, unchanged.
+
+**Consequences**: enforced in the policy, which both surfaces already
+route through — the shared `StoreOrganizationRequest::authorize()`
+covers web and API POSTs, and the web `organizations/create` page route
+gained `->can('create', Organization::class)` so the form isn't
+reachable by URL either. Both org-list endpoints now return `canCreate`
+so neither client re-derives the rule; the web account-menu switcher and
+mobile's `OrgSwitcherSheet` hide their "Buat organisasi baru" link
+accordingly (hidden until the query answers, so it never flashes for
+someone who can't use it).
+
+## ADR-0020: Leaving an organization is a request the chair approves, not a unilateral act
+
+**Status**: accepted (13 Sep 2026)
+
+**Context**: the mobile Profil screen had shown a "Keluar dari
+organisasi?" confirmation dialog since the design build, but its
+`onConfirm` only closed the dialog — no endpoint existed on either
+surface. So leaving was never implemented at all, and the decision of
+*how* it should work was still open.
+
+**Decision**: a member submits a `MembershipExitRequest`; the chair
+approves or rejects it. The membership stays fully active until
+approval — the member keeps seeing kas, kegiatan and tugas meanwhile.
+Approval soft-deletes the membership, reusing the existing 30-day
+"Keluar" retention window rather than inventing a second departure
+mechanism alongside the chair's own "Keluarkan". The chair may not
+submit a request: an organization is never left chairless, so the role
+must be handed over first via the existing `TransferChairAction` — the
+same rule that already blocks removing a chair.
+
+**Consequences**: one pending request per membership, enforced by a
+partial unique index (`WHERE status = 'PENDING'`) so a double-tapped
+submit can't queue two decisions — a rejected member can still ask
+again. Database notifications both ways: to the chair on request, to
+the member on decision. Approval also clears the member's
+`active_organization_id` if it pointed at the organization they just
+left. Web renders the chair's pending queue on the member list and the
+member's own "Keluar dari organisasi" button below it; mobile wires the
+existing dialog to the real endpoint and shows "menunggu persetujuan"
+while pending. **Mobile has no chair-side approval UI** — approving is
+web-only for now, because a queue screen is not one of the 11 specified
+mobile screens (`mobile/AGENTS.md`) and adding one needs a design
+decision first.
+
+**Not included**: auto-approval on a timeout. A member whose chair never
+responds stays stuck by design for now; revisit if it happens in
+practice.

@@ -15,6 +15,9 @@ interface OrganizationOption {
  */
 export function OrganizationSwitcherItem({ currentOrganizationId, onNavigate }: { currentOrganizationId: string | null; onNavigate: () => void }) {
     const [organizations, setOrganizations] = useState<OrganizationOption[] | null>(null);
+    // Server-decided, not re-derived here: an ordinary member may not create
+    // a second organization (OrganizationPolicy::create).
+    const [canCreate, setCanCreate] = useState(false);
     const [open, setOpen] = useState(false);
 
     const load = async () => {
@@ -26,6 +29,7 @@ export function OrganizationSwitcherItem({ currentOrganizationId, onNavigate }: 
         const response = await fetch(route('organizations.options'), { headers: { Accept: 'application/json' } });
         const body = await response.json();
         setOrganizations(body.organizations as OrganizationOption[]);
+        setCanCreate(Boolean(body.canCreate));
         setOpen(true);
     };
 
@@ -55,13 +59,15 @@ export function OrganizationSwitcherItem({ currentOrganizationId, onNavigate }: 
                             {org.id === currentOrganizationId && <Check className="size-4" />}
                         </button>
                     ))}
-                    <Link
-                        href={route('organizations.create')}
-                        className="hover:bg-accent text-muted-foreground flex w-full items-center rounded-sm px-2 py-1.5 text-left text-sm"
-                    >
-                        <Plus className="mr-2 size-4" />
-                        Buat organisasi baru
-                    </Link>
+                    {canCreate && (
+                        <Link
+                            href={route('organizations.create')}
+                            className="hover:bg-accent text-muted-foreground flex w-full items-center rounded-sm px-2 py-1.5 text-left text-sm"
+                        >
+                            <Plus className="mr-2 size-4" />
+                            Buat organisasi baru
+                        </Link>
+                    )}
                 </div>
             )}
         </>

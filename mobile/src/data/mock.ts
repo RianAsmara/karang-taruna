@@ -220,40 +220,13 @@ export const profil = {
 };
 
 export const belumTersediaCopy: Record<string, { destination: string; body: string }> = {
-  'anggota-peran': {
-    destination: 'Anggota & peran',
-    body: 'Daftar anggota dan pengaturan peran akan muncul di sini.',
-  },
-  'iuran-tarif': {
-    destination: 'Iuran & tarif',
-    body: 'Pengaturan besaran dan jadwal iuran akan muncul di sini.',
-  },
-  inventaris: {
-    destination: 'Inventaris',
-    body: 'Daftar barang milik organisasi akan muncul di sini.',
-  },
-  dokumen: {
-    destination: 'Dokumen',
-    body: 'Berkas dan dokumen organisasi akan muncul di sini.',
-  },
-  sponsor: {
-    destination: 'Sponsor',
-    body: 'Daftar mitra dan sponsor akan muncul di sini.',
-  },
+  // Only genuinely-unbuilt destinations belong here. Entries for
+  // anggota-peran, iuran-tarif, inventaris, dokumen, sponsor, iuran-saya,
+  // kegiatan-baru and organisasi-baru were removed once those screens
+  // shipped — a stub entry outliving its screen makes the app look less
+  // finished than it is. See docs/under-construction.md.
   pengaturan: {
     destination: 'Pengaturan & notifikasi',
     body: 'Pengaturan akun dan notifikasi sedang disiapkan.',
-  },
-  'iuran-saya': {
-    destination: 'Iuran saya',
-    body: 'Rincian iuran Anda per bulan akan muncul di sini.',
-  },
-  'kegiatan-baru': {
-    destination: 'Buat kegiatan baru',
-    body: 'Formulir kegiatan baru sedang disiapkan.',
-  },
-  'organisasi-baru': {
-    destination: 'Buat organisasi baru',
-    body: 'Pembuatan organisasi baru sedang disiapkan. Sementara ini, minta kode organisasi dari pengurus.',
   },
 };

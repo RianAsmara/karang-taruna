@@ -1,8 +1,9 @@
 import { router } from 'expo-router';
 import { useRef, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { KeyboardAwareScroll } from '@/components/KeyboardAwareScroll';
 import { Avatar } from '@/components/Avatar';
 import { Button } from '@/components/Button';
 import { organization } from '@/data/mock';
@@ -58,7 +59,7 @@ export function LoginScreen() {
 
   return (
     <View style={styles.root}>
-      <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
+      <KeyboardAwareScroll contentContainerStyle={styles.scroll}>
         <Pressable
           onPress={() => (step === 'otp' ? setStep('phone') : router.back())}
           hitSlop={theme.hitSlop}
@@ -140,7 +141,7 @@ export function LoginScreen() {
             </View>
           </>
         )}
-      </ScrollView>
+      </KeyboardAwareScroll>
 
       <View style={styles.detectedOrg}>
         <View style={styles.detectedOrgRule} />

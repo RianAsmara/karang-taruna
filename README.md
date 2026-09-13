@@ -21,6 +21,7 @@ working rules.
 
 ```
 rukunmuda/
+├── .claude/            # project agents + skills (see .claude/README.md)
 ├── laravel/            # Laravel 13 app — web (Inertia) + REST API
 ├── mobile/              # React Native + Expo client (Phase 6)
 ├── docs/                # architecture, domain model, database, api, security,
@@ -64,11 +65,27 @@ docker exec rukunmuda-minio-1 mc anonymous set download local/rukunmuda/theme-lo
 
 Without this, logo images 403 and show as broken images in the browser/app.
 
-Seeded accounts (password `password`): `owner@rukunmuda.test`,
-`admin@rukunmuda.test`, `bendahara@rukunmuda.test`,
-`panitia@rukunmuda.test`, `anggota@rukunmuda.test`,
-`warga@rukunmuda.test` — one per `OrganizationRole`, all members of the
-same seeded organization, which also gets one sample event (with
+Seeded accounts, all `@rukunmuda.test` with the password `password`,
+all members of the same seeded organization:
+
+| Login | `OrganizationRole` |
+| --- | --- |
+| `owner@` | `KETUA` |
+| `sekretaris@` | `SEKRETARIS` |
+| `bendahara@` | `BENDAHARA` |
+| `panitia@` | `ANGGOTA` (also Ketua Panitia on the seeded event) |
+| `anggota@` | `ANGGOTA` |
+| `warga@` | `ANGGOTA` |
+
+`owner@` is the highest role — there is no separate "admin" account;
+`ADMIN` stopped existing when the role model moved to four roles
+(ADR-0017). `panitia@` and `warga@` are demo logins, not distinct
+roles: Panitia is per-event only (`EventCommittee`), which is why
+`panitia@` holds `ANGGOTA` and is assigned to the seeded event's
+committee. Platform superadmin is separate from all of this — see
+`superadmin@rukunmuda.test` below.
+
+That organization also gets one sample event (with
 committee members and tasks), one published announcement, two kas
 accounts with a realistic transaction history (including one still
 pending approval), monthly dues for every member (one already paid), a
@@ -153,6 +170,8 @@ a stale login on the device before the network — log out and back in.
 - [`docs/decisions.md`](docs/decisions.md) — ADR log
 - [`docs/deployment.md`](docs/deployment.md) — process model, infra, environment, backups, go-live checklist
 - [`docs/next-up.md`](docs/next-up.md) — live, prioritized "what's next" across backend/web/mobile
+- [`docs/under-construction.md`](docs/under-construction.md) — every unfinished surface and what actually blocks it
+- [`.claude/README.md`](.claude/README.md) — the six specialist agents (fullstack, QA, UI/UX, PM, DevOps, DevSecOps) and the project skills they follow
 
 ## Stack
 

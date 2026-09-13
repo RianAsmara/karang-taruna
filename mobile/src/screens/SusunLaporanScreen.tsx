@@ -1,7 +1,8 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
+import { KeyboardAwareScroll } from '@/components/KeyboardAwareScroll';
 import { Button } from '@/components/Button';
 import { Dialog } from '@/components/Dialog';
 import { EmptyState } from '@/components/EmptyState';
@@ -255,7 +256,7 @@ function SusunLaporanForm({
   return (
     <View style={styles.root}>
       <ScreenHeader title="Susun laporan" onBack={() => router.back()} />
-      <ScrollView contentContainerStyle={styles.scroll}>
+      <KeyboardAwareScroll contentContainerStyle={styles.scroll}>
         <View style={styles.periodRow}>
           <Text style={styles.periodLabel}>{formatMonthYear(new Date(report.periodStart))}</Text>
           <Tag tone={tag.tone} label={tag.label} />
@@ -295,7 +296,7 @@ function SusunLaporanForm({
         <View style={styles.field}>
           <FormField label="Catatan" value={note} onChangeText={setNote} placeholder="Catatan untuk ketua" multiline numberOfLines={4} />
         </View>
-      </ScrollView>
+      </KeyboardAwareScroll>
 
       <View style={styles.actionBar}>
         {isDualRoleShortcut ? (

@@ -27,10 +27,22 @@ interface Member {
     activityPoints: number;
 }
 
+interface ExitRequest {
+    id: string;
+    memberName: string | null;
+    memberRoleLabel: string;
+    reason: string | null;
+    createdAt: string;
+}
+
 interface MembersIndexProps {
     members: Member[];
     roles: RoleOption[];
     canManageMembers: boolean;
+    /** Pending "keluar" requests awaiting this chair's decision. Empty for everyone else. */
+    exitRequests: ExitRequest[];
+    myExitRequestPending: boolean;
+    canRequestExit: boolean;
     filters: { search: string | null };
 }
 
@@ -85,13 +97,29 @@ function AddMemberForm({ roles }: { roles: RoleOption[] }) {
     );
 }
 
-export default function MembersIndex({ members, roles, canManageMembers, filters }: MembersIndexProps) {
+export default function MembersIndex({
+    members,
+    roles,
+    canManageMembers,
+    exitRequests,
+    myExitRequestPending,
+    canRequestExit,
+    filters,
+}: MembersIndexProps) {
     const updateRole = (member: Member, role: string) => {
         router.patch(route('members.update-role', member.id), { role }, { preserveScroll: true });
     };
 
     const removeMember = (member: Member) => {
         router.delete(route('members.destroy', member.id), { preserveScroll: true });
+    };
+
+    const requestExit = () => {
+        router.post(route('membership.exit-requests.store'), {}, { preserveScroll: true });
+    };
+
+    const decideExit = (exitRequest: ExitRequest, approve: boolean) => {
+        router.post(route('membership.exit-requests.decide', exitRequest.id), { approve }, { preserveScroll: true });
     };
 
     return (
@@ -101,6 +129,37 @@ export default function MembersIndex({ members, roles, canManageMembers, filters
                 <h1 className="text-xl font-semibold">Anggota</h1>
 
                 {canManageMembers && <AddMemberForm roles={roles} />}
+
+                {exitRequests.length > 0 && (
+                    <div className="border-sidebar-border/70 dark:border-sidebar-border rounded-xl border p-4">
+                        <h2 className="font-medium">Permintaan keluar</h2>
+                        <p className="text-muted-foreground mt-1 text-sm">
+                            Anggota berikut meminta keluar dari organisasi. Keanggotaan mereka tetap aktif sampai Anda menyetujui.
+                        </p>
+                        <ul className="mt-3 flex flex-col gap-2">
+                            {exitRequests.map((exitRequest) => (
+                                <li
+                                    key={exitRequest.id}
+                                    className="flex flex-wrap items-center justify-between gap-2 rounded-lg border p-3 text-sm"
+                                >
+                                    <div>
+                                        <span className="font-medium">{exitRequest.memberName}</span>{' '}
+                                        <span className="text-muted-foreground">· {exitRequest.memberRoleLabel}</span>
+                                        {exitRequest.reason && <p className="text-muted-foreground mt-1">{exitRequest.reason}</p>}
+                                    </div>
+                                    <div className="flex gap-2">
+                                        <Button size="sm" variant="outline" onClick={() => decideExit(exitRequest, false)}>
+                                            Tolak
+                                        </Button>
+                                        <Button size="sm" onClick={() => decideExit(exitRequest, true)}>
+                                            Setujui
+                                        </Button>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                )}
 
                 <SearchInput initialValue={filters.search} placeholder="Cari nama atau email…" />
 
@@ -155,6 +214,18 @@ export default function MembersIndex({ members, roles, canManageMembers, filters
                         </tbody>
                     </table>
                 </div>
+
+                {myExitRequestPending ? (
+                    <p className="text-muted-foreground text-sm">
+                        Permintaan keluar Anda sedang menunggu persetujuan ketua.
+                    </p>
+                ) : canRequestExit ? (
+                    <div>
+                        <Button variant="ghost" size="sm" onClick={requestExit}>
+                            Keluar dari organisasi
+                        </Button>
+                    </div>
+                ) : null}
             </div>
         </AppLayout>
     );

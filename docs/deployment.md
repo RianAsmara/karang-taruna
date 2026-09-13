@@ -1,5 +1,14 @@
 # Deployment
 
+> **The implementation of everything below now lives in `infra/`.**
+> `infra/README.md` is the sequence you run; this file is the reasoning
+> behind it. Concretely: `infra/Dockerfile` (one image, three roles),
+> `infra/docker-compose.prod.yml` (app + queue + scheduler + Caddy +
+> Postgres + Redis + MinIO), `infra/scripts/deploy.sh`,
+> `pg-backup.sh`, `verify-restore.sh`, `healthcheck.sh`, and
+> `infra/.env.prod.example`. Target: a single VPS with Docker.
+> Mobile distribution is a shared APK — `mobile/BUILDING.md`.
+
 What it actually takes to run RukunMuda outside local development —
 process model, required infrastructure, environment, backups, and a
 go-live checklist. Local dev setup lives in the root `README.md`; this
@@ -154,3 +163,6 @@ the database, not as an afterthought.
 - [ ] Object storage bucket has versioning or a mirror/backup target
 - [ ] `mc anonymous set download` applied to the theme-logo prefix in production's bucket too (see README's local-dev note) — otherwise every org's uploaded logo 403s
 - [ ] CI green on the commit being deployed
+- [ ] `SENTRY_LARAVEL_DSN` set — without it a production failure is invisible until a member reports it
+- [ ] Placeholders filled in on the Kebijakan Privasi and Syarat Penggunaan pages (`resources/js/pages/legal/`): legal entity and contact address
+- [ ] `infra/scripts/verify-restore.sh` run once against a real dump, successfully

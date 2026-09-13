@@ -33,6 +33,72 @@ caching — the last deliberately not added, see its own entry for
 why). The next session should start by asking the user what they want
 next, not by assuming this file still has a queue.
 
+## 2026-09-13 (go-live work) — Three of the four launch blockers closed
+
+Acting on the readiness review below. Chosen targets: a single VPS with
+Docker Compose, and mobile distributed as a shared APK (not the Play
+Store) — that is how these organizations already pass things around.
+
+**Deployment (`infra/`, previously an empty directory).** One
+`Dockerfile` producing one image run in three roles — web, queue,
+scheduler — because a worker executing a different build's job classes
+than the web container is a bug that surfaces days later. Caddy in
+front for automatic HTTPS, which also removes certbot from the picture.
+`entrypoint.sh` republishes `public/` into the shared volume on every
+boot rather than relying on a named volume's first-creation copy: that
+copy happens once, so a redeploy would serve the previous release's JS
+against the new manifest — a white screen with a 404 for a hashed asset
+and nothing in the app's logs. Migrations and cache warming run only in
+the web role, so the three containers cannot race each other.
+`deploy.sh` dumps the database *before* migrating (the one deploy step
+redeploying the old image cannot undo) and waits on `/up` before
+reporting success.
+
+**Backups.** `pg-backup.sh` (cron-able, retention window, mirrors the
+object-storage bucket) validates each dump with `pg_restore --list`
+immediately — a truncated dump looks like a backup right up to the
+moment you need it. `verify-restore.sh` restores the newest dump into a
+throwaway database and asserts organizations, memberships, transactions
+and reports came back with rows, then recomputes the net approved
+balance. TRANSFER is excluded from that sum deliberately: it moves money
+between accounts of the same organization and nets to zero org-wide.
+
+**Observability.** `sentry/sentry-laravel`, inert without a DSN.
+`send_default_pii` is hard-coded `false` rather than env-configurable —
+shipping request bodies and user identities to a third-party processor
+is a UU PDP decision, not an ops toggle.
+
+**Email verification enforced (ADR-0022).** The scaffolding was all
+there — routes, controllers, the `verify-email` page — and the two lines
+enforcing it were missing, so anyone could register with any address and
+immediately create an organization. Our own `verified` middleware, not
+Laravel's, for two reasons: it stores the intended URL via
+`Redirect::guest()`, without which a newcomer opening an invite link
+verifies and lands on the dashboard having never joined — W-002's
+failure exactly, one screen later, and now pinned by its own test; and
+it answers API clients with `403 {code: email_unverified}` in
+Indonesian, since mobile has no verification screen and that string is
+what the user reads. Logout, session listing and a new
+`POST /api/v1/auth/email/verification-notification` sit outside the gate
+on purpose.
+
+**Legal pages.** `/privasi` and `/syarat`, unauthenticated (agreeing to
+terms you cannot read is not consent), linked from the register form.
+Content describes what the app actually stores, verified against the
+schema — not a template. Two placeholders remain and must be filled
+before launch: legal entity and contact address.
+
+478 backend tests (up from 475), Pint/PHPStan/tsc/ESLint/`vite build`
+clean.
+
+**Still open, in order:** provision the VPS and run `infra/README.md`
+(nothing here has run on a server yet — it is written and
+syntax-checked, not deployed); fill the two legal placeholders; a mobile
+"check your email" screen (`user.emailVerified` is returned for it, but
+it is not one of the 11 specified screens, so it needs a design
+decision); `npx expo run:android` and real device testing, still pending
+from the previous session.
+
 ## 2026-09-13 (readiness review) — Verdict: pilot-ready, not public-launch-ready
 
 Asked directly whether the app is ready to deploy for real users.

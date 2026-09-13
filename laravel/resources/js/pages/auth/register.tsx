@@ -106,9 +106,21 @@ export default function Register() {
                     </Button>
                 </div>
 
+                <p className="text-muted-foreground text-center text-xs">
+                    Dengan membuat akun, Anda menyetujui{' '}
+                    <TextLink href={route('legal.terms')} tabIndex={6}>
+                        Syarat Penggunaan
+                    </TextLink>{' '}
+                    dan{' '}
+                    <TextLink href={route('legal.privacy')} tabIndex={7}>
+                        Kebijakan Privasi
+                    </TextLink>
+                    .
+                </p>
+
                 <div className="text-muted-foreground text-center text-sm">
                     Sudah punya akun?{' '}
-                    <TextLink href={route('login')} tabIndex={6}>
+                    <TextLink href={route('login')} tabIndex={8}>
                         Masuk
                     </TextLink>
                 </div>

@@ -44,6 +44,10 @@ class AuthController extends Controller
                 'id' => $user->id,
                 'name' => $user->name,
                 'email' => $user->email,
+                // Every other endpoint is gated by 'verified'. Returning
+                // this lets the client show the "check your email" screen
+                // straight away rather than after a 403 it can't explain.
+                'emailVerified' => $user->hasVerifiedEmail(),
             ],
         ], 201);
     }
@@ -78,8 +82,32 @@ class AuthController extends Controller
                 'id' => $user->id,
                 'name' => $user->name,
                 'email' => $user->email,
+                // Every other endpoint is gated by 'verified'. Returning
+                // this lets the client show the "check your email" screen
+                // straight away rather than after a 403 it can't explain.
+                'emailVerified' => $user->hasVerifiedEmail(),
             ],
         ], 201);
+    }
+
+    /**
+     * Re-send the verification link. Outside the 'verified' middleware by
+     * necessity — the user asking for it is precisely the one who cannot
+     * pass it.
+     */
+    public function resendVerificationEmail(Request $request): JsonResponse
+    {
+        $user = $request->user();
+
+        if ($user->hasVerifiedEmail()) {
+            return response()->json(['message' => 'Email Anda sudah terverifikasi.'], 200);
+        }
+
+        $user->sendEmailVerificationNotification();
+
+        return response()->json([
+            'message' => 'Tautan verifikasi baru sudah dikirim ke '.$user->email.'.',
+        ], 202);
     }
 
     public function logout(Request $request): JsonResponse

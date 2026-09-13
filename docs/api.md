@@ -47,6 +47,7 @@ surface yet because it doesn't exist yet.
 Auth
   POST   /api/v1/auth/login                          (public)
   POST   /api/v1/auth/logout                          auth:sanctum (revokes only the current token — other devices stay signed in)
+  POST   /api/v1/auth/email/verification-notification auth:sanctum, throttle 6/min — re-sends the verification link
   GET    /api/v1/auth/sessions                         auth:sanctum (the caller's own active Sanctum tokens/devices; isCurrent flags the one in use)
   DELETE /api/v1/auth/sessions/{tokenId}                auth:sanctum (revoke one of the caller's own other devices)
 
@@ -192,11 +193,19 @@ distinct, stateless flow from the web session login, not a duplicate of
 it (ADR-0014):
 
 1. `POST /api/v1/auth/login` with `{email, password, device_name}`.
-   On success: `201` with `{token, user: {id, name, email}}`. The token
-   is a Sanctum personal access token, named after `device_name` (so a
-   user's active sessions are identifiable/revocable per device later).
-   On failure: `422` with a validation error on `email`.
+   On success: `201` with `{token, user: {id, name, email, emailVerified}}`.
+   The token is a Sanctum personal access token, named after `device_name`
+   (so a user's active sessions are identifiable/revocable per device
+   later). On failure: `422` with a validation error on `email`.
 2. Every subsequent request sends `Authorization: Bearer {token}`.
+   **A token from an unverified account opens nothing** (ADR-0022): every
+   gated endpoint answers `403` with
+   `{message, code: 'email_unverified'}`. `user.emailVerified` is returned
+   on both register and login precisely so the client can show a "check
+   your email" state up front rather than discovering the 403 one request
+   later. `POST /api/v1/auth/email/verification-notification` re-sends the
+   link and, like logout and the session endpoints, sits outside the gate
+   — the user who needs it is the one who cannot pass it.
 3. `POST /api/v1/auth/logout` (authenticated) revokes the *current*
    token only (`$request->user()->currentAccessToken()->delete()`) — a
    user's other logged-in devices stay signed in.

@@ -1,0 +1,7 @@
+# Production secrets. infra/.env.prod holds APP_KEY, database and object
+# storage credentials — committing it would publish every one of them.
+infra/.env.prod
+infra/.env.*.prod
+
+# Backup dumps, if BACKUP_DIR is ever pointed inside the repo.
+*.dump

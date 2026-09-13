@@ -8,6 +8,7 @@ use App\Models\OrganizationInvite;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Tests\TestCase;
 
 class OrganizationInviteTest extends TestCase
@@ -175,6 +176,41 @@ class OrganizationInviteTest extends TestCase
             'password' => 'kata-sandi-rahasia',
             'password_confirmation' => 'kata-sandi-rahasia',
         ])->assertRedirect("/join/{$invite->token}");
+    }
+
+    public function test_an_unverified_user_returns_to_the_invite_link_after_verifying()
+    {
+        // One step further along the same path as the test above. Once
+        // registration honours the intended URL, the *next* thing standing
+        // between a newcomer and their organization is email verification.
+        // Laravel's own 'verified' middleware redirects without recording
+        // where the user was going, which would drop them on the dashboard
+        // having never joined — the identical silent failure, one screen
+        // later. App\Http\Middleware\EnsureEmailIsVerified redirects with
+        // Redirect::guest() so the destination survives.
+        $invite = $this->makeInvite();
+        $newcomer = User::factory()->unverified()->create();
+
+        $this->actingAs($newcomer)
+            ->get("/join/{$invite->token}")
+            ->assertRedirect(route('verification.notice'));
+
+        $newcomer->markEmailAsVerified();
+        Auth::forgetGuards();
+
+        // What VerifyEmailController does on a successful click: it already
+        // redirects to intended(), so the stored destination is honoured.
+        $this->actingAs($newcomer->fresh())
+            ->get(route('verification.notice'))
+            ->assertRedirect("/join/{$invite->token}");
+
+        $this->actingAs($newcomer->fresh())->get("/join/{$invite->token}");
+
+        $this->assertDatabaseHas('organization_memberships', [
+            'organization_id' => $this->organization->id,
+            'user_id' => $newcomer->id,
+            'role' => OrganizationRole::Anggota->value,
+        ]);
     }
 
     /**

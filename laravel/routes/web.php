@@ -18,6 +18,11 @@ Route::get('/', function () {
     return Inertia::render('welcome');
 })->name('home');
 
+// Unauthenticated by necessity: a person has to be able to read what they
+// are agreeing to before they agree to it, and the register page links here.
+Route::get('privasi', fn () => Inertia::render('legal/privacy'))->name('legal.privacy');
+Route::get('syarat', fn () => Inertia::render('legal/terms'))->name('legal.terms');
+
 // Public, unauthenticated pages — throttled (see AppServiceProvider's
 // 'public-pages' limiter): generous for real visitors, but not
 // unbounded for scraping/DoS-ish abuse the way an unthrottled public
@@ -36,7 +41,7 @@ Route::middleware('throttle:public-pages')->group(function () {
     Route::get('reports/{report}/pdf', [ReportController::class, 'pdf'])->name('reports.pdf');
 });
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::get('organizations/create', function () {

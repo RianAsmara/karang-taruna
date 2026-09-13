@@ -676,3 +676,39 @@ what stop a forwarded link from being a permanent open door.
 
 **Not included**: per-invite role selection, single-use-by-default, and
 invite analytics. Add them only if real use shows a need.
+
+## ADR-0022: Email verification is required before an account can do anything
+
+**Decided**: A user must verify their email address before reaching any
+authenticated surface, web or API. `User` implements `MustVerifyEmail`;
+every authenticated route group carries the `verified` middleware.
+
+**Why**: An account here reaches an organization's member list, phone
+numbers, and full financial history. Before this, anyone could register
+with any address — including someone else's, or one that does not exist —
+and immediately create an organization. The verification scaffolding was
+already present and wired (routes, controllers, the `verify-email` page);
+only the two lines that enforce it were missing, so this was an
+unfinished feature rather than a new one.
+
+**What it means**: The `verified` middleware is our own
+(`App\Http\Middleware\EnsureEmailIsVerified`), aliased over Laravel's,
+for two reasons. It redirects with `Redirect::guest()` so the requested
+URL is stored as the session's intended destination — Laravel's own
+version does not, which would drop a newcomer opening an invite link onto
+the dashboard having never joined, the identical silent onboarding
+failure as W-002 one screen later. And it answers API clients with JSON
+(`403`, `code: email_unverified`) in Indonesian, because mobile has no
+verification screen and that message is what the user actually reads.
+
+**What we ruled out**: Gating the API entirely (mobile would trap a
+newly registered user with no way forward) — so `auth/logout`,
+`auth/sessions` and a new `auth/email/verification-notification` sit
+outside the gate deliberately, since the user who needs them is exactly
+the one who cannot pass it. Also ruled out: leaving mobile exempt.
+A verification rule that one client can skip is not a rule.
+
+**Still open**: mobile has no "check your email" screen. The API now
+returns `user.emailVerified` on register and login so the client can show
+one; building it needs a design decision (it is not among the 11
+specified screens) and a native rebuild to verify.

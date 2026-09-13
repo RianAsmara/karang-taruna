@@ -23,7 +23,7 @@ use App\Http\Controllers\TransparencyController;
 use App\Http\Controllers\VoteController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['auth', 'current-org'])->group(function () {
+Route::middleware(['auth', 'verified', 'current-org'])->group(function () {
     Route::get('members', [MemberController::class, 'index'])->name('members.index');
     Route::post('members', [MemberController::class, 'store'])->name('members.store');
     Route::patch('members/{member}', [MemberController::class, 'updateRole'])->name('members.update-role');

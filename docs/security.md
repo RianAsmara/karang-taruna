@@ -29,6 +29,17 @@
   — not required by anything shipped through Phase 5.
 - Passwords: Laravel's default hashing (bcrypt/argon2 per config) —
   never stored or logged in plaintext.
+- **Email verification is enforced** (ADR-0022). `User` implements
+  `MustVerifyEmail` and every authenticated route group — web, settings,
+  organization, superadmin, and the API — carries the `verified`
+  middleware. An unverified account reaches nothing. The middleware is
+  ours (`App\Http\Middleware\EnsureEmailIsVerified`, aliased over
+  Laravel's): it stores the intended URL via `Redirect::guest()` so an
+  invite link survives the verification detour, and answers API clients
+  with `403 {code: email_unverified}` rather than an HTML redirect.
+  Deliberately outside the gate: `auth/logout`, `auth/sessions`, and
+  `auth/email/verification-notification` (throttled 6/min) — the user who
+  needs them is the one who cannot pass it.
 
 ## Authorization
 
@@ -113,6 +124,17 @@ domain's scale, revisited only if a real need for more emerges.
   client-side validation is UX-only and never trusted.
 - Output escaping via React/Blade defaults — no raw HTML injection from
   user-controlled content without explicit sanitization.
+
+## Error reporting (Sentry)
+
+`sentry/sentry-laravel` reports uncaught exceptions, inert unless
+`SENTRY_LARAVEL_DSN` is set (so local and CI stay offline).
+`send_default_pii` is **hard-coded `false`**, not env-configurable: this
+app stores members' names, phone numbers and payment history, and
+enabling PII would ship request bodies and user identities to a
+third-party processor. That is a data-protection decision (UU PDP
+27/2022), not an ops toggle. An event here carries the stack trace and
+nothing about who triggered it.
 
 ## What's explicitly never exposed
 

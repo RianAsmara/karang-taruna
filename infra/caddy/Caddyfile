@@ -1,0 +1,37 @@
+# Caddy terminates TLS (automatic Let's Encrypt) and serves Laravel's
+# public/ directly, handing PHP to php-fpm in the app container.
+#
+# APP_DOMAIN and ACME_EMAIL come from the compose environment.
+
+{
+	email {$ACME_EMAIL}
+}
+
+{$APP_DOMAIN} {
+	root * /var/www/public
+	encode zstd gzip
+
+	# Vite emits content-hashed filenames, so these can never go stale.
+	@assets path /build/*
+	header @assets Cache-Control "public, max-age=31536000, immutable"
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "DENY"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	php_fastcgi app:9000 {
+		# Uploads over a weak mobile connection are legitimately slow;
+		# this must exceed php.ini's max_execution_time.
+		read_timeout 120s
+	}
+	file_server
+
+	log {
+		output stdout
+		format json
+	}
+}

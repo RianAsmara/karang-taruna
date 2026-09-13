@@ -5,7 +5,9 @@ namespace Tests\Feature\Api;
 use App\Enums\OrganizationRole;
 use App\Models\Organization;
 use App\Models\User;
+use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Notification;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
@@ -26,18 +28,57 @@ class AuthTest extends TestCase
             'device_name' => 'Android phone',
         ]);
 
-        $response->assertCreated()->assertJsonStructure(['token', 'user' => ['id', 'name', 'email']]);
+        $response->assertCreated()->assertJsonStructure(['token', 'user' => ['id', 'name', 'email', 'emailVerified']]);
+        $response->assertJsonPath('user.emailVerified', false);
 
         $this->assertDatabaseHas('users', ['email' => 'budi@rukunmuda.test', 'name' => 'Budi Santoso']);
 
         $token = $response->json('token');
 
-        // Registered, but no organization yet — the mobile client is
+        // The token is issued, but it opens nothing until the address is
+        // verified — an unverified email means an unverified person, and
+        // an account here reaches an organization's member list and its
+        // financial history.
+        $this->withHeader('Authorization', "Bearer {$token}")
+            ->getJson('/api/v1/organizations/current')
+            ->assertStatus(403)
+            ->assertJsonPath('code', 'email_unverified');
+
+        User::where('email', 'budi@rukunmuda.test')->firstOrFail()->markEmailAsVerified();
+
+        // Test-process artifact, not app behaviour: the auth manager caches
+        // the user it resolved for the previous request, so without this the
+        // second call still sees the pre-verification instance. Each real
+        // HTTP request resolves the user from scratch.
+        Auth::forgetGuards();
+
+        // Verified, but no organization yet — the mobile client is
         // expected to route this to Buat Organisasi rather than treating
         // it as a hard error.
         $this->withHeader('Authorization', "Bearer {$token}")
             ->getJson('/api/v1/organizations/current')
             ->assertStatus(422);
+    }
+
+    public function test_an_unverified_user_can_still_log_out_and_request_a_new_verification_link()
+    {
+        Notification::fake();
+
+        $user = User::factory()->unverified()->create();
+        $token = $user->createToken('Android phone')->plainTextToken;
+
+        // Both sit outside the 'verified' gate on purpose: the user who
+        // needs them is exactly the one who cannot pass it. Gating these
+        // would leave a newly registered account with no way forward.
+        $this->withHeader('Authorization', "Bearer {$token}")
+            ->postJson('/api/v1/auth/email/verification-notification')
+            ->assertStatus(202);
+
+        Notification::assertSentTo($user, VerifyEmail::class);
+
+        $this->withHeader('Authorization', "Bearer {$token}")
+            ->postJson('/api/v1/auth/logout')
+            ->assertNoContent();
     }
 
     public function test_registering_with_an_already_used_email_is_rejected()

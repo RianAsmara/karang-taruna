@@ -1,0 +1,130 @@
+# Production stack for a single VPS.
+#
+# Run from the repository root:
+#   docker compose -f infra/docker-compose.prod.yml --env-file infra/.env.prod up -d
+#
+# The root docker-compose.yml is local development only — it exposes
+# Postgres, Redis and MinIO on the host with throwaway credentials.
+# This file exposes nothing but 80/443.
+
+name: rukunmuda
+
+x-app: &app
+  build:
+    context: ..
+    dockerfile: infra/Dockerfile
+  image: rukunmuda-app:latest
+  restart: unless-stopped
+  env_file: .env.prod
+  depends_on:
+    postgres:
+      condition: service_healthy
+    redis:
+      condition: service_healthy
+
+services:
+  app:
+    <<: *app
+    environment:
+      RUKUNMUDA_ROLE: web
+    volumes:
+      - public:/var/www/public
+      - storage:/app/storage
+    # No healthcheck: the php-fpm-alpine image ships no FastCGI client to
+    # probe with, and a check that always passes is worse than none.
+    # Liveness is observed from outside — see scripts/healthcheck.sh.
+
+  # A queue worker that dies silently is indistinguishable from "nothing
+  # queued" until someone asks why reminders stopped — hence restart and
+  # --max-time, which recycles the process hourly so a leaked connection
+  # or a stale opcache can never accumulate.
+  queue:
+    <<: *app
+    environment:
+      RUKUNMUDA_ROLE: queue
+    command: php artisan queue:work --tries=3 --max-time=3600 --sleep=1
+    volumes:
+      - storage:/app/storage
+
+  # `schedule:work` is the long-running equivalent of a minute-by-minute
+  # cron entry, so the VPS needs no crontab of its own. Drives
+  # dues:remind-unpaid (weekly) — the app's only scheduled command.
+  scheduler:
+    <<: *app
+    environment:
+      RUKUNMUDA_ROLE: scheduler
+    command: php artisan schedule:work
+    volumes:
+      - storage:/app/storage
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    depends_on: [app]
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      APP_DOMAIN: ${APP_DOMAIN}
+      ACME_EMAIL: ${ACME_EMAIL}
+    volumes:
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - public:/var/www/public:ro
+      - caddy-data:/data       # issued certificates — losing this re-requests them and can hit Let's Encrypt rate limits
+      - caddy-config:/config
+
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_DATABASE}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # Not a disposable cache: this also holds sessions and the job queue.
+  # appendonly keeps queued jobs across a restart.
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD}
+    volumes:
+      - redis:/data
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli -a $$REDIS_PASSWORD ping | grep PONG"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # Financial evidence, documents and org logos. Swap this for a managed
+  # S3 provider by deleting the service and pointing AWS_* elsewhere —
+  # nothing else in the stack depends on it.
+  minio:
+    image: minio/minio:latest
+    restart: unless-stopped
+    environment:
+      MINIO_ROOT_USER: ${AWS_ACCESS_KEY_ID}
+      MINIO_ROOT_PASSWORD: ${AWS_SECRET_ACCESS_KEY}
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio:/data
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  postgres:
+  redis:
+  minio:
+  storage:
+  public:
+  caddy-data:
+  caddy-config:

@@ -41,10 +41,20 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
     Route::get('finance/reports/{report}/share', [ReportController::class, 'share'])->name('finance.reports.share');
     Route::get('finance/reports/{report}/qr', [ReportController::class, 'qr'])->name('finance.reports.qr');
 
+    // Session management stays outside 'verified': an unverified user must
+    // still be able to log out and to ask for a fresh verification email,
+    // or the app traps them with no way forward.
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('auth/logout', [AuthController::class, 'logout'])->name('auth.logout');
         Route::get('auth/sessions', [AuthController::class, 'sessions'])->name('auth.sessions.index');
         Route::delete('auth/sessions/{tokenId}', [AuthController::class, 'destroySession'])->name('auth.sessions.destroy');
+
+        Route::post('auth/email/verification-notification', [AuthController::class, 'resendVerificationEmail'])
+            ->middleware('throttle:6,1')
+            ->name('auth.verification.send');
+    });
+
+    Route::middleware(['auth:sanctum', 'verified'])->group(function () {
 
         // Outside 'current-org' on purpose — a user with no organization yet
         // must still be able to create their first one.
